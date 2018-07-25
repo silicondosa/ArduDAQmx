@@ -2,7 +2,8 @@
 // Created by Suraj Chakravarthi Raja.
 //
 
-#include "../cLinkedList.h"
+#include "cLinkedList.h"
+#include "macrodef.h"
 
 #ifdef _WIN32
     #include <cstddef>
@@ -24,10 +25,10 @@ extern long cListLength (cLinkedList *myList)
 
 extern int cListEmpty (cLinkedList *myList)
 {
-    if (myList->num_elem == 0) {
-        return 1;
+    if (myList->num_elem > 0) {
+        return FALSE;
     }
-    return 0;
+    return TRUE;
 }
 
 
@@ -70,6 +71,11 @@ extern cListElem * cListFindElem (cLinkedList *myList, void *myData)
         }
     }
     return myElem;
+}
+
+extern void * cListFindData (cLinkedList *myList, void *myData)
+{
+    return (cListFindElem(myList, myData))->obj;
 }
 
 extern void * cListFirstData (cLinkedList *myList)
@@ -165,6 +171,10 @@ extern  void cListUnlinkElem (cLinkedList *myList, cListElem *delElem)
 
     free(delElem);
     delElem = NULL;
+
+    if (cListEmpty(myList)) {
+        cListInit(myList);
+    }
 }
 
 extern void cListUnlinkAll (cLinkedList *myList)

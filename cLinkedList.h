@@ -8,9 +8,11 @@
 #ifdef _WIN32
     #include <cstddef>
     #include <cstdlib>
+    #include "macrodef.h"
 #else
     #include <stddef.h>
     #include <stdlib.h>
+    #include "macrodef.h"
 #endif
 
 
@@ -23,7 +25,7 @@ typedef struct cListElemTAG {
 typedef struct cLinkedListTAG {
     long        num_elem;
     cListElem   anchor;
-} cLinkedList;
+} cLinkedList, cList;
 
 // Linked list status functions
 extern long cListLength             (cLinkedList *);
@@ -36,6 +38,7 @@ extern cListElem * cListNextElem    (cLinkedList *, cListElem *);
 extern cListElem * cListPrevElem    (cLinkedList *, cListElem *);
 
 extern cListElem * cListFindElem    (cLinkedList *, void *);
+extern void *      cListFindData    (cLinkedList *, void *);
 
 extern void * cListFirstData   (cLinkedList *);
 extern void * cListLastData    (cLinkedList *);
