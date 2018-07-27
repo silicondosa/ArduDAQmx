@@ -4,6 +4,7 @@
 
 #include "cLinkedList.h"
 #include "macrodef.h"
+#include <stdio.h>
 
 #ifdef _WIN32
     #include <cstddef>
@@ -165,12 +166,18 @@ extern int cListPrepend (cLinkedList *myList, void *newData) {
 
 extern  void cListUnlinkElem (cLinkedList *myList, cListElem *delElem)
 {
-    (delElem->prevElem)->nextElem = delElem->nextElem;
-    (delElem->nextElem)->prevElem = delElem->prevElem;
-    myList->num_elem -= 1;
+    if (myList->num_elem > 0 && delElem != NULL) {
+        (delElem->prevElem)->nextElem = delElem->nextElem;
+        (delElem->nextElem)->prevElem = delElem->prevElem;
+        myList->num_elem -= 1;
 
-    free(delElem);
-    delElem = NULL;
+        free(delElem);
+        delElem = NULL;
+    } else if (delElem == NULL) {
+        fprintf(ERRSTREAM, "cListUnlinkElem (cLinkedList): WARNING - Quashed attempt to de-reference a NULL pointer!\n");
+    } else {
+        fprintf(ERRSTREAM, "cListUnlinkElem (cLinkedList): WARNING - Quashed attempt to access empty linked list.\n");
+    }
 
     if (cListEmpty(myList)) {
         cListInit(myList);

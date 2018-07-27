@@ -5,16 +5,20 @@
 #ifndef CLINKEDLIST_H
 #define CLINKEDLIST_H
 
+#include "macrodef.h"
+
 #ifdef _WIN32
     #include <cstddef>
     #include <cstdlib>
-    #include "macrodef.h"
 #else
     #include <stddef.h>
     #include <stdlib.h>
-    #include "macrodef.h"
 #endif
 
+#ifndef ERRSTREAM
+#include <stdio.h>
+#define ERRSTREAM stdout
+#endif
 
 typedef struct cListElemTAG {
     void    *obj;
