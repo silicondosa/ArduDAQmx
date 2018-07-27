@@ -15,11 +15,6 @@
     #include <stdlib.h>
 #endif
 
-#ifndef ERRSTREAM
-#include <stdio.h>
-#define ERRSTREAM stdout
-#endif
-
 typedef struct cListElemTAG {
     void    *obj;
     struct  cListElemTAG *nextElem;

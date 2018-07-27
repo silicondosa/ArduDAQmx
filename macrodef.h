@@ -32,9 +32,17 @@
     #define round(X) (((X) >= 0) ? (int)((X)+0.5) : (int)((X)-0.5))
 #endif /* ~round */
 
+#ifndef floor
+    #define floor(X) ((long)X)
+#endif
+
 #ifndef MAXPATHLENGTH
     #define MAXPATHLENGTH 256
 #endif /* ~MAXPATHLENGTH */
 
+#ifndef ERRSTREAM
+#include <stdio.h>
+#define ERRSTREAM stdout
+#endif
 
 #endif //CLINKEDLIST_MACRODEF_H
