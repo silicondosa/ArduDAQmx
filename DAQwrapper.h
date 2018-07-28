@@ -1,0 +1,8 @@
+//
+// Created by surajcha on 7/27/18.
+//
+
+#ifndef CLINKEDLIST_DAQWRAPPER_H
+#define CLINKEDLIST_DAQWRAPPER_H
+
+#endif //CLINKEDLIST_DAQWRAPPER_H
