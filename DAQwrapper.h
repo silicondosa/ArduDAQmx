@@ -6,6 +6,7 @@
 #define CLINKEDLIST_DAQWRAPPER_H
 
 #include "cLinkedList.h"
+#include "NIDAQmx.h"
 
 typedef enum    taskStatesTAG   {CONFIG, READY, RUNNING, STOPPED} taskStates;
 typedef enum    pinTypesTAG     {AI, AO, DI, DO, CTR} pinTypes;
@@ -43,6 +44,12 @@ typedef struct  DAQpinTAG {
     double          signalSlope;
     double          signalIntercept;
 } DAQpin;
+
+
+void setPin(DAQpin *, pinTypes);
+void * readPin(DAQpin *);
+void writePin(DAQpin *, void *);
+
 
 
 #endif //CLINKEDLIST_DAQWRAPPER_H
