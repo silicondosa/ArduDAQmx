@@ -4,3 +4,8 @@
 
 #include "../DAQwrapper.h"
 #include "../NIDAQmx.h"
+
+void enumerateDAQDevices()
+{
+	int a;
+}

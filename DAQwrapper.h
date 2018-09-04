@@ -45,6 +45,8 @@ typedef struct  DAQpinTAG {
     double          signalIntercept;
 } DAQpin;
 
+void setDeviceChannels();
+void enumerateDAQDevices();
 
 void setPin(DAQpin *, pinTypes);
 void * readPin(DAQpin *);
