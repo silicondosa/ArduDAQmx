@@ -1,0 +1,3 @@
+C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/cLinkedList.dir
+C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/edit_cache.dir
+C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/rebuild_cache.dir
