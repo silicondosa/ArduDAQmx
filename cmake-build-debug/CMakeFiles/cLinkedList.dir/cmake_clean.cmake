@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/cLinkedList.dir/sources/DAQwrapper.c.obj"
   "CMakeFiles/cLinkedList.dir/sources/cLinkedList.c.obj"
+  "CMakeFiles/cLinkedList.dir/sources/garbageCollector.c.obj"
   "CMakeFiles/cLinkedList.dir/sources/listTestUtils.c.obj"
   "CMakeFiles/cLinkedList.dir/sources/main.c.obj"
   "cLinkedList.pdb"

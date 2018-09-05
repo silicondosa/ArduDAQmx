@@ -178,6 +178,33 @@ sources\cLinkedList.c.s:
 	$(MAKE) -f CMakeFiles\cLinkedList.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\cLinkedList.dir\sources\cLinkedList.c.s
 .PHONY : sources\cLinkedList.c.s
 
+sources\garbageCollector.obj: sources\garbageCollector.c.obj
+
+.PHONY : sources\garbageCollector.obj
+
+# target to build an object file
+sources\garbageCollector.c.obj:
+	$(MAKE) -f CMakeFiles\cLinkedList.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\cLinkedList.dir\sources\garbageCollector.c.obj
+.PHONY : sources\garbageCollector.c.obj
+
+sources\garbageCollector.i: sources\garbageCollector.c.i
+
+.PHONY : sources\garbageCollector.i
+
+# target to preprocess a source file
+sources\garbageCollector.c.i:
+	$(MAKE) -f CMakeFiles\cLinkedList.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\cLinkedList.dir\sources\garbageCollector.c.i
+.PHONY : sources\garbageCollector.c.i
+
+sources\garbageCollector.s: sources\garbageCollector.c.s
+
+.PHONY : sources\garbageCollector.s
+
+# target to generate assembly for a file
+sources\garbageCollector.c.s:
+	$(MAKE) -f CMakeFiles\cLinkedList.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\cLinkedList.dir\sources\garbageCollector.c.s
+.PHONY : sources\garbageCollector.c.s
+
 sources\listTestUtils.obj: sources\listTestUtils.c.obj
 
 .PHONY : sources\listTestUtils.obj
@@ -247,6 +274,9 @@ help:
 	@echo ... sources/cLinkedList.obj
 	@echo ... sources/cLinkedList.i
 	@echo ... sources/cLinkedList.s
+	@echo ... sources/garbageCollector.obj
+	@echo ... sources/garbageCollector.i
+	@echo ... sources/garbageCollector.s
 	@echo ... sources/listTestUtils.obj
 	@echo ... sources/listTestUtils.i
 	@echo ... sources/listTestUtils.s

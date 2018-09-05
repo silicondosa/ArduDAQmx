@@ -101,10 +101,16 @@
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/NIDAQmx.h">
 			<Option target="cLinkedList"/>
 		</Unit>
+		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/ansi_c.h">
+			<Option target="cLinkedList"/>
+		</Unit>
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/cLinkedList.h">
 			<Option target="cLinkedList"/>
 		</Unit>
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/deviceManager.h">
+			<Option target="cLinkedList"/>
+		</Unit>
+		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/garbageCollector.h">
 			<Option target="cLinkedList"/>
 		</Unit>
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/listTestUtils.h">
@@ -122,10 +128,16 @@
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/sources/cLinkedList.c">
 			<Option target="cLinkedList"/>
 		</Unit>
+		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/sources/garbageCollector.c">
+			<Option target="cLinkedList"/>
+		</Unit>
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/sources/listTestUtils.c">
 			<Option target="cLinkedList"/>
 		</Unit>
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/sources/main.c">
+			<Option target="cLinkedList"/>
+		</Unit>
+		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/stdafx.h">
 			<Option target="cLinkedList"/>
 		</Unit>
 		<Unit filename="C:/Users/tyros/codebase/DAQwrapper/CMakeLists.txt">

@@ -2,8 +2,8 @@
 // Created by surajcha on 7/27/18.
 //
 
-#ifndef CLINKEDLIST_DAQWRAPPER_H
-#define CLINKEDLIST_DAQWRAPPER_H
+#ifndef DAQWRAPPER_H
+#define DAQWRAPPER_H
 
 #include "cLinkedList.h"
 #include "NIDAQmx.h"
@@ -54,4 +54,4 @@ void writePin(DAQpin *, void *);
 
 
 
-#endif //CLINKEDLIST_DAQWRAPPER_H
+#endif //DAQWRAPPER_H

@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_C
   "C:/Users/tyros/codebase/DAQwrapper/sources/DAQwrapper.c" "C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/cLinkedList.dir/sources/DAQwrapper.c.obj"
   "C:/Users/tyros/codebase/DAQwrapper/sources/cLinkedList.c" "C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/cLinkedList.dir/sources/cLinkedList.c.obj"
+  "C:/Users/tyros/codebase/DAQwrapper/sources/garbageCollector.c" "C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/cLinkedList.dir/sources/garbageCollector.c.obj"
   "C:/Users/tyros/codebase/DAQwrapper/sources/listTestUtils.c" "C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/cLinkedList.dir/sources/listTestUtils.c.obj"
   "C:/Users/tyros/codebase/DAQwrapper/sources/main.c" "C:/Users/tyros/codebase/DAQwrapper/cmake-build-debug/CMakeFiles/cLinkedList.dir/sources/main.c.obj"
   )
