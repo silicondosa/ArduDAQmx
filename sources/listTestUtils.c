@@ -9,9 +9,9 @@
 #include <time.h>
 #include <errno.h>
 #include <locale.h>
-#include "macrodef.h"
-#include "cLinkedList.h"
-#include "listTestUtils.h"
+#include "../include/macrodef.h"
+#include "../include/cLinkedList.h"
+#include "../include/listTestUtils.h"
 
 typedef int dataFormat;
 

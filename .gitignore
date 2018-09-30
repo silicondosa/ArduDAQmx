@@ -364,3 +364,7 @@ ASALocalRun/
 
 # Local History for Visual Studio
 .localhistory/
+
+# CMake files and directories
+cmake-build-debug/
+cmake-build-release/

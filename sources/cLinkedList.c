@@ -2,8 +2,8 @@
 // Created by Suraj Chakravarthi Raja.
 //
 
-#include "cLinkedList.h"
-#include "macrodef.h"
+#include "../include/cLinkedList.h"
+#include "../include/macrodef.h"
 #include <stdio.h>
 
 #ifdef _WIN32
