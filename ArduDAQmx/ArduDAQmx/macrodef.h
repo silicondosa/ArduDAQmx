@@ -22,11 +22,17 @@
     #define DIR_SEP '/'
 #endif /* ~_WIN32 */
 
-#ifndef max
+
+#ifdef __max
+	#define max __max
+#else
 	#define max(A,B) ( ((A) > (B)) ? (A) : (B) )
 #endif /* ~max */
 
-#ifndef  min
+
+#ifdef  __min
+	#define min __min
+#else
     #define min(A,B) ( ((A) > (B)) ? (B) : (A) )
 #endif /* ~min */
 
@@ -35,7 +41,6 @@
 #endif /* ~round */
 
 #ifndef floor
-	#include <stdio.h>
     #define floor(X) ((long)X)
 #endif
 
