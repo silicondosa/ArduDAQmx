@@ -5,8 +5,8 @@
 #ifndef DAQWRAPPER_H
 #define DAQWRAPPER_H
 
-#include "cLinkedList.h"
-#include "NIDAQmx.h"
+#include "../include/cLinkedList.h"
+#include "../include/NIDAQmx.h"
 
 typedef enum    taskStatesTAG   {CONFIG, READY, RUNNING, STOPPED} taskStates;
 typedef enum    pinTypesTAG     {AI, AO, DI, DO, CTR} pinTypes;

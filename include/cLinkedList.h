@@ -8,8 +8,8 @@
 #include "macrodef.h"
 
 #ifdef _WIN32
-    #include <cstddef>
-    #include <cstdlib>
+    #include <stddef.h>
+    #include <stdlib.h>
 #else
     #include <stddef.h>
     #include <stdlib.h>

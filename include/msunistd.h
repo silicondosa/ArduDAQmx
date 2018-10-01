@@ -7,11 +7,31 @@
 * https://stackoverflow.com/a/826027/1202830
 */
 
-#include <stdlib.h>
-#include <io.h>
+#ifndef _INC_STDLIB
+	#include <stdlib.h>
+#endif
+
+#ifndef _INC_STDIO
+	#include <stdio.h>
+#endif
+
+#ifndef _INC_IO
+	#include <io.h>	
+#endif
+
+#ifndef _STDINT
+	#include <stdint.h>
+#endif
+
 // #include <getopt.h> /* getopt at: https://gist.github.com/ashelly/7776712 */
-#include <process.h> /* for getpid() and the exec..() family */
-#include <direct.h> /* for _getcwd() and _chdir() */
+
+#ifndef _INC_PROCESS
+	#include <process.h> /* for getpid() and the exec..() family */
+#endif
+
+#ifndef _INC_DIRECT
+	#include <direct.h> /* for _getcwd() and _chdir() */
+#endif
 
 #define srandom srand
 #define random rand
@@ -44,8 +64,10 @@ These may be OR'd together.  */
 #define STDIN_FILENO 0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
+
 /* should be in some equivalent to <sys/types.h> */
-typedef __int8            int8_t;
+
+//typedef __int8            int8_t;
 typedef __int16           int16_t;
 typedef __int32           int32_t;
 typedef __int64           int64_t;

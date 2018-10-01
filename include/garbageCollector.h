@@ -5,7 +5,6 @@
 #ifndef GARBAGECOLLECTOR_H
 #define GARBAGECOLLECTOR_H
 
-#include "garbageCollector.h"
 #include "cLinkedList.h"
 #include <stdlib.h>
 

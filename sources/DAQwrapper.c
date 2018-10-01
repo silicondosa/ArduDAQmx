@@ -5,7 +5,7 @@
 #include "../include/DAQwrapper.h"
 #include "../include/NIDAQmx.h"
 
-void enumerateDAQDevices(DAQdevice *)
+void enumerateDAQDevices()
 {
     int buffersize, n = 1;
     //Buffer size datatypes

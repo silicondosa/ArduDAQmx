@@ -2,7 +2,7 @@
 // Created by tyros on 9/4/2018.
 //
 
-#include "garbageCollector.h"
+#include "../include/garbageCollector.h"
 #include <stdlib.h>
 
 extern void addToGarbagePile(void *newElem)
@@ -24,7 +24,7 @@ extern void* generateGarbageData(int datSize)
 extern void purgeGarbagePile()
 {
     int i = 0, pileLen = cListLength(&garbagePile);
-    void *tempElem;
+    void *tempElem = NULL;
     for (;  i < pileLen ; i++) {
         free( cListFirstData(&garbagePile) );
     }
