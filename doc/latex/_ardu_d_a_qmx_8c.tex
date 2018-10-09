@@ -1,0 +1,169 @@
+\hypertarget{_ardu_d_a_qmx_8c}{}\section{C\+:/\+Users/tyros/codebase/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx.c File Reference}
+\label{_ardu_d_a_qmx_8c}\index{C\+:/\+Users/tyros/codebase/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx.\+c@{C\+:/\+Users/tyros/codebase/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx.\+c}}
+
+
+Ardu\+D\+A\+Qmx\+: A simple Arduino-\/esque wrapper for the National Instruments N\+I-\/\+D\+A\+Qmx C/\+C++ A\+PI.  
+
+
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$string.\+h$>$}\newline
+{\ttfamily \#include \char`\"{}Ardu\+D\+A\+Qmx.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}ansi\+\_\+c.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}macrodef.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}N\+I\+D\+A\+Qmx.\+h\char`\"{}}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+void \mbox{\hyperlink{_ardu_d_a_qmx_8c_aed9f4550d92bfcf1d4d0d412f83d826a}{enumerate\+D\+A\+Qmx\+Devices}} (int print\+Flag)
+\item 
+int \mbox{\hyperlink{_ardu_d_a_qmx_8c_a86d834167083ec93f12aec315b8002bc}{get\+Ardu\+D\+A\+Qmx\+Status}} ()
+\item 
+int \mbox{\hyperlink{_ardu_d_a_qmx_8c_a74e71ba34a69d58218513c563168473a}{print\+D\+A\+Qmx\+Status}} ()
+\item 
+\mbox{\hyperlink{structc_linked_list_t_a_g}{c\+Linked\+List}} $\ast$ \mbox{\hyperlink{_ardu_d_a_qmx_8c_aaa101613128c68a5a8a6fcb7913f6b09}{get\+D\+A\+Qmx\+Device\+List}} ()
+\item 
+char $\ast$ \mbox{\hyperlink{_ardu_d_a_qmx_8c_ab337bac5083f7a63e2035ad0ee85de68}{get\+Ardu\+D\+A\+Qmx\+Prefix}} ()
+\item 
+void \mbox{\hyperlink{_ardu_d_a_qmx_8c_a94f2855c59c818bb304e5b92a72110e7}{set\+Ardu\+D\+A\+Qmx\+Prefix}} (char $\ast$new\+Prefix)
+\item 
+unsigned \mbox{\hyperlink{_ardu_d_a_qmx_8c_ae45f5589829c1e7eb2006076eb7dc700}{get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length}} ()
+\item 
+int \mbox{\hyperlink{_ardu_d_a_qmx_8c_a9d80c29bb44fc41f368da4678743025e}{Ardu\+D\+A\+Qmx\+Init}} ()
+\item 
+int \mbox{\hyperlink{_ardu_d_a_qmx_8c_a5b2ff22cb107c61d1db1896c0363aa8e}{Ardu\+D\+A\+Qmx\+Terminate}} ()
+\item 
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_aff6271b34cc25e5f46d170a072e15ee3}\label{_ardu_d_a_qmx_8c_aff6271b34cc25e5f46d170a072e15ee3}} 
+\mbox{\hyperlink{structpin}{pin}} $\ast$ {\bfseries pin\+Mode} (unsigned int, unsigned int, I\+Omode)
+\end{DoxyCompactItemize}
+\subsection*{Variables}
+\begin{DoxyCompactItemize}
+\item 
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_ab35521bfe64066f9bcd76366ec1d8a7b}\label{_ardu_d_a_qmx_8c_ab35521bfe64066f9bcd76366ec1d8a7b}} 
+int {\bfseries Ardu\+D\+A\+Qmx\+Status} = 0
+\item 
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_ae084422b04984ef93a5860f1ac0c38b9}\label{_ardu_d_a_qmx_8c_ae084422b04984ef93a5860f1ac0c38b9}} 
+\mbox{\hyperlink{structc_linked_list_t_a_g}{c\+Linked\+List}} $\ast$ {\bfseries Ardu\+D\+A\+Qmx\+Dev\+List} = N\+U\+LL
+\item 
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_ade03d808d62ec823585b8a06754a0d91}\label{_ardu_d_a_qmx_8c_ade03d808d62ec823585b8a06754a0d91}} 
+char $\ast$ {\bfseries Ardu\+D\+A\+Qmx\+Dev\+Prefix} = \char`\"{}P\+X\+I1\+Slot\char`\"{}
+\item 
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_a0e16df053afc74673879bddf4c5194c4}\label{_ardu_d_a_qmx_8c_a0e16df053afc74673879bddf4c5194c4}} 
+const unsigned {\bfseries Max\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length} = 8
+\item 
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_aa26e4c83732949db1a32908d2067ff1e}\label{_ardu_d_a_qmx_8c_aa26e4c83732949db1a32908d2067ff1e}} 
+unsigned {\bfseries Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length} = Max\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+Ardu\+D\+A\+Qmx\+: A simple Arduino-\/esque wrapper for the National Instruments N\+I-\/\+D\+A\+Qmx C/\+C++ A\+PI. 
+
+\begin{DoxyAuthor}{Author}
+Suraj Chakravarthi Raja 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_a9d80c29bb44fc41f368da4678743025e}\label{_ardu_d_a_qmx_8c_a9d80c29bb44fc41f368da4678743025e}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!Ardu\+D\+A\+Qmx\+Init@{Ardu\+D\+A\+Qmx\+Init}}
+\index{Ardu\+D\+A\+Qmx\+Init@{Ardu\+D\+A\+Qmx\+Init}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{Ardu\+D\+A\+Qmx\+Init()}{ArduDAQmxInit()}}
+{\footnotesize\ttfamily int Ardu\+D\+A\+Qmx\+Init (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Performs the initialization of the Ardu\+D\+A\+Qmx library. Calling this function is mandatory before using the library. If the library is not initialized and ready, calling this function will setup the library and set the library status to S\+T\+A\+T\+U\+S\+\_\+\+R\+E\+A\+DY
+
+\begin{DoxyReturn}{Returns}
+Returns 0 if there are no errors, and an error code otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_a5b2ff22cb107c61d1db1896c0363aa8e}\label{_ardu_d_a_qmx_8c_a5b2ff22cb107c61d1db1896c0363aa8e}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!Ardu\+D\+A\+Qmx\+Terminate@{Ardu\+D\+A\+Qmx\+Terminate}}
+\index{Ardu\+D\+A\+Qmx\+Terminate@{Ardu\+D\+A\+Qmx\+Terminate}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{Ardu\+D\+A\+Qmx\+Terminate()}{ArduDAQmxTerminate()}}
+{\footnotesize\ttfamily int Ardu\+D\+A\+Qmx\+Terminate (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})}
+
+Terminates the Ardu\+D\+A\+Qmx library and sets the status to S\+T\+A\+T\+U\+S\+\_\+\+P\+R\+E\+C\+O\+N\+F\+IG. It also cleans up any dynamic memory allocated by the library with some garbage collection. Calling this function is mandatory before exitting the program. But the function may also be called if the library needs to be reconfigured.
+
+\begin{DoxyReturn}{Returns}
+Returns the status of the library as relfected in \textquotesingle{}Ardu\+D\+A\+Qmx\+Status\textquotesingle{}. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_aed9f4550d92bfcf1d4d0d412f83d826a}\label{_ardu_d_a_qmx_8c_aed9f4550d92bfcf1d4d0d412f83d826a}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!enumerate\+D\+A\+Qmx\+Devices@{enumerate\+D\+A\+Qmx\+Devices}}
+\index{enumerate\+D\+A\+Qmx\+Devices@{enumerate\+D\+A\+Qmx\+Devices}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{enumerate\+D\+A\+Qmx\+Devices()}{enumerateDAQmxDevices()}}
+{\footnotesize\ttfamily void enumerate\+D\+A\+Qmx\+Devices (\begin{DoxyParamCaption}\item[{int}]{print\+Flag }\end{DoxyParamCaption})}
+
+enumerates all accessible D\+A\+Qmx devices and populates the \textquotesingle{}Ardu\+D\+A\+Qmx\+Dev\+List\textquotesingle{} list along with some status messages. This function can also optionally prints a table with the same list of D\+A\+Qmx devices.
+
+
+\begin{DoxyParams}{Parameters}
+{\em print\+Flag} & When set to T\+R\+U\+E(1), the function prints enumerates the devices in a table. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_ae45f5589829c1e7eb2006076eb7dc700}\label{_ardu_d_a_qmx_8c_ae45f5589829c1e7eb2006076eb7dc700}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length@{get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length}}
+\index{get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length@{get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length()}{getArduDAQmxDevPrefixLength()}}
+{\footnotesize\ttfamily unsigned get\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the length of the current D\+A\+Qmx device prefix as defined in \textquotesingle{}Ardu\+D\+A\+Qmx\+Dev\+Prefix\+Length\textquotesingle{}.
+
+\begin{DoxyReturn}{Returns}
+returns the length of current D\+A\+Qmx device prefix as an unsigned integer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_ab337bac5083f7a63e2035ad0ee85de68}\label{_ardu_d_a_qmx_8c_ab337bac5083f7a63e2035ad0ee85de68}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!get\+Ardu\+D\+A\+Qmx\+Prefix@{get\+Ardu\+D\+A\+Qmx\+Prefix}}
+\index{get\+Ardu\+D\+A\+Qmx\+Prefix@{get\+Ardu\+D\+A\+Qmx\+Prefix}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{get\+Ardu\+D\+A\+Qmx\+Prefix()}{getArduDAQmxPrefix()}}
+{\footnotesize\ttfamily char $\ast$ get\+Ardu\+D\+A\+Qmx\+Prefix (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns a pointer to the D\+A\+Qmx device prefix string
+
+\begin{DoxyReturn}{Returns}
+returns a character pointer to the D\+A\+Qmx device prefix string 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_a86d834167083ec93f12aec315b8002bc}\label{_ardu_d_a_qmx_8c_a86d834167083ec93f12aec315b8002bc}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!get\+Ardu\+D\+A\+Qmx\+Status@{get\+Ardu\+D\+A\+Qmx\+Status}}
+\index{get\+Ardu\+D\+A\+Qmx\+Status@{get\+Ardu\+D\+A\+Qmx\+Status}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{get\+Ardu\+D\+A\+Qmx\+Status()}{getArduDAQmxStatus()}}
+{\footnotesize\ttfamily int get\+Ardu\+D\+A\+Qmx\+Status (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns the current opeational status of the Ardu\+D\+A\+Qmx library as reported by the \textquotesingle{}Ardu\+D\+A\+Qmx\+Status\textquotesingle{} variable. Use this function to access the \textquotesingle{}Ardu\+D\+A\+Qmx\+Status\textquotesingle{} variable.
+
+\begin{DoxyReturn}{Returns}
+
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_aaa101613128c68a5a8a6fcb7913f6b09}\label{_ardu_d_a_qmx_8c_aaa101613128c68a5a8a6fcb7913f6b09}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!get\+D\+A\+Qmx\+Device\+List@{get\+D\+A\+Qmx\+Device\+List}}
+\index{get\+D\+A\+Qmx\+Device\+List@{get\+D\+A\+Qmx\+Device\+List}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{get\+D\+A\+Qmx\+Device\+List()}{getDAQmxDeviceList()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{structc_linked_list_t_a_g}{c\+Linked\+List}} $\ast$ get\+D\+A\+Qmx\+Device\+List (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Returns a pointer to the linked list of active D\+A\+Qmx devices.
+
+\begin{DoxyReturn}{Returns}
+Returns a pointer to the linked list of active D\+A\+Qmx devices. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_a74e71ba34a69d58218513c563168473a}\label{_ardu_d_a_qmx_8c_a74e71ba34a69d58218513c563168473a}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!print\+D\+A\+Qmx\+Status@{print\+D\+A\+Qmx\+Status}}
+\index{print\+D\+A\+Qmx\+Status@{print\+D\+A\+Qmx\+Status}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{print\+D\+A\+Qmx\+Status()}{printDAQmxStatus()}}
+{\footnotesize\ttfamily int print\+D\+A\+Qmx\+Status (\begin{DoxyParamCaption}{ }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Prints the meaning of the library status as reflected in \textquotesingle{}Ardu\+D\+A\+Qmx\+Status\textquotesingle{}.
+
+\begin{DoxyReturn}{Returns}
+Returns \textquotesingle{}Ardu\+D\+A\+Qmx\+Status\textquotesingle{} as an integer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{_ardu_d_a_qmx_8c_a94f2855c59c818bb304e5b92a72110e7}\label{_ardu_d_a_qmx_8c_a94f2855c59c818bb304e5b92a72110e7}} 
+\index{Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}!set\+Ardu\+D\+A\+Qmx\+Prefix@{set\+Ardu\+D\+A\+Qmx\+Prefix}}
+\index{set\+Ardu\+D\+A\+Qmx\+Prefix@{set\+Ardu\+D\+A\+Qmx\+Prefix}!Ardu\+D\+A\+Qmx.\+c@{Ardu\+D\+A\+Qmx.\+c}}
+\subsubsection{\texorpdfstring{set\+Ardu\+D\+A\+Qmx\+Prefix()}{setArduDAQmxPrefix()}}
+{\footnotesize\ttfamily void set\+Ardu\+D\+A\+Qmx\+Prefix (\begin{DoxyParamCaption}\item[{char $\ast$}]{new\+Prefix }\end{DoxyParamCaption})\hspace{0.3cm}{\ttfamily [inline]}}
+
+Lets users set the D\+A\+Qmx device name prefix as defined in \textquotesingle{}Ardu\+D\+A\+Qmx\+Dev\+Prefix\textquotesingle{}. If prefix is longer than \textquotesingle{}Max\+Ardu\+D\+A\+Qmx\+Dev\+Prefix\textquotesingle{}, only 8 characters (not including N\+U\+LL character) used -\/ everything else is truncated.
+
+
+\begin{DoxyParams}{Parameters}
+{\em new\+Prefix} & Pointer to a C string with the new device prefix. \\
+\hline
+\end{DoxyParams}
