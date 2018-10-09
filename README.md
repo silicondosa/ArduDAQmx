@@ -27,7 +27,7 @@ the [National Instruments website.](https://www.ni.com/dataacquisition/nidaqmx.h
 * You may now use the ArduDAQmx wrapper in tandem with the NI-DAQmx library.
 
 ## ArduDAQmx Documentation
-Documentation for the ArduDAQmx wrapper is available at **`INSERT DOXYGEN index.html URL HERE`**.
+Documentation for the ArduDAQmx wrapper is available [here](https://solaremperor.github.io/ArduDAQmx/).
 
 ## Legal
 ArduDAQmx is distributed under the MIT license.
