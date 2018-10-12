@@ -1,6 +1,8 @@
-//
-// Created by Suraj Chakravarthi Raja.
-//
+/*!
+ * \file cLinkedList.h
+ * \brief cLinkedList: A simple C library that implements a doubly linked list.
+ * \author Suraj Chakravarthi Raja
+ */
 
 #pragma once
 
@@ -17,48 +19,59 @@
     #include <stdlib.h>
 #endif
 
-typedef struct cListElemTAG {
+/*!
+ * Structure for a single element on the ::cLinkedList linked list.
+ */
+typedef struct _cListElem {
+	/*! Data object pointed to the list element.*/
     void    *obj;
-    struct  cListElemTAG *nextElem;
-    struct  cListElemTAG *prevElem;
+	/*! The element next to this element on the list.*/
+    struct  _cListElem *nextElem;
+	/*! The element before this element on the list.*/
+    struct  _cListElem *prevElem;
 } cListElem;
 
-typedef struct cLinkedListTAG {
+/*!
+ * Structure for a linked list of ::cListElem elements.
+ */
+typedef struct _cLinkedList {
+	/*! Number of elements in the linked list.*/
     long        num_elem;
+	/*! The achhor element of the linked list to which all other elements are tied.*/
     cListElem   anchor;
-} cLinkedList, cList;
+} cLinkedList;
 
 // Linked list status functions
-extern long cListLength             (cLinkedList *);
-extern int  cListEmpty              (cLinkedList *);
+long cListLength             (cLinkedList *);
+int  cListEmpty              (cLinkedList *);
 
 // Linked list read functions
-extern cListElem * cListFirstElem   (cLinkedList *);
-extern cListElem * cListLastElem    (cLinkedList *);
-extern cListElem * cListNextElem    (cLinkedList *, cListElem *);
-extern cListElem * cListPrevElem    (cLinkedList *, cListElem *);
+cListElem * cListFirstElem   (cLinkedList *);
+cListElem * cListLastElem    (cLinkedList *);
+cListElem * cListNextElem    (cLinkedList *, cListElem *);
+cListElem * cListPrevElem    (cLinkedList *, cListElem *);
 
-extern cListElem * cListFindElem    (cLinkedList *, void *);
-extern void *      cListFindData    (cLinkedList *, void *);
+cListElem * cListFindElem    (cLinkedList *, void *);
+void *      cListFindData    (cLinkedList *, void *);
 
-extern void * cListFirstData   (cLinkedList *);
-extern void * cListLastData    (cLinkedList *);
-extern void * cListNextData    (cLinkedList *, void *);
-extern void * cListPrevData    (cLinkedList *, void *);
+void * cListFirstData   (cLinkedList *);
+void * cListLastData    (cLinkedList *);
+void * cListNextData    (cLinkedList *, void *);
+void * cListPrevData    (cLinkedList *, void *);
 
 // Linked list creation functions
-extern int cListInit                (cLinkedList *);
+int cListInit                (cLinkedList *);
 
-extern int cListInsertAfter     (cLinkedList *, void *, cListElem *);
-extern int cListInsertBefore    (cLinkedList *, void *, cListElem *);
-extern int cListAppend          (cLinkedList *, void *);
-extern int cListPrepend         (cLinkedList *, void *);
+int cListInsertAfter     (cLinkedList *, void *, cListElem *);
+int cListInsertBefore    (cLinkedList *, void *, cListElem *);
+int cListAppend          (cLinkedList *, void *);
+int cListPrepend         (cLinkedList *, void *);
 
 // Linked list unlink functions
-extern void cListUnlinkElem         (cLinkedList *, cListElem *);
+void cListUnlinkElem         (cLinkedList *, cListElem *);
 
-extern void cListUnlinkAll          (cLinkedList *);
+void cListUnlinkAll          (cLinkedList *);
 
-extern void cListUnlinkData         (cLinkedList *, void *);
+void cListUnlinkData         (cLinkedList *, void *);
 
 #endif //CLINKEDLIST_H

@@ -240,7 +240,17 @@ int ArduDAQmxTerminate()
 	return ArduDAQmxStatus;
 }
 
-pin * pinMode(unsigned int, unsigned int, IOmode)
+
+/*!
+ * \fn pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
+ * Defines the input-output mode of pins as either analog or digital pins.
+ * 
+ * \param deviceNumer NI-DAQ device/slot number of the pin.
+ * \param pinNumber Pin number on the NI-DAQ device.
+ * \param IOtype I/O type being requested on the pin as defined in ::IOmode.
+ * \return Returns the 'pin' data structure used to configure and operate the pin.
+ */
+pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 {
 	return NULL;
 }

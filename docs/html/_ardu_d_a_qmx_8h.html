@@ -81,44 +81,46 @@ $(function() {
 <a href="#details">More...</a></p>
 <div class="textblock"><code>#include &quot;ansi_c.h&quot;</code><br />
 <code>#include &quot;NIDAQmx.h&quot;</code><br />
-<code>#include &quot;cLinkedList.h&quot;</code><br />
+<code>#include &quot;<a class="el" href="c_linked_list_8h_source.html">cLinkedList.h</a>&quot;</code><br />
 </div>
 <p><a href="_ardu_d_a_qmx_8h_source.html">Go to the source code of this file.</a></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="nested-classes"></a>
 Classes</h2></td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structpin.html">pin</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct__pin.html">_pin</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct_d_a_qmx_device.html">DAQmxDevice</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="struct___d_a_qmx_device.html">_DAQmxDevice</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="typedef-members"></a>
 Typedefs</h2></td></tr>
-<tr class="memitem:a2cc9367ff85ac26f1f3480522ed8b81b"><td class="memItemLeft" align="right" valign="top"><a id="a2cc9367ff85ac26f1f3480522ed8b81b"></a>
-typedef struct <a class="el" href="structpin.html">pin</a>&#160;</td><td class="memItemRight" valign="bottom"><b>pin</b></td></tr>
-<tr class="separator:a2cc9367ff85ac26f1f3480522ed8b81b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aabbdcf5fe6c364c96c0ebc4aaddc93f4"><td class="memItemLeft" align="right" valign="top"><a id="aabbdcf5fe6c364c96c0ebc4aaddc93f4"></a>
-typedef struct <a class="el" href="struct_d_a_qmx_device.html">DAQmxDevice</a>&#160;</td><td class="memItemRight" valign="bottom"><b>DAQmxDevice</b></td></tr>
-<tr class="separator:aabbdcf5fe6c364c96c0ebc4aaddc93f4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afa72cb8c5e58bb13a2e431d9e148740e"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feae">_StatusMode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#afa72cb8c5e58bb13a2e431d9e148740e">StatusMode</a></td></tr>
+<tr class="separator:afa72cb8c5e58bb13a2e431d9e148740e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a01bb22fd57ae799c4a23700042ce1155"><td class="memItemLeft" align="right" valign="top">typedef enum <a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87de">_IOmode</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a01bb22fd57ae799c4a23700042ce1155">IOmode</a></td></tr>
+<tr class="separator:a01bb22fd57ae799c4a23700042ce1155"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9d40c3469d144b33d3d17e968a6146f7"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct__pin.html">_pin</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a9d40c3469d144b33d3d17e968a6146f7">pin</a></td></tr>
+<tr class="separator:a9d40c3469d144b33d3d17e968a6146f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6aa113f3832d5277fec8956f85b5f896"><td class="memItemLeft" align="right" valign="top">typedef struct <a class="el" href="struct___d_a_qmx_device.html">_DAQmxDevice</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a6aa113f3832d5277fec8956f85b5f896">DAQmxDevice</a></td></tr>
+<tr class="separator:a6aa113f3832d5277fec8956f85b5f896"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="enum-members"></a>
 Enumerations</h2></td></tr>
-<tr class="memitem:aa97367c9a750c1444e8c746f99ff20b9"><td class="memItemLeft" align="right" valign="top"><a id="aa97367c9a750c1444e8c746f99ff20b9"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>StatusModes</b> { <b>STATUS_PRECONFIG</b> = -1, 
-<b>STATUS_CONFIG</b> = 0, 
-<b>STATUS_READY</b> = 1
+<tr class="memitem:aa551a8939c859b770084e565b918feae"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feae">_StatusMode</a> { <a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feaea78f0677334e37acb625e2da4e1f9fb79">STATUS_PRECONFIG</a> = -1, 
+<a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feaea6684d866540f092ef8dfef9bccc19777">STATUS_CONFIG</a> = 0, 
+<a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feaeab59e71f00388923fe958169190acf2d8">STATUS_READY</a> = 1
  }</td></tr>
-<tr class="separator:aa97367c9a750c1444e8c746f99ff20b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a790de4c3ef85ab13a76427767a46c95f"><td class="memItemLeft" align="right" valign="top"><a id="a790de4c3ef85ab13a76427767a46c95f"></a>enum &#160;</td><td class="memItemRight" valign="bottom"><b>IOmode</b> { <br />
-&#160;&#160;<b>DIGITAL_IN</b>, 
-<b>DIGITAL_OUT</b>, 
-<b>ANALOG_IN</b>, 
-<b>ANALOG_OUT</b>, 
+<tr class="separator:aa551a8939c859b770084e565b918feae"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17a9d59e99fb25db093651d231ae87de"><td class="memItemLeft" align="right" valign="top">enum &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87de">_IOmode</a> { <br />
+&#160;&#160;<a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87dea8a09338bf84b93e0023dbcb183f9fe37">DIGITAL_IN</a>, 
+<a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87dea1fd2c12609b0128b864de6394bb5bb4a">DIGITAL_OUT</a>, 
+<a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87dea70883baf6ec107daad2ad49e9057ee75">ANALOG_IN</a>, 
+<a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87deac8fa0863e99c9c198fed2c4b570de952">ANALOG_OUT</a>, 
 <br />
-&#160;&#160;<b>COUNTER_IN</b>, 
-<b>COUNTER_OUT</b>
+&#160;&#160;<a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87dea9b416c6f852f693dded9b4486ddff00b">COUNTER_IN</a>, 
+<a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87dea4ff5cb347273f04190ebd551e7b00a98">COUNTER_OUT</a>
 <br />
  }</td></tr>
-<tr class="separator:a790de4c3ef85ab13a76427767a46c95f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a17a9d59e99fb25db093651d231ae87de"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="func-members"></a>
 Functions</h2></td></tr>
@@ -128,7 +130,7 @@ Functions</h2></td></tr>
 <tr class="separator:a86d834167083ec93f12aec315b8002bc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a74e71ba34a69d58218513c563168473a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a74e71ba34a69d58218513c563168473a">printDAQmxStatus</a> ()</td></tr>
 <tr class="separator:a74e71ba34a69d58218513c563168473a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aced42cdaee0090d8aa76cce38ebb97ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="structc_linked_list_t_a_g.html">cLinkedList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#aced42cdaee0090d8aa76cce38ebb97ac">getDAQmxDeviceList</a> ()</td></tr>
+<tr class="memitem:aced42cdaee0090d8aa76cce38ebb97ac"><td class="memItemLeft" align="right" valign="top"><a class="el" href="c_linked_list_8h.html#aac1ab3387f7254e06b22dc5a54f2e5f6">cLinkedList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#aced42cdaee0090d8aa76cce38ebb97ac">getDAQmxDeviceList</a> ()</td></tr>
 <tr class="separator:aced42cdaee0090d8aa76cce38ebb97ac"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:acd1df1b1612d8b6656d4fc30b82203fa"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#acd1df1b1612d8b6656d4fc30b82203fa">getArduDAQmxPrefix</a> ()</td></tr>
 <tr class="separator:acd1df1b1612d8b6656d4fc30b82203fa"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -140,32 +142,140 @@ Functions</h2></td></tr>
 <tr class="separator:a9d80c29bb44fc41f368da4678743025e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5b2ff22cb107c61d1db1896c0363aa8e"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a5b2ff22cb107c61d1db1896c0363aa8e">ArduDAQmxTerminate</a> ()</td></tr>
 <tr class="separator:a5b2ff22cb107c61d1db1896c0363aa8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aff6271b34cc25e5f46d170a072e15ee3"><td class="memItemLeft" align="right" valign="top"><a id="aff6271b34cc25e5f46d170a072e15ee3"></a>
-<a class="el" href="structpin.html">pin</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>pinMode</b> (unsigned int, unsigned int, IOmode)</td></tr>
+<tr class="memitem:aff6271b34cc25e5f46d170a072e15ee3"><td class="memItemLeft" align="right" valign="top"><a class="el" href="_ardu_d_a_qmx_8h.html#a9d40c3469d144b33d3d17e968a6146f7">pin</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#aff6271b34cc25e5f46d170a072e15ee3">pinMode</a> (unsigned int, unsigned int, <a class="el" href="_ardu_d_a_qmx_8h.html#a01bb22fd57ae799c4a23700042ce1155">IOmode</a>)</td></tr>
 <tr class="separator:aff6271b34cc25e5f46d170a072e15ee3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="var-members"></a>
 Variables</h2></td></tr>
-<tr class="memitem:ab35521bfe64066f9bcd76366ec1d8a7b"><td class="memItemLeft" align="right" valign="top"><a id="ab35521bfe64066f9bcd76366ec1d8a7b"></a>
-int&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxStatus</b></td></tr>
+<tr class="memitem:ab35521bfe64066f9bcd76366ec1d8a7b"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#ab35521bfe64066f9bcd76366ec1d8a7b">ArduDAQmxStatus</a></td></tr>
 <tr class="separator:ab35521bfe64066f9bcd76366ec1d8a7b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae084422b04984ef93a5860f1ac0c38b9"><td class="memItemLeft" align="right" valign="top"><a id="ae084422b04984ef93a5860f1ac0c38b9"></a>
-<a class="el" href="structc_linked_list_t_a_g.html">cLinkedList</a> *&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxDevList</b></td></tr>
+<tr class="memitem:ae084422b04984ef93a5860f1ac0c38b9"><td class="memItemLeft" align="right" valign="top"><a class="el" href="c_linked_list_8h.html#aac1ab3387f7254e06b22dc5a54f2e5f6">cLinkedList</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#ae084422b04984ef93a5860f1ac0c38b9">ArduDAQmxDevList</a></td></tr>
 <tr class="separator:ae084422b04984ef93a5860f1ac0c38b9"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade03d808d62ec823585b8a06754a0d91"><td class="memItemLeft" align="right" valign="top"><a id="ade03d808d62ec823585b8a06754a0d91"></a>
-char *&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxDevPrefix</b></td></tr>
+<tr class="memitem:ade03d808d62ec823585b8a06754a0d91"><td class="memItemLeft" align="right" valign="top">char *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#ade03d808d62ec823585b8a06754a0d91">ArduDAQmxDevPrefix</a></td></tr>
 <tr class="separator:ade03d808d62ec823585b8a06754a0d91"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0e16df053afc74673879bddf4c5194c4"><td class="memItemLeft" align="right" valign="top"><a id="a0e16df053afc74673879bddf4c5194c4"></a>
-const unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>MaxArduDAQmxDevPrefixLength</b></td></tr>
+<tr class="memitem:a0e16df053afc74673879bddf4c5194c4"><td class="memItemLeft" align="right" valign="top">const unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#a0e16df053afc74673879bddf4c5194c4">MaxArduDAQmxDevPrefixLength</a></td></tr>
 <tr class="separator:a0e16df053afc74673879bddf4c5194c4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa26e4c83732949db1a32908d2067ff1e"><td class="memItemLeft" align="right" valign="top"><a id="aa26e4c83732949db1a32908d2067ff1e"></a>
-unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxDevPrefixLength</b></td></tr>
+<tr class="memitem:aa26e4c83732949db1a32908d2067ff1e"><td class="memItemLeft" align="right" valign="top">unsigned&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="_ardu_d_a_qmx_8h.html#aa26e4c83732949db1a32908d2067ff1e">ArduDAQmxDevPrefixLength</a></td></tr>
 <tr class="separator:aa26e4c83732949db1a32908d2067ff1e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>ArduDAQmx: A simple Arduino-esque wrapper for the National Instruments NI-DAQmx C/C++ API. </p>
 <dl class="section author"><dt>Author</dt><dd>Suraj Chakravarthi Raja </dd></dl>
-</div><h2 class="groupheader">Function Documentation</h2>
+</div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="a6aa113f3832d5277fec8956f85b5f896"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6aa113f3832d5277fec8956f85b5f896">&#9670;&nbsp;</a></span>DAQmxDevice</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct___d_a_qmx_device.html">_DAQmxDevice</a>  <a class="el" href="_ardu_d_a_qmx_8h.html#a6aa113f3832d5277fec8956f85b5f896">DAQmxDevice</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Custom data type encompasses info on DAQmx devices used by ArduDAQmx. </p>
+
+</div>
+</div>
+<a id="a01bb22fd57ae799c4a23700042ce1155"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a01bb22fd57ae799c4a23700042ce1155">&#9670;&nbsp;</a></span>IOmode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef enum <a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87de">_IOmode</a> <a class="el" href="_ardu_d_a_qmx_8h.html#a01bb22fd57ae799c4a23700042ce1155">IOmode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Defines the six types of I/O modes suported by this library. </p>
+
+</div>
+</div>
+<a id="a9d40c3469d144b33d3d17e968a6146f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9d40c3469d144b33d3d17e968a6146f7">&#9670;&nbsp;</a></span>pin</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef struct <a class="el" href="struct__pin.html">_pin</a>  <a class="el" href="_ardu_d_a_qmx_8h.html#a9d40c3469d144b33d3d17e968a6146f7">pin</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Custom data type to encompass info on pins used by ArduDAQmx. </p>
+
+</div>
+</div>
+<a id="afa72cb8c5e58bb13a2e431d9e148740e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afa72cb8c5e58bb13a2e431d9e148740e">&#9670;&nbsp;</a></span>StatusMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">typedef enum <a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feae">_StatusMode</a> <a class="el" href="_ardu_d_a_qmx_8h.html#afa72cb8c5e58bb13a2e431d9e148740e">StatusMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Enumerates the list of possible status modes of the ArduDAQmx library as set in 'ArduDAQmxStatus'. </p>
+
+</div>
+</div>
+<h2 class="groupheader">Enumeration Type Documentation</h2>
+<a id="a17a9d59e99fb25db093651d231ae87de"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17a9d59e99fb25db093651d231ae87de">&#9670;&nbsp;</a></span>_IOmode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="_ardu_d_a_qmx_8h.html#a17a9d59e99fb25db093651d231ae87de">_IOmode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Defines the six types of I/O modes suported by this library. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="a17a9d59e99fb25db093651d231ae87dea8a09338bf84b93e0023dbcb183f9fe37"></a>DIGITAL_IN&#160;</td><td class="fielddoc"><p>Pin I/O mode: DIGITAL IN </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a17a9d59e99fb25db093651d231ae87dea1fd2c12609b0128b864de6394bb5bb4a"></a>DIGITAL_OUT&#160;</td><td class="fielddoc"><p>Pin I/O mode: DIGITAL OUT </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a17a9d59e99fb25db093651d231ae87dea70883baf6ec107daad2ad49e9057ee75"></a>ANALOG_IN&#160;</td><td class="fielddoc"><p>Pin I/O mode: ANALOG IN </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a17a9d59e99fb25db093651d231ae87deac8fa0863e99c9c198fed2c4b570de952"></a>ANALOG_OUT&#160;</td><td class="fielddoc"><p>Pin I/O mode: ANALOG OUT </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a17a9d59e99fb25db093651d231ae87dea9b416c6f852f693dded9b4486ddff00b"></a>COUNTER_IN&#160;</td><td class="fielddoc"><p>Counter I/O mode: COUNTER IN </p>
+</td></tr>
+<tr><td class="fieldname"><a id="a17a9d59e99fb25db093651d231ae87dea4ff5cb347273f04190ebd551e7b00a98"></a>COUNTER_OUT&#160;</td><td class="fielddoc"><p>Counter I/O mode: COUNTER OUT </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<a id="aa551a8939c859b770084e565b918feae"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa551a8939c859b770084e565b918feae">&#9670;&nbsp;</a></span>_StatusMode</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">enum <a class="el" href="_ardu_d_a_qmx_8h.html#aa551a8939c859b770084e565b918feae">_StatusMode</a></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Enumerates the list of possible status modes of the ArduDAQmx library as set in 'ArduDAQmxStatus'. </p>
+<table class="fieldtable">
+<tr><th colspan="2">Enumerator</th></tr><tr><td class="fieldname"><a id="aa551a8939c859b770084e565b918feaea78f0677334e37acb625e2da4e1f9fb79"></a>STATUS_PRECONFIG&#160;</td><td class="fielddoc"><p>Pin and task configuratoin may be altered only in the preconfigure state. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aa551a8939c859b770084e565b918feaea6684d866540f092ef8dfef9bccc19777"></a>STATUS_CONFIG&#160;</td><td class="fielddoc"><p>States that the library has been configured. </p>
+</td></tr>
+<tr><td class="fieldname"><a id="aa551a8939c859b770084e565b918feaeab59e71f00388923fe958169190acf2d8"></a>STATUS_READY&#160;</td><td class="fielddoc"><p>Sets the library as ready to use. </p>
+</td></tr>
+</table>
+
+</div>
+</div>
+<h2 class="groupheader">Function Documentation</h2>
 <a id="a9d80c29bb44fc41f368da4678743025e"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9d80c29bb44fc41f368da4678743025e">&#9670;&nbsp;</a></span>ArduDAQmxInit()</h2>
 
@@ -320,7 +430,7 @@ unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxDevPrefi
   <td class="mlabels-left">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="structc_linked_list_t_a_g.html">cLinkedList</a>* getDAQmxDeviceList </td>
+          <td class="memname"><a class="el" href="c_linked_list_8h.html#aac1ab3387f7254e06b22dc5a54f2e5f6">cLinkedList</a>* getDAQmxDeviceList </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td></td>
@@ -334,6 +444,50 @@ unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxDevPrefi
 </div><div class="memdoc">
 <p>Returns a pointer to the linked list of active DAQmx devices.</p>
 <dl class="section return"><dt>Returns</dt><dd>Returns a pointer to the linked list of active DAQmx devices. </dd></dl>
+
+</div>
+</div>
+<a id="aff6271b34cc25e5f46d170a072e15ee3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aff6271b34cc25e5f46d170a072e15ee3">&#9670;&nbsp;</a></span>pinMode()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="_ardu_d_a_qmx_8h.html#a9d40c3469d144b33d3d17e968a6146f7">pin</a>* pinMode </td>
+          <td>(</td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>deviceNumer</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">unsigned int&#160;</td>
+          <td class="paramname"><em>pinNumber</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="_ardu_d_a_qmx_8h.html#a01bb22fd57ae799c4a23700042ce1155">IOmode</a>&#160;</td>
+          <td class="paramname"><em>IOtype</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Defines the input-output mode of pins as either analog or digital pins.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">deviceNumer</td><td>NI-DAQ device/slot number of the pin. </td></tr>
+    <tr><td class="paramname">pinNumber</td><td>Pin number on the NI-DAQ device. </td></tr>
+    <tr><td class="paramname">IOtype</td><td>I/O type being requested on the pin as defined in <a class="el" href="_ardu_d_a_qmx_8h.html#a01bb22fd57ae799c4a23700042ce1155">IOmode</a>. </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Returns the 'pin' data structure used to configure and operate the pin. </dd></dl>
 
 </div>
 </div>
@@ -394,6 +548,82 @@ unsigned&#160;</td><td class="memItemRight" valign="bottom"><b>ArduDAQmxDevPrefi
   </table>
   </dd>
 </dl>
+
+</div>
+</div>
+<h2 class="groupheader">Variable Documentation</h2>
+<a id="ae084422b04984ef93a5860f1ac0c38b9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae084422b04984ef93a5860f1ac0c38b9">&#9670;&nbsp;</a></span>ArduDAQmxDevList</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="c_linked_list_8h.html#aac1ab3387f7254e06b22dc5a54f2e5f6">cLinkedList</a>* ArduDAQmxDevList</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Master list of available NI-DAQmx compatible devices. DO NOT access this variable directly. The list of available NI-DAQmx devices can be printed using 'enumerateDAQmxDevices(1)'. Get the pointer to tis list using 'getArduDAQmxDeviceList()'. Calling 'printDAQmxStatus' will print the meaning of this variable. </p>
+
+</div>
+</div>
+<a id="ade03d808d62ec823585b8a06754a0d91"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ade03d808d62ec823585b8a06754a0d91">&#9670;&nbsp;</a></span>ArduDAQmxDevPrefix</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">char* ArduDAQmxDevPrefix</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Device name prefix. Default value is "PXI1Slot" but can be changed. DO NOT access this variable directly. Acces this variable only by using the '<a class="el" href="_ardu_d_a_qmx_8h.html#acd1df1b1612d8b6656d4fc30b82203fa">getArduDAQmxPrefix()</a>' and '<a class="el" href="_ardu_d_a_qmx_8h.html#a94f2855c59c818bb304e5b92a72110e7">setArduDAQmxPrefix(char *)</a>' functions </p>
+
+</div>
+</div>
+<a id="aa26e4c83732949db1a32908d2067ff1e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aa26e4c83732949db1a32908d2067ff1e">&#9670;&nbsp;</a></span>ArduDAQmxDevPrefixLength</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">unsigned ArduDAQmxDevPrefixLength</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Length of the device name prefix - used to isolate device number. DO NOT access this variable directly. Access this variable onlyby using the 'getArduDAQmxPrefixLength()' function. Its maximum value is defined by the 'MaxDevPrefixLength'. </p>
+
+</div>
+</div>
+<a id="ab35521bfe64066f9bcd76366ec1d8a7b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab35521bfe64066f9bcd76366ec1d8a7b">&#9670;&nbsp;</a></span>ArduDAQmxStatus</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">int ArduDAQmxStatus</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>Operational status of the ArduDAQmx library. DO NOT access this variable. </p>
+
+</div>
+</div>
+<a id="a0e16df053afc74673879bddf4c5194c4"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e16df053afc74673879bddf4c5194c4">&#9670;&nbsp;</a></span>MaxArduDAQmxDevPrefixLength</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">const unsigned MaxArduDAQmxDevPrefixLength</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+<p>The maximum length of the DADmx device string is 8 characters. It does NOT include the NULL character. </p>
 
 </div>
 </div>

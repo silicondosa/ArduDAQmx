@@ -1,0 +1,405 @@
+\hypertarget{c_linked_list_8c}{}\section{C\+:/\+Users/tyros/codebase/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/c\+Linked\+List.c File Reference}
+\label{c_linked_list_8c}\index{C\+:/\+Users/tyros/codebase/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/c\+Linked\+List.\+c@{C\+:/\+Users/tyros/codebase/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/\+Ardu\+D\+A\+Qmx/c\+Linked\+List.\+c}}
+
+
+c\+Linked\+List\+: A simple C library that implements a doubly linked list.  
+
+
+{\ttfamily \#include \char`\"{}c\+Linked\+List.\+h\char`\"{}}\newline
+{\ttfamily \#include \char`\"{}macrodef.\+h\char`\"{}}\newline
+{\ttfamily \#include $<$stdio.\+h$>$}\newline
+{\ttfamily \#include $<$stddef.\+h$>$}\newline
+{\ttfamily \#include $<$stdlib.\+h$>$}\newline
+\subsection*{Functions}
+\begin{DoxyCompactItemize}
+\item 
+long \mbox{\hyperlink{c_linked_list_8c_ab4dec4c48faab3176bc2499a60f647c1}{c\+List\+Length}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+int \mbox{\hyperlink{c_linked_list_8c_a1795c176a0adc369cdff8b47573bd331}{c\+List\+Empty}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ \mbox{\hyperlink{c_linked_list_8c_a4f98cc93c4e604f5849845cf0767ab5f}{c\+List\+First\+Elem}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ \mbox{\hyperlink{c_linked_list_8c_ac25927653414ab346483b0c64389bb3a}{c\+List\+Last\+Elem}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ \mbox{\hyperlink{c_linked_list_8c_a0d63e7329559869dc4ef6a87dea97964}{c\+List\+Next\+Elem}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$my\+Elem)
+\item 
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ \mbox{\hyperlink{c_linked_list_8c_a600f99eb259af1b9e2ccbba23ca76092}{c\+List\+Prev\+Elem}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$my\+Elem)
+\item 
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ \mbox{\hyperlink{c_linked_list_8c_a18a09fd8aea8d86bb97e4cf573c21874}{c\+List\+Find\+Elem}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$my\+Data)
+\item 
+void $\ast$ \mbox{\hyperlink{c_linked_list_8c_a325ea31f9f9bd7677bb7f2ade2a5392f}{c\+List\+Find\+Data}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$my\+Data)
+\item 
+void $\ast$ \mbox{\hyperlink{c_linked_list_8c_a11a41a752f27901c27935be3c4b7d582}{c\+List\+First\+Data}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+void $\ast$ \mbox{\hyperlink{c_linked_list_8c_a1126ce4d932d49bcdbf6275b30fe7391}{c\+List\+Last\+Data}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+void $\ast$ \mbox{\hyperlink{c_linked_list_8c_aab133b04b3c0e8a6389be55ab11983d1}{c\+List\+Next\+Data}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$my\+Data)
+\item 
+void $\ast$ \mbox{\hyperlink{c_linked_list_8c_a517405e38e43ee40c7437d7a5d62c06f}{c\+List\+Prev\+Data}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$my\+Data)
+\item 
+int \mbox{\hyperlink{c_linked_list_8c_ad4ec01b040c21f49657f99fcd08ec059}{c\+List\+Init}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+int \mbox{\hyperlink{c_linked_list_8c_a62091e987a330505c442401eb5f739c6}{c\+List\+Insert\+After}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$new\+Data, \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$elem)
+\item 
+int \mbox{\hyperlink{c_linked_list_8c_a6b68415f5d89e152e8d30f0b6524fff5}{c\+List\+Insert\+Before}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$new\+Data, \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$elem)
+\item 
+int \mbox{\hyperlink{c_linked_list_8c_a0699d8d65ac23635105bc731541ce920}{c\+List\+Append}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$new\+Data)
+\item 
+int \mbox{\hyperlink{c_linked_list_8c_afce5f9e2de496943f4f52d792d0ed3a2}{c\+List\+Prepend}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, void $\ast$new\+Data)
+\item 
+void \mbox{\hyperlink{c_linked_list_8c_a7f4f83fe785c2ef2fa01b291d8ff5162}{c\+List\+Unlink\+Elem}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List, \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$del\+Elem)
+\item 
+void \mbox{\hyperlink{c_linked_list_8c_aceb6e6abaec76d561d18cb216f55dfb3}{c\+List\+Unlink\+All}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$my\+List)
+\item 
+void \mbox{\hyperlink{c_linked_list_8c_aab20c00867dc5f7934af11dd0e20de86}{c\+List\+Unlink\+Data}} (\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$del\+List, void $\ast$del\+Data)
+\end{DoxyCompactItemize}
+
+
+\subsection{Detailed Description}
+c\+Linked\+List\+: A simple C library that implements a doubly linked list. 
+
+\begin{DoxyAuthor}{Author}
+Suraj Chakravarthi Raja 
+\end{DoxyAuthor}
+
+
+\subsection{Function Documentation}
+\mbox{\Hypertarget{c_linked_list_8c_a0699d8d65ac23635105bc731541ce920}\label{c_linked_list_8c_a0699d8d65ac23635105bc731541ce920}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Append@{c\+List\+Append}}
+\index{c\+List\+Append@{c\+List\+Append}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Append()}{cListAppend()}}
+{\footnotesize\ttfamily int c\+List\+Append (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{new\+Data }\end{DoxyParamCaption})}
+
+Inserts the specified new data at the end of the supplied linked list as the last element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em new\+Data} & void pointer to the new data to be inserted. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Upon successful insertion, the function returns a (int) 1. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a1795c176a0adc369cdff8b47573bd331}\label{c_linked_list_8c_a1795c176a0adc369cdff8b47573bd331}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Empty@{c\+List\+Empty}}
+\index{c\+List\+Empty@{c\+List\+Empty}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Empty()}{cListEmpty()}}
+{\footnotesize\ttfamily int c\+List\+Empty (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Checks to see if the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} linked list passed a parameter is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer of the linked list which we need to check if empty. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Returns (bool) T\+R\+UE if the passed linked list is empty and (bool) F\+A\+L\+SE otherwise. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a325ea31f9f9bd7677bb7f2ade2a5392f}\label{c_linked_list_8c_a325ea31f9f9bd7677bb7f2ade2a5392f}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Find\+Data@{c\+List\+Find\+Data}}
+\index{c\+List\+Find\+Data@{c\+List\+Find\+Data}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Find\+Data()}{cListFindData()}}
+{\footnotesize\ttfamily void $\ast$ c\+List\+Find\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{my\+Data }\end{DoxyParamCaption})}
+
+Attempts to find an element linked in a \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list using the data that would be held by the list element to be found. Returns a void pointer to the data found on the linked list. Returns a N\+U\+LL pointer if the data isn\textquotesingle{}t found. The longer the list, the longer it could take to find the element. This is a linear search.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be read. \\
+\hline
+{\em my\+Data} & void pointer to the data that would be held by the list element that needs to be found. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void pointer to the data found on the linked list. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a18a09fd8aea8d86bb97e4cf573c21874}\label{c_linked_list_8c_a18a09fd8aea8d86bb97e4cf573c21874}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Find\+Elem@{c\+List\+Find\+Elem}}
+\index{c\+List\+Find\+Elem@{c\+List\+Find\+Elem}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Find\+Elem()}{cListFindElem()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ c\+List\+Find\+Elem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{my\+Data }\end{DoxyParamCaption})}
+
+Attempts to find an element linked in a \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list using the data that would be held by the list element to be found. Returns a \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the first element holding the data if the data is found in the list. Returns a N\+U\+LL pointer if the data isn\textquotesingle{}t found. The longer the list, the longer it could take to find the element. This is a linear search.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be read. \\
+\hline
+{\em my\+Data} & void pointer to the data that would be held by the list element that needs to be found. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the first element found that holds the data being used to find the element. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a11a41a752f27901c27935be3c4b7d582}\label{c_linked_list_8c_a11a41a752f27901c27935be3c4b7d582}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+First\+Data@{c\+List\+First\+Data}}
+\index{c\+List\+First\+Data@{c\+List\+First\+Data}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+First\+Data()}{cListFirstData()}}
+{\footnotesize\ttfamily void $\ast$ c\+List\+First\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Returns a pointer to the data held by the first element on the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list. But, it returns a N\+U\+LL pointer if the list is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void pointer to the data held by the first element in the linked list passed as a pointer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a4f98cc93c4e604f5849845cf0767ab5f}\label{c_linked_list_8c_a4f98cc93c4e604f5849845cf0767ab5f}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+First\+Elem@{c\+List\+First\+Elem}}
+\index{c\+List\+First\+Elem@{c\+List\+First\+Elem}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+First\+Elem()}{cListFirstElem()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ c\+List\+First\+Elem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Returns a \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the first element on the linked list passed as a parameter. Returns a N\+U\+LL pointer if the list is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list whose first element we need. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the first element of the linked list. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_ad4ec01b040c21f49657f99fcd08ec059}\label{c_linked_list_8c_ad4ec01b040c21f49657f99fcd08ec059}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Init@{c\+List\+Init}}
+\index{c\+List\+Init@{c\+List\+Init}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Init()}{cListInit()}}
+{\footnotesize\ttfamily int c\+List\+Init (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Dynamically initialized the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer with a linked list.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+1 if the linked list was succesfully iniitialized and 0 if it wasn\textquotesingle{}t. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a62091e987a330505c442401eb5f739c6}\label{c_linked_list_8c_a62091e987a330505c442401eb5f739c6}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Insert\+After@{c\+List\+Insert\+After}}
+\index{c\+List\+Insert\+After@{c\+List\+Insert\+After}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Insert\+After()}{cListInsertAfter()}}
+{\footnotesize\ttfamily int c\+List\+Insert\+After (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{new\+Data,  }\item[{\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$}]{elem }\end{DoxyParamCaption})}
+
+Inserts the data element passed into the linked list specified as a list element after the specified list element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em new\+Data} & void pointer to the new data to be inserted. \\
+\hline
+{\em elem} & \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element next to which the new data needs to be inserted \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Upon successful insertion, the function returns a (int) 1. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a6b68415f5d89e152e8d30f0b6524fff5}\label{c_linked_list_8c_a6b68415f5d89e152e8d30f0b6524fff5}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Insert\+Before@{c\+List\+Insert\+Before}}
+\index{c\+List\+Insert\+Before@{c\+List\+Insert\+Before}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Insert\+Before()}{cListInsertBefore()}}
+{\footnotesize\ttfamily int c\+List\+Insert\+Before (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{new\+Data,  }\item[{\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$}]{elem }\end{DoxyParamCaption})}
+
+Inserts the data element passed into the linked list specified as a list element before the specified list element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em new\+Data} & void pointer to the new data to be inserted. \\
+\hline
+{\em elem} & \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element before which the new data needs to be inserted \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Upon successful insertion, the function returns a (int) 1. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a1126ce4d932d49bcdbf6275b30fe7391}\label{c_linked_list_8c_a1126ce4d932d49bcdbf6275b30fe7391}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Last\+Data@{c\+List\+Last\+Data}}
+\index{c\+List\+Last\+Data@{c\+List\+Last\+Data}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Last\+Data()}{cListLastData()}}
+{\footnotesize\ttfamily void $\ast$ c\+List\+Last\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Returns a pointer to the data held by the last element on the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list. But, it returns a N\+U\+LL pointer if the list is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void pointer to the data held by the last element in the linked list passed as a pointer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_ac25927653414ab346483b0c64389bb3a}\label{c_linked_list_8c_ac25927653414ab346483b0c64389bb3a}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Last\+Elem@{c\+List\+Last\+Elem}}
+\index{c\+List\+Last\+Elem@{c\+List\+Last\+Elem}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Last\+Elem()}{cListLastElem()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ c\+List\+Last\+Elem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Returns a \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the last element of the linked list passed as a paramener. Returns a N\+U\+LL pointer if the list is empty.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list whose last element we need. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the last element of the linked list. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_ab4dec4c48faab3176bc2499a60f647c1}\label{c_linked_list_8c_ab4dec4c48faab3176bc2499a60f647c1}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Length@{c\+List\+Length}}
+\index{c\+List\+Length@{c\+List\+Length}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Length()}{cListLength()}}
+{\footnotesize\ttfamily long c\+List\+Length (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Returns the length of the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} linked list passed to it as a parameter.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer of the linked list whose length is returned. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Length of the linked list passed as a parameter. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_aab133b04b3c0e8a6389be55ab11983d1}\label{c_linked_list_8c_aab133b04b3c0e8a6389be55ab11983d1}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Next\+Data@{c\+List\+Next\+Data}}
+\index{c\+List\+Next\+Data@{c\+List\+Next\+Data}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Next\+Data()}{cListNextData()}}
+{\footnotesize\ttfamily void $\ast$ c\+List\+Next\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{my\+Data }\end{DoxyParamCaption})}
+
+Returns a pointer to the data next to the data on the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list as passed to the function. But, it returns a N\+U\+LL pointer if the list is empty or if the passed data does not exist.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em my\+Data} & void pointer to the data next to which we get the want look for the next data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void pointer to the data held by the next element in the linked list passed as a pointer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a0d63e7329559869dc4ef6a87dea97964}\label{c_linked_list_8c_a0d63e7329559869dc4ef6a87dea97964}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Next\+Elem@{c\+List\+Next\+Elem}}
+\index{c\+List\+Next\+Elem@{c\+List\+Next\+Elem}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Next\+Elem()}{cListNextElem()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ c\+List\+Next\+Elem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$}]{my\+Elem }\end{DoxyParamCaption})}
+
+Returns a \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element in a \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} linked list that is next to and after another element. Returns a N\+U\+LL pinter if the list is empty or the element being passed as a pointer is the last element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be read. \\
+\hline
+{\em my\+Elem} & The function returns the element next to the element pointed to by this \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element next to the element passed as a parameter. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_afce5f9e2de496943f4f52d792d0ed3a2}\label{c_linked_list_8c_afce5f9e2de496943f4f52d792d0ed3a2}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Prepend@{c\+List\+Prepend}}
+\index{c\+List\+Prepend@{c\+List\+Prepend}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Prepend()}{cListPrepend()}}
+{\footnotesize\ttfamily int c\+List\+Prepend (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{new\+Data }\end{DoxyParamCaption})}
+
+Inserts the specified new data at the beginning of the supplied linked list as the first element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em new\+Data} & void pointer to the new data to be inserted. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+Upon successful insertion, the function returns a (int) 1. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a517405e38e43ee40c7437d7a5d62c06f}\label{c_linked_list_8c_a517405e38e43ee40c7437d7a5d62c06f}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Prev\+Data@{c\+List\+Prev\+Data}}
+\index{c\+List\+Prev\+Data@{c\+List\+Prev\+Data}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Prev\+Data()}{cListPrevData()}}
+{\footnotesize\ttfamily void $\ast$ c\+List\+Prev\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{void $\ast$}]{my\+Data }\end{DoxyParamCaption})}
+
+Returns a pointer to the data before the data on the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list as passed to the function. But, it returns a N\+U\+LL pointer if the list is empty or if the passed data does not exist.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em my\+Data} & void pointer to the data before which we look for the previous data. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+void pointer to the data held by the previous element in the linked list passed as a pointer. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_a600f99eb259af1b9e2ccbba23ca76092}\label{c_linked_list_8c_a600f99eb259af1b9e2ccbba23ca76092}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Prev\+Elem@{c\+List\+Prev\+Elem}}
+\index{c\+List\+Prev\+Elem@{c\+List\+Prev\+Elem}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Prev\+Elem()}{cListPrevElem()}}
+{\footnotesize\ttfamily \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$ c\+List\+Prev\+Elem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$}]{my\+Elem }\end{DoxyParamCaption})}
+
+Returns a \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element in a \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} linked list that is before another element. Returns a N\+U\+LL pinter if the list is empty or the element being passed as a pointer is the first element.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be read. \\
+\hline
+{\em my\+Elem} & The function returns the element beefore the element pointed to by this \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element that is before the element passed as a parameter. 
+\end{DoxyReturn}
+\mbox{\Hypertarget{c_linked_list_8c_aceb6e6abaec76d561d18cb216f55dfb3}\label{c_linked_list_8c_aceb6e6abaec76d561d18cb216f55dfb3}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Unlink\+All@{c\+List\+Unlink\+All}}
+\index{c\+List\+Unlink\+All@{c\+List\+Unlink\+All}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Unlink\+All()}{cListUnlinkAll()}}
+{\footnotesize\ttfamily void c\+List\+Unlink\+All (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List }\end{DoxyParamCaption})}
+
+Unlinks all elements from the linked list and empties the \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} list. Calling this function before the end of the program ensure that the linked list does not leave any orphaned memory locations when the program exits.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{c_linked_list_8c_aab20c00867dc5f7934af11dd0e20de86}\label{c_linked_list_8c_aab20c00867dc5f7934af11dd0e20de86}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Unlink\+Data@{c\+List\+Unlink\+Data}}
+\index{c\+List\+Unlink\+Data@{c\+List\+Unlink\+Data}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Unlink\+Data()}{cListUnlinkData()}}
+{\footnotesize\ttfamily void c\+List\+Unlink\+Data (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{del\+List,  }\item[{void $\ast$}]{del\+Data }\end{DoxyParamCaption})}
+
+Unlinks the first element in the list which holds the data pointed to by this pointer.
+
+
+\begin{DoxyParams}{Parameters}
+{\em del\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em del\+Data} & void pointer to the data whose element needs to be unlinked from the list. \\
+\hline
+\end{DoxyParams}
+\mbox{\Hypertarget{c_linked_list_8c_a7f4f83fe785c2ef2fa01b291d8ff5162}\label{c_linked_list_8c_a7f4f83fe785c2ef2fa01b291d8ff5162}} 
+\index{c\+Linked\+List.\+c@{c\+Linked\+List.\+c}!c\+List\+Unlink\+Elem@{c\+List\+Unlink\+Elem}}
+\index{c\+List\+Unlink\+Elem@{c\+List\+Unlink\+Elem}!c\+Linked\+List.\+c@{c\+Linked\+List.\+c}}
+\subsubsection{\texorpdfstring{c\+List\+Unlink\+Elem()}{cListUnlinkElem()}}
+{\footnotesize\ttfamily void c\+List\+Unlink\+Elem (\begin{DoxyParamCaption}\item[{\mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} $\ast$}]{my\+List,  }\item[{\mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} $\ast$}]{del\+Elem }\end{DoxyParamCaption})}
+
+Unlinks the element requested from the linked list if it exists in the linked list.
+
+
+\begin{DoxyParams}{Parameters}
+{\em my\+List} & \mbox{\hyperlink{c_linked_list_8h_aac1ab3387f7254e06b22dc5a54f2e5f6}{c\+Linked\+List}} pointer to the linked list need to be used. \\
+\hline
+{\em del\+Elem} & \mbox{\hyperlink{c_linked_list_8h_ac8b72bb1eeaff60100466f6aa47be6b9}{c\+List\+Elem}} pointer to the element that needs to unlinked. \\
+\hline
+\end{DoxyParams}

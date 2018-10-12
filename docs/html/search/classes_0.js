@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['clinkedlisttag',['cLinkedListTAG',['../structc_linked_list_t_a_g.html',1,'']]],
-  ['clistelemtag',['cListElemTAG',['../structc_list_elem_t_a_g.html',1,'']]],
-  ['cviabsolutetime',['CVIAbsoluteTime',['../union_c_v_i_absolute_time.html',1,'']]],
-  ['cvitime',['CVITime',['../struct_c_v_i_time.html',1,'']]]
+  ['_5fclinkedlist',['_cLinkedList',['../struct__c_linked_list.html',1,'']]],
+  ['_5fclistelem',['_cListElem',['../struct__c_list_elem.html',1,'']]],
+  ['_5fdaqmxdevice',['_DAQmxDevice',['../struct___d_a_qmx_device.html',1,'']]],
+  ['_5fpin',['_pin',['../struct__pin.html',1,'']]]
 ];

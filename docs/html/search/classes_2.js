@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['pin',['pin',['../structpin.html',1,'']]]
+  ['daqmxdevice',['DAQmxDevice',['../struct_d_a_qmx_device.html',1,'']]]
 ];
