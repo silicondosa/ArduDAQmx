@@ -59,26 +59,26 @@ typedef enum _StatusMode {
  */
 typedef enum _IOmode{
 // pin I/O modes
-	/*! Pin I/O mode: DIGITAL IN*/
-	DIGITAL_IN, 
-	/*! Pin I/O mode: DIGITAL OUT*/
-	DIGITAL_OUT, 
 	/*! Pin I/O mode: ANALOG IN*/
-	ANALOG_IN,  
+	ANALOG_IN		= 0,  
+	/*! Pin I/O mode: DIGITAL IN*/
+	DIGITAL_IN		= 1,
 	/*! Pin I/O mode: ANALOG OUT*/
-	ANALOG_OUT, 
-
+	ANALOG_OUT		= 2,
+	/*! Pin I/O mode: DIGITAL OUT*/
+	DIGITAL_OUT		= 3,
+	
 // counter I/O modes
 	/*! Counter I/O mode: COUNTER IN*/
-	COUNTER_IN,  
+	COUNTER_IN		= 4,
 	/*! Counter I/O mode: COUNTER OUT*/
-	COUNTER_OUT  
+	COUNTER_OUT		= 5
 }IOmode;
 
 /*!
  * Custom data type to encompass info on pins used by ArduDAQmx.
  */
-typedef struct _pin{
+typedef struct _pin {
 	/*! NI-DAQ device/slot number where the pin lives.*/
 	unsigned int	SlotNum;
 	/*! Pin number of the pin on the device.*/
@@ -86,6 +86,17 @@ typedef struct _pin{
 	/*! I/O mode of the pin as defined in ::IOmode.*/
 	IOmode			pinIOmode;
 } pin;
+
+typedef struct _DAQmxTask {
+	/*! Device number of the task.*/
+	unsigned int	DevNum;
+	/*! Pointer to the device object of the task.*/
+	DAQmxDevice		*myDev;
+	/*!	The I/O type of the task.*/
+	IOmode			taskIOmode;
+	/*! List of pins associated with the task.*/
+	cLinkedList		*pinList;
+} DAQmxTask;
 
 /*!
  * Custom data type encompasses info on DAQmx devices used by ArduDAQmx.
@@ -101,6 +112,8 @@ typedef struct _DAQmxDevice{
 	int				isDevSim;
 	/*! List of pins of the device used by ArduDAQmx.*/
 	cLinkedList		*pinList;
+	/*! List of tasks associated with the device.*/
+	cLinkedList		*taskList;
 } DAQmxDevice;
 
 // library function declarations
@@ -116,6 +129,9 @@ inline unsigned getArduDAQmxDevPrefixLength();
 	// initialization and termination functions
 int ArduDAQmxInit();
 int ArduDAQmxTerminate();
+
+	// Get the DAQmx device
+DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
 
 	// mode selection functions
 pin* pinMode(unsigned int, unsigned int, IOmode);

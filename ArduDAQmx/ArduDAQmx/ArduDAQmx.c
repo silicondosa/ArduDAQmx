@@ -240,6 +240,25 @@ int ArduDAQmxTerminate()
 	return ArduDAQmxStatus;
 }
 
+/*!
+ * \fn DAQmxDevice * getDAQmxDeviceData(unsigned int deviceNumber)
+ * Attempts to locate a DAQmx device object given an associated device number.
+ * If no device is found, it returns a NULL pointer.
+ * 
+ * \param deviceNumber The debvice number of the device that need to be identified, passed as an unsigned integer.
+ * \return ::DAQmxDevice pointer to the data structure that stores the information of the DAQmx device.
+ */
+DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber)
+{
+	cListElem *myElem = NULL;
+	DAQmxDevice *tempDev = NULL;
+	for (myElem = cListFirstElem(ArduDAQmxDevList); myElem != NULL; myElem = cListNextElem(ArduDAQmxDevList, myElem)) {
+		tempDev = (DAQmxDevice *)myElem->obj;
+		if (tempDev->DevNum == deviceNumber)
+			return tempDev;
+	}
+	return tempDev;
+}
 
 /*!
  * \fn pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
@@ -252,6 +271,24 @@ int ArduDAQmxTerminate()
  */
 pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 {
-	return NULL;
+	DAQmxDevice *myDev = findDAQmxDeviceData(deviceNumer);
+	pin * myPin = NULL;
+	if (myDev != NULL) {
+		// every type of IO mode supported by the device gets it's own task.
+
+		// Search through them by IO type and pin number
+		//if task found
+			// if pin found
+				// reset pin mode if possible, else return NULL
+			//if pin not found, attach pin to the task of 
+
+		// ELSE if task not found, create task and add pin number to task
+			//when creating task, check sync order. If new order is less than current order,
+			//reset sync order for all tasks.
+
+		//TODO: reorder IO modes to match sync order. !!!!!!!!!!!!!!!!!!!!!!
+	} // check myDev check
+
+	return myPin;
 }
 
