@@ -13,6 +13,12 @@
 
 // ArduDAQmx uses some global status variables to keep track of library operations
 /*!
+ * Maximum number of pins in any given device 
+ */
+extern unsigned int DAQmxMaxPinCount;
+
+
+/*!
  * Operational status of the ArduDAQmx library. DO NOT access this variable.
  */
 extern int ArduDAQmxStatus;
@@ -22,7 +28,7 @@ extern int ArduDAQmxStatus;
  * The list of available NI-DAQmx devices can be printed using 'enumerateDAQmxDevices(1)'.
  * Get the pointer to tis list using 'getArduDAQmxDeviceList()'. Calling 'printDAQmxStatus' will print the meaning of this variable.
  */
-extern cLinkedList *ArduDAQmxDevList;
+//extern cLinkedList *DAQmxTempDevList;
 
 /*!
 * Device name prefix. Default value is "PXI1Slot" but can be changed.
@@ -58,6 +64,10 @@ typedef enum _StatusMode {
  * Defines the six types of I/O modes suported by this library.
  */
 typedef enum _IOmode{
+// Invalid I/O mode
+	/*! Pin I/O mode: INVALID IO mode*/
+	INVALID_IO		= 32767,
+
 // pin I/O modes
 	/*! Pin I/O mode: ANALOG IN*/
 	ANALOG_IN		= 0,  
@@ -80,11 +90,13 @@ typedef enum _IOmode{
  */
 typedef struct _pin {
 	/*! NI-DAQ device/slot number where the pin lives.*/
-	unsigned int	SlotNum;
+	unsigned int	DevNum		= 0;
 	/*! Pin number of the pin on the device.*/
-	unsigned int	PinNum;
+	unsigned int	PinNum		= 0;
+	/*! Pin active use flag*/
+	bool			activeFlag	= 0;
 	/*! I/O mode of the pin as defined in ::IOmode.*/
-	IOmode			pinIOmode;
+	IOmode			pinIOmode	= INVALID_IO;
 } pin;
 
 typedef struct _DAQmxTask {
@@ -110,18 +122,20 @@ typedef struct _DAQmxDevice{
 	int				DevSerial;
 	/*! This flag is set when device is simulated.*/
 	int				isDevSim;
-	/*! List of pins of the device used by ArduDAQmx.*/
-	cLinkedList		*pinList;
+	/*! Pointer to the array of pins of the device.*/
+	pin				*pinList;
 	/*! List of tasks associated with the device.*/
 	cLinkedList		*taskList;
 } DAQmxDevice;
+
+extern DAQmxDevice	*ArduDAQmxDevList;
 
 // library function declarations
 	// configuration functions
 void enumerateDAQmxDevices(int printFlag);
 inline int getArduDAQmxStatus();
 inline int printDAQmxStatus();
-inline cLinkedList * getDAQmxDeviceList();
+inline DAQmxDevice * getDAQmxDeviceList();
 inline char * getArduDAQmxPrefix();
 inline void setArduDAQmxPrefix(char *newPrefix);
 inline unsigned getArduDAQmxDevPrefixLength();
