@@ -15,7 +15,7 @@
 /*!
  * Maximum number of pins in any given device 
  */
-extern unsigned int DAQmxMaxPinCount;
+const unsigned int DAQmxMaxPinCount = 32;
 
 
 /*!
@@ -24,15 +24,25 @@ extern unsigned int DAQmxMaxPinCount;
 extern int ArduDAQmxStatus;
 
 /*!
- * Master list of available NI-DAQmx compatible devices. DO NOT access this variable directly.
- * The list of available NI-DAQmx devices can be printed using 'enumerateDAQmxDevices(1)'.
- * Get the pointer to tis list using 'getArduDAQmxDeviceList()'. Calling 'printDAQmxStatus' will print the meaning of this variable.
+ * Error code of the ArduDAQmx library. DO NOT access this variable.
  */
-//extern cLinkedList *DAQmxTempDevList;
+extern int ArduDAQmxError;
 
 /*!
-* Device name prefix. Default value is "PXI1Slot" but can be changed.
+ * Error code of the NI-DAQmx library. DO NOT access this variable.
+ */
+extern int NIDAQmxErrorCode;
+
+/*!
+* Default device name prefix as "PXI1Slot".
 * DO NOT access this variable directly. Acces this variable only by using the 'getArduDAQmxPrefix()' and 'setArduDAQmxPrefix(char *)' functions
+*/
+extern const char *DefaultArduDAQmxDevPrefix;
+
+/*!
+* Device name prefix. Default value is set as defined in 'DefaultArduDAQmxDevPrefix'.
+* DO NOT access this variable directly. Acces this variable only by using the 'getArduDAQmxPrefix()' and 'setArduDAQmxPrefix(char *)' functions.
+* It can only be set by calling the 'ArduDAQmxInit' function.
 */
 extern char *ArduDAQmxDevPrefix;
 
@@ -51,14 +61,31 @@ extern unsigned ArduDAQmxDevPrefixLength;
 /*!
  * Enumerates the list of possible status modes of the ArduDAQmx library as set in 'ArduDAQmxStatus'.
  */
-typedef enum _StatusMode {
-	/*! Pin and task configuratoin may be altered only in the preconfigure state.*/
+typedef enum _ArduDAQmxStatusMode {
+	/*! ArduDAQmx configuration may be altered only in the preconfigure state.*/
 	STATUS_PRECONFIG	= -1,
-	/*! States that the library has been configured.*/
+	/*! States that the ArduDAQmx library has been configured. NI-DAQmx may now be setup.*/
 	STATUS_CONFIG		=  0,
-	/*! Sets the library as ready to use.*/
-	STATUS_READY		=  1 
-}StatusMode;
+	/*! The NI-DAQmx synchronization, clocks and triggers are setup and is ready to run.*/
+	STATUS_READY		=  1,
+	/*!	The library is in operation and running. Data is being collected using it now.*/
+	STATUS_RUN			=  2
+}ArduDAQmxStatusMode;
+
+/*!
+ * Enumerates the list of error codes of the ArduDAQmx library as set in 'ArduDAQmxErrorCode'.
+ */
+typedef enum _ArduDAQmxErrorCode {
+	/*! List of NI-DAQmx devices detected by ArduDAQmx library has changed.*/
+	ERROR_DEVCHANGE			= -3,
+	/*! No NI-DAQmx devices detected by ArduDAQmx library.*/
+	ERROR_NODEVICES			= -2,
+	/*! Pin and task configuratoin may be altered only in the preconfigure state.*/
+	ERROR_NOTCONFIG			= -1,
+	/*! States that the library has been configured.*/
+	ERROR_NONE				=  0,
+}ArduDAQmxErrorCode;
+
 
 /*!
  * Defines the six types of I/O modes suported by this library.
@@ -107,7 +134,7 @@ typedef struct _DAQmxTask {
 	/*!	The I/O type of the task.*/
 	IOmode			taskIOmode;
 	/*! List of pins associated with the task.*/
-	cLinkedList		*pinList;
+	pin				pinList[DAQmxMaxPinCount];
 } DAQmxTask;
 
 /*!
@@ -128,21 +155,64 @@ typedef struct _DAQmxDevice{
 	cLinkedList		*taskList;
 } DAQmxDevice;
 
+
+// MASTER ARRAY OF DEVICES
+/*!
+ * Pointer to master array of available NI-DAQmx compatible devices. DO NOT access this variable directly.
+ * The list of available NI-DAQmx devices can be printed using 'enumerateDAQmxDevices(1)'.
+ * Get the pointer to tis list using 'getArduDAQmxDeviceList()'. Calling 'printDAQmxStatus' will print the meaning of this variable.
+ */
 extern DAQmxDevice	*ArduDAQmxDevList;
+
+/*!
+ * Number of available DAQmx devices detected by the library as in the 'ArduDAQmxDevList' list pointer.
+ */
+extern unsigned long ArduDAQmxDevCount;
+
+/*!
+ * Highest device number of all NI-DAQmx devices detected by the library as in the 'ArduDAQmxDevList' list pointer.
+ */
+extern unsigned long ArduDAQmxDevMaxNum;
+
+
+// TEMPORARY LINKED LIST OF DEVICES
+/*!
+ * Linked list of available DAQmx devices as obtained by the 'enumerateDAQmxDevices' function.
+ * The list of available NI-DAQmx devices can be printed using 'enumerateDAQmxDevices(1)'.
+ */
+extern cLinkedList *DAQmxEnumeratedDevList;
+
+/*!
+ * Number of available DAQmx devices enumerated by the 'enumerateDAQmxDevices' function.
+ */
+extern unsigned long DAQmxEnumeratedDevCount;
+
+/*!
+ * Highest device number of all NI-DAQmx devices enumerated by the 'enumerateDAQmxDevices' function.
+ */
+extern unsigned long DAQmxEnumeratedDevMaxNum;
+
+
 
 // library function declarations
 	// configuration functions
+//void deleteEnumeratedDevices();
 void enumerateDAQmxDevices(int printFlag);
 inline int getArduDAQmxStatus();
-inline int printDAQmxStatus();
+inline int getArduDAQmxLastError();
+inline int setArduDAQmxLastError(ArduDAQmxErrorCode newErrorCode, unsigned printErrorMsgFlag);
+inline int printArduDAQmxStatus();
+inline int printArduDAQmxLastError();
 inline DAQmxDevice * getDAQmxDeviceList();
+inline unsigned long getDAQmxDeviceCount();
 inline char * getArduDAQmxPrefix();
-inline void setArduDAQmxPrefix(char *newPrefix);
 inline unsigned getArduDAQmxDevPrefixLength();
 
 	// initialization and termination functions
-int ArduDAQmxInit();
+int ArduDAQmxConfigure();
+int ArduDAQmxInit(char *devicePrefix);
 int ArduDAQmxTerminate();
+void ArduDAQmxClearEnumerateDevices();
 
 	// Get the DAQmx device
 DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);

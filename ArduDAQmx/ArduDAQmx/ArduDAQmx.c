@@ -14,7 +14,7 @@
 #include <string.h>
 
 // initializations for global status variables that keep track of library operations
-unsigned int	DAQmxMaxPinCount			= 32;
+//const unsigned int	DAQmxMaxPinCount		= 32;
 int				ArduDAQmxStatus				= (int) STATUS_PRECONFIG;
 char			*ArduDAQmxDevPrefix			= "PXI1Slot";
 const unsigned	MaxArduDAQmxDevPrefixLength	= 8;
@@ -31,168 +31,126 @@ DAQmxDevice		*ArduDAQmxDevList			= NULL;
  */
 void enumerateDAQmxDevices(int printFlag)
 {
-	int buffersize, loopNum = 0; // Buffer size datatypes
+	int buffersize; // Buffer size datatypes
 	int devicetype_buffersize; //devicesernum_buffersize;
 
 	//Device Info variable initialization
-	char			*devicenames, *remainder_devicenames; // device name string
-	char			*devicetype; // device type string
-	char			*devToken;
+	char			*DAQmxDevNameList, *remainder_DAQmxDevNameList; // device name string
+	char			*DAQmxDeviceType; // device type string
+	char			*DAQmxDevName;
 	DAQmxDevice		*newDevice = NULL;
 
-	int				devicesernum;
-	int				is_simulated;
-	unsigned long	devNUM = 0, maxDevNum = 0;
+	int				deviceSerial;
+	int				isSimulated;
+	unsigned long	devNUM = 0;
 	int				isObjInserted = 0;
-
-	cLinkedList		*DAQmxTempDevList = NULL;
-	cListElem		*list_i = NULL;
+	cListElem		*list_elem = NULL;
 	
 	// Create temporary list for DAQmx Devices
-	DAQmxTempDevList = (cLinkedList *)malloc(sizeof(cLinkedList)); // DYN-M: create DAQmx master device list
-	cListInit(DAQmxTempDevList);
+	DAQmxEnumeratedDevList = (cLinkedList *)malloc(sizeof(cLinkedList)); // DYN-M: create DAQmx master device list
+	cListInit(DAQmxEnumeratedDevList);
+	int tempDAQmxEnumeratedDevCount  = 0;
+	DAQmxEnumeratedDevMaxNum = 0;
 
 	// obtain device names from NI-DAQmx
-	buffersize = DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, devicenames);
-	devicenames = (char*)malloc(buffersize); // DYN-M: dynamically allocate devicenames
-	remainder_devicenames = devicenames;
+	buffersize = DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, DAQmxDevNameList);
+	DAQmxDevNameList = (char*)malloc(buffersize); // DYN-M: dynamically allocate devicenames
+	remainder_DAQmxDevNameList = DAQmxDevNameList;
 
 	//Get the string of devicenames in the computer
-	DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, devicenames, buffersize);
+	DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, DAQmxDevNameList, buffersize);
 
 	// Optionally print device table headers
 	if (printFlag == 1) {
-		printf("Full Device name list: %s\n\n", devicenames);
+		printf("Full Device name list: %s\n\n", DAQmxDevNameList);
 		printf("******************** LIST OF DEVICES ON THIS COMPUTER *********************\n");
 		printf("Device Name || Device Number || Device type || Device Serial# || Simulated?\n");
 		printf("***************************************************************************\n");
 	} // end print flag check
 
 	//Get information about the first DAQmx device on the list
-	devToken = strtok_s(remainder_devicenames, ",", &remainder_devicenames);
-
-	while (devToken != NULL) {
-		
+	for (ArduDAQmxClearEnumerateDevices(), DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ",", &remainder_DAQmxDevNameList); DAQmxDevName != NULL; DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ", ", &remainder_DAQmxDevNameList), tempDAQmxEnumeratedDevCount++) {
 		// Obtain some device properties
-		devicetype_buffersize = DAQmxGetDeviceAttribute(devToken, DAQmx_Dev_ProductType, NULL); //Get Product Type for a DAQmx device pointed to by devToken
-		devicetype = (char*)malloc(devicetype_buffersize); // DYN-M: dynamically allocate memory for devicetype
-		DAQmxGetDeviceAttribute(devToken, DAQmx_Dev_ProductType, devicetype, devicetype_buffersize); //Get device type		
-		DAQmxGetDeviceAttribute(devToken, DAQmx_Dev_SerialNum, &devicesernum, 1); //Get Product Serial Number for the device
-		DAQmxGetDeviceAttribute(devToken, DAQmx_Dev_IsSimulated, &is_simulated, 1); //Get "Is device simulated?" flag for the device
+		devicetype_buffersize = DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_ProductType, NULL); //Get Product Type for a DAQmx device pointed to by devToken
+		DAQmxDeviceType = (char*) malloc(devicetype_buffersize); // DYN-M: dynamically allocate memory for devicetype
+		DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_ProductType, DAQmxDeviceType, devicetype_buffersize); //Get device type		
+		DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_SerialNum  , &deviceSerial  , 1); //Get Product Serial Number for the device
+		DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_IsSimulated, &isSimulated  , 1); //Get "Is device simulated?" flag for the device
 
-
-		//If ArduDAQmx is initialized, write device properties to device struct, then write device struct to device list
-		if (getArduDAQmxStatus() == (int)STATUS_PRECONFIG) {
-			newDevice = (DAQmxDevice *)malloc(sizeof(DAQmxDevice)); // DYN-M: dynamically allocate newDevice for DAQmx Master List
+		newDevice = (DAQmxDevice *) malloc(sizeof(DAQmxDevice)); // DYN-M: dynamically allocate newDevice for DAQmx Master List
 			
-			//copy datapoints
-			strcpy_s(newDevice->DevName, sizeof(newDevice->DevName), devToken); // copy device name in structure
-			devNUM					= strtol( &(newDevice->DevName[ArduDAQmxDevPrefixLength]), NULL, 10);
-			newDevice->DevNum		= devNUM; // set device number in structure			
-			newDevice->DevSerial	= devicesernum;
-			newDevice->isDevSim		= is_simulated;
-			newDevice->pinList		= (pin *) malloc( sizeof(pin) * DAQmxMaxPinCount ); // DYN-M: initialize pin list array
-			
-			// TODO: initialize list of tasks
+		//copy datapoints
+		strcpy_s(newDevice->DevName, sizeof(newDevice->DevName), DAQmxDevName); // copy device name in structure
+		devNUM					= strtol( &(newDevice->DevName[ArduDAQmxDevPrefixLength]), NULL, 10);
+		newDevice->DevNum		= devNUM; // set device number in structure			
+		newDevice->DevSerial	= deviceSerial;
+		newDevice->isDevSim		= isSimulated;
+		//newDevice->pinList		= (pin *) malloc( sizeof(pin) * DAQmxMaxPinCount ); // DYN-M: initialize pin list array
+		
+		// TODO: initialize list of tasks
 
-			//set max device number
-			if (devNUM > maxDevNum)
-				maxDevNum = devNUM;
+		//set max device number
+		if (devNUM > DAQmxEnumeratedDevMaxNum)
+			DAQmxEnumeratedDevMaxNum = devNUM;
 
-			// Sort and insert new device object into temporary linked list
-			for (isObjInserted = 0, list_i = cListFirstElem(DAQmxTempDevList); isObjInserted != 1; list_i = cListNextElem(DAQmxTempDevList, list_i)) {
-				if (list_i == NULL) {
-					isObjInserted = 1;
-					cListAppend(DAQmxTempDevList, (void *)newDevice); //append device struct to device list
-				} else if ( ((DAQmxDevice *)list_i->obj)->DevNum > newDevice->DevNum ) {
-					isObjInserted = 1;
-					cListInsertAfter(DAQmxTempDevList, (void *)newDevice, list_i);
-				} else if ( ((DAQmxDevice *)list_i->obj)->DevNum == newDevice->DevNum) {
-					fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Multiple DAQmx devices have the same device number. Rename devices in NI MAX.\n");
-					exit(-1);
-				}
-			} // end object insertion loop
-
-		} // end config status check
-
-		//free device type buffer
-		free(devicetype);
+		// Sort and insert new device object into temporary linked list
+		for (isObjInserted = 0, list_elem = cListLastElem(DAQmxEnumeratedDevList); isObjInserted != 1; list_elem = cListPrevElem(DAQmxEnumeratedDevList, list_elem)) {
+			if (list_elem == NULL) { // if linked list is empty, append the new device to list
+				isObjInserted = 1;
+				cListAppend      (DAQmxEnumeratedDevList, (void *)newDevice);
+			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum	== 0 ) { // if object in list has device number as 0, call FATAL error
+				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
+				exit(-1);
+			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum == newDevice->DevNum) { // if more than one object has equal device numbers, call FATAL error
+				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Multiple DAQmx devices have the same device number. Rename devices in NI MAX.\n");
+				exit(-1);
+			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum <  newDevice->DevNum) { // if list object device number is greater than new device number, insert new device before the list object
+				isObjInserted = 1;
+				cListInsertAfter(DAQmxEnumeratedDevList, (void *)newDevice, list_elem);
+			}
+		} // end object insertion for loop
 
 		// Optionally print device table contents
 		if (printFlag == 1) {
-			if (is_simulated = 0)
-				printf("%s || %d || %s || %d || no\n",  devToken, devNUM, devicetype, devicesernum);
+			if (isSimulated = 0)
+				printf("%s || %d || %s || %d || no\n",  DAQmxDevName, devNUM, DAQmxDeviceType, deviceSerial);
 			else
-				printf("%s || %d || %s || %d || yes\n", devToken, devNUM, devicetype, devicesernum);
+				printf("%s || %d || %s || %d || yes\n", DAQmxDevName, devNUM, DAQmxDeviceType, deviceSerial);
 		} // end print flag check
 
-		//Get the next DAQmx device name in the list
-		devToken = strtok_s(remainder_devicenames, ", ", &remainder_devicenames);
-		loopNum++;
-	} // end while loop
+		free(DAQmxDeviceType); // free device type buffer
+	} // end device enumeration for loop
 
 	// Print end of device table, status messages
 	if (printFlag == 1) {
 		printf("***************************************************************************\n\n");
-		printf("ArduDAQmx library: %d devices in internal device list\n", cListLength(DAQmxTempDevList));
-		printDAQmxStatus();
+		printf("ArduDAQmx library: %d devices in internal device list\n", cListLength(DAQmxEnumeratedDevList));
+		printArduDAQmxStatus();
 	} // end print flag check
 
-	// If in PRECONFIG state, setup library and device list
-	if (getArduDAQmxStatus() == (int)STATUS_PRECONFIG) {
-		ArduDAQmxDevList	= (DAQmxDevice *) malloc( sizeof(DAQmxDevice) * maxDevNum ); // DYN-M: allocate array of devices for fast access
-		unsigned int		i = 0, minDevNum = 32767, devListLength = cListLength(DAQmxTempDevList);
-		cListElem *elem		= NULL;
-		DAQmxDevice *cpyDev = NULL;
-		for (; i < maxDevNum; i++) {
-			//copy sorted temprorary device list into the primary device array.
-			
-			//TODO: need to move some or all of the if conditions to the above sorting loop
-			
-			for (elem = cListFirstElem(DAQmxTempDevList) ; elem != NULL; elem = cListNextElem( DAQmxTempDevList, elem) ) {
-				if ( ((DAQmxDevice *)elem->obj)->DevNum			== 0 ) {
-					fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
-					exit(-1);
-				} else if ( ((DAQmxDevice *)elem->obj)->DevNum	== minDevNum ) {
-					fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: More than one device has the same device number (%d)", minDevNum);
-					exit(-1);
-				} else if ( ((DAQmxDevice *)elem->obj)->DevNum	< minDevNum ) {
-					minDevNum = ((DAQmxDevice *)elem->obj)->DevNum;
-					cpyDev = (DAQmxDevice *)elem->obj;
-				}
-			} // linked list scan loop
-			ArduDAQmxDevList[minDevNum - 1] = *cpyDev;
-		} // array scan loop
-	} else if (loopNum != cListLength(DAQmxTempDevList)) {
-		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Current list of %d devices - Possible change in devices since the library was configured. Terminate the library and reconfigure!", loopNum);
+	if (tempDAQmxEnumeratedDevCount != cListLength(DAQmxEnumeratedDevList)) {
+		fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Length of enumerated device list not equal to enumerated device count.\n");
+		exit(-1);
+	} else if (tempDAQmxEnumeratedDevCount == 0) { // If no new devices on the list, flash a warning and disable library
+		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: No NI-DAQmx devices detected. Terminating the library...\n");		
+		setArduDAQmxLastError(ERROR_NODEVICES, 1);
+		ArduDAQmxTerminate();
+	} else if (DAQmxEnumeratedDevCount != 0 && DAQmxEnumeratedDevCount != tempDAQmxEnumeratedDevCount) { // if new list is different than old list, then flash warning and disable library
+		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Current list of %d devices - Possible change in devices since the library was configured. Terminating the library...", DAQmxEnumeratedDevCount);
+		setArduDAQmxLastError(ERROR_DEVCHANGE, 1);
+		ArduDAQmxTerminate();
 	}
-
-	// DYN-F: delete devices from DAQmxTempDevList and unlink all of it.
-	cListElem *elem = NULL;
-	for (elem = cListFirstElem(DAQmxTempDevList) ; elem != NULL; elem = cListNextElem( DAQmxTempDevList, elem) ) {
-		// free( ((DAQmxDevice *)elem->obj)->pinList ); // DYN-F: free pinlist array
-		free( (DAQmxDevice *)elem->obj ); // free DAQmxDevice object
-		free(elem); // unlink linked list element
-	}
-
-	// if we are in PRECONFIG mode, move to CONFIG mode, preventing any further INIT variable changes.
-	if (getArduDAQmxStatus() == (int)STATUS_PRECONFIG) {	
-		ArduDAQmxStatus == STATUS_CONFIG;
-	}
-
-	// DYN-F: free DAQmxTempDevList
-	free(DAQmxTempDevList);
-	DAQmxTempDevList = NULL;
-
-	free(devicenames); // DYN-F: free devicenames
+	DAQmxEnumeratedDevCount = tempDAQmxEnumeratedDevCount;
+	
+	free(DAQmxDevNameList); // DYN-F: free devicenames
 } // end enumerateDAQmxDevices function
 
 /*!
  * \fn inline int getArduDAQmxStatus()
- * Returns the current opeational status of the ArduDAQmx library as reported by the 'ArduDAQmxStatus' variable.
+ * Returns the current operational status of the ArduDAQmx library as reported by the 'ArduDAQmxStatus' variable.
  * Use this function to access the 'ArduDAQmxStatus' variable.
  * 
- * \return 
+ * \return Returns an integer value of the status of the ArduDAQmx library as defined in the 'StatusMode' enumeration.
  */
 inline int getArduDAQmxStatus()
 {
@@ -200,12 +158,42 @@ inline int getArduDAQmxStatus()
 }
 
 /*!
+ * \fn inline int getArduDAQmxLastError()
+ * Returns the last error code of the ArduDAQmx library as reported by the 'ArduDAQmxErrorCode' variable.
+ * Use this function to access the 'ArduDAQmxErrorCode' variable.
+ * 
+ * \return Returns an integer value of the status of the ArduDAQmx library as defined in the 'ArduDAQmxErrorCode' enumeration.
+ */
+inline int getArduDAQmxLastError()
+{
+	return ArduDAQmxError;
+}
+
+/*!
+ * \fn inline int setArduDAQmxLastError(ErrorCode newErrorCode, unsigned printErrorMsgFlag)
+ * Sets the '' eror code of the ArduDAQmx library.
+ * The routine also prints the meaning of the message if the printErrorMsgFlag = 1.
+ * 
+ * \param newErrorCode The new error code to set of type 'ArduDAQmxErrorcode'
+ * \param printErrorMsgFlag
+ * \return 
+ */
+inline int setArduDAQmxLastError(ArduDAQmxErrorCode newErrorCode, unsigned printErrorMsgFlag)
+{
+	ArduDAQmxError = newErrorCode;
+	if (printErrorMsgFlag == 1)
+		printArduDAQmxLastError();
+	return ArduDAQmxError;
+}
+
+
+/*!
  * \fn inline int printDAQmxStatus()
  * Prints the meaning of the library status as reflected in 'ArduDAQmxStatus'.
  * 
  * \return Returns 'ArduDAQmxStatus' as an integer.
  */
-inline int printDAQmxStatus()
+inline int printArduDAQmxStatus()
 {
 	switch (ArduDAQmxStatus)
 	{
@@ -225,6 +213,34 @@ inline int printDAQmxStatus()
 }
 
 /*!
+ * \fn inline int printDAQmxLastError()
+ * Prints the meaning of the last library error as reflected in 'ArduDAQmxErrorCode'.
+ * 
+ * \return Returns 'ArduDAQmxErrorCode' as an integer.
+ */
+inline int printArduDAQmxLastError()
+{
+	switch (ArduDAQmxError)
+	{
+	case ERROR_DEVCHANGE:
+			printf("ArduDAQmx library: Error: Number of DAQmx devices have changed during operation. [ERROR_DEVCHANGE]\n");
+			break;
+	case ERROR_NODEVICES:
+			printf("ArduDAQmx library: Error: No DAQmx devices discovered. [ERROR_NODEVICES]\n");
+			break;
+	case ERROR_NOTCONFIG:
+			printf("ArduDAQmx library: Error: Library is not configured. [ERROR_NOTCONFIG]\n");
+			break;
+	case ERROR_NONE:
+			printf("ArduDAQmx library: No errors detected. [ERROR_NONE]\n");
+			break;	
+	default:
+			break;
+	}
+	return (int)ArduDAQmxError;
+}
+
+/*!
  * \fn inline cLinkedList * getDAQmxDeviceList()
  * Returns a pointer to the array of active DAQmx devices.
  * 
@@ -234,6 +250,18 @@ inline DAQmxDevice * getDAQmxDeviceList()
 {
 	return ArduDAQmxDevList;
 }
+
+/*!
+ * \fn inline unsigned long getDAQmxDeviceCount()
+ * Returns the numver of NI-DAQmx devices detected by the ArduDAQmx library.
+ * 
+ * \return numver of NI-DAQmx devices detected by the ArduDAQmx library.
+ */
+inline unsigned long getDAQmxDeviceCount()
+{
+	return ArduDAQmxDevCount;
+}
+
 
 /*!
  * \fn inline char * getArduDAQmxPrefix()
@@ -247,24 +275,10 @@ inline char * getArduDAQmxPrefix()
 }
 
 /*!
- * \fn inline void setArduDAQmxPrefix(char *newPrefix)
- * Lets users set the DAQmx device name prefix as defined in 'ArduDAQmxDevPrefix'.
- * If prefix is longer than 'MaxArduDAQmxDevPrefix', only 8 characters (not including NULL character) used - everything else is truncated.
- * 
- * \param newPrefix Pointer to a C string with the new device prefix.
- */
-/*inline void setArduDAQmxPrefix(char *newPrefix)
-{
-	if (getArduDAQmxStatus() == STATUS_PRECONFIG) {
-
-	}
-}*/
-
-/*!
  * \fn inline unsigned getArduDAQmxDevPrefixLength()
  * Returns the length of the current DAQmx device prefix as defined in 'ArduDAQmxDevPrefixLength'.
  * 
- * \return returns the length of current DAQmx device prefix as an unsigned integer.
+ * \return Returns the length of current DAQmx device prefix as an unsigned integer.
  */
 inline unsigned getArduDAQmxDevPrefixLength()
 {
@@ -272,9 +286,41 @@ inline unsigned getArduDAQmxDevPrefixLength()
 }
 
 /*!
+ * \fn int ArduDAQmxConfigure()
+ * Configures the ArduDAQmx library with a list of devices and library status.
+ * This function is called by 'ArduDAQmxInit' and must be called before initialization to setup the library.
+ * 
+ * \return Returns the status of the status of the library as defined in 'ArduDAQmxStatus'
+ */
+int ArduDAQmxConfigure()
+{
+
+	// If in PRECONFIG state, setup library and device list
+	if (getArduDAQmxStatus() == (int)STATUS_PRECONFIG) { // if there are no issues and library is in preconfig, setup library
+		ArduDAQmxDevList	= (DAQmxDevice *) malloc( sizeof(DAQmxDevice) * DAQmxEnumeratedDevMaxNum ); // DYN-M: allocate array of devices for fast access
+		unsigned int		i = 0;
+		cListElem *elem		= NULL;
+		DAQmxDevice *cpyDev = NULL;
+
+		// copy sorted temprorary device list into the master device array.
+		for (elem = cListFirstElem(DAQmxEnumeratedDevList) ; elem != NULL; elem = cListNextElem( DAQmxEnumeratedDevList, elem) ) {
+			ArduDAQmxDevList[i++] = *(DAQmxDevice *)elem->obj;
+		}
+		ArduDAQmxDevCount  = DAQmxEnumeratedDevCount;
+		ArduDAQmxDevMaxNum = DAQmxEnumeratedDevMaxNum;
+		setArduDAQmxLastError(ERROR_NONE, 0);
+		ArduDAQmxStatus = STATUS_CONFIG;
+	} else {
+		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to configure.\n");
+	}
+
+	return getArduDAQmxStatus();
+}
+
+/*!
  * \fn int ArduDAQmxInit()
  * Performs the initialization of the ArduDAQmx library. Calling this function is mandatory before using the library.
- * If the library is not initialized and ready, calling this function will setup the library and set the library status to STATUS_READY
+ * If the library is not initialized and ready, calling this function will setup the library and set the library status to STATUS_CONFIG.
  * 
  * \param devicePrefix Pointer to a C string with the device name prefix.
  * \return Returns 0 if there are no errors, and an error code otherwise.
@@ -285,10 +331,10 @@ int ArduDAQmxInit(char *devicePrefix)
 		strncpy_s(ArduDAQmxDevPrefix, strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength), devicePrefix, MaxArduDAQmxDevPrefixLength);
 		ArduDAQmxDevPrefixLength = strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength);
 		enumerateDAQmxDevices(0);
+		ArduDAQmxConfigure();
 	} else {
 		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to initialize.\n");
 	}
-	
 	return ArduDAQmxStatus;
 }
 
@@ -299,19 +345,41 @@ int ArduDAQmxInit(char *devicePrefix)
  * Calling this function is mandatory before exitting the program.
  * But the function may also be called if the library needs to be reconfigured.
  * 
+ * \param newStatus The error/status that the library must take after program terminates
  * \return Returns the status of the library as relfected in 'ArduDAQmxStatus'.
  */
 int ArduDAQmxTerminate()
 {
 	//TODO: stop any active DAQmx tasks using the ArduDAQmx I/O Stop function
+		
 
+	ArduDAQmxClearEnumerateDevices(); // clear enumerated device list
 
-	// DYN-F: free ArduDAQmxDevList array
-	free(ArduDAQmxDevList);
+	free(ArduDAQmxDevList); // DYN-F: free ArduDAQmxDevList array
 	ArduDAQmxDevList = NULL;
 	
 	ArduDAQmxStatus = (int)STATUS_PRECONFIG;
+
 	return ArduDAQmxStatus;
+}
+
+/*!
+ * \fn void ArduDAQmxClearEnumerateDevices()
+ * Clears the linked list of enumerated devices. Automatically called by 'enumerateDAQmxDevices'.
+ * Not to be used by the user. 
+ */
+void ArduDAQmxClearEnumerateDevices() {
+	// DYN-F: delete devices from DAQmxEnumeratedDevList and unlink all of it.
+	cListElem *myElem;
+	for (myElem = cListFirstElem(DAQmxEnumeratedDevList); myElem != NULL; myElem = cListNextElem(DAQmxEnumeratedDevList, myElem)) {
+		free( ((DAQmxDevice *)myElem->obj) ); // free DAQmxDevice object
+		free(myElem); // unlink linked list element
+	}
+
+	free(DAQmxEnumeratedDevList); // DYN-F: free DAQmxEnumeratedDevList
+	DAQmxEnumeratedDevList = NULL;
+	DAQmxEnumeratedDevCount = 0;
+	DAQmxEnumeratedDevMaxNum = 0;
 }
 
 /*!
