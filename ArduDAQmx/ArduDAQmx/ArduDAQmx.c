@@ -14,12 +14,20 @@
 #include <string.h>
 
 // initializations for global status variables that keep track of library operations
-//const unsigned int	DAQmxMaxPinCount		= 32;
+	// EXTERN declarations
 int				ArduDAQmxStatus				= (int) STATUS_PRECONFIG;
-char			*ArduDAQmxDevPrefix			= "PXI1Slot";
+int				ArduDAQmxError				= 0;
+int				NIDAQmxErrorCode			= 0;
+const char		*DefaultArduDAQmxDevPrefix	= "PXI1Slot";
+char			*ArduDAQmxDevPrefix			= NULL;
 const unsigned	MaxArduDAQmxDevPrefixLength	= 8;
 unsigned		ArduDAQmxDevPrefixLength	= MaxArduDAQmxDevPrefixLength;
 DAQmxDevice		*ArduDAQmxDevList			= NULL;
+unsigned long	ArduDAQmxDevCount			= 0;
+unsigned long	ArduDAQmxDevMaxNum			= 0;
+cLinkedList		*DAQmxEnumeratedDevList		= NULL;
+unsigned long	DAQmxEnumeratedDevCount		= 0;
+unsigned long	DAQmxEnumeratedDevMaxNum	= 0;
 
 // Library function definitions
 /*!
@@ -35,7 +43,8 @@ void enumerateDAQmxDevices(int printFlag)
 	int devicetype_buffersize; //devicesernum_buffersize;
 
 	//Device Info variable initialization
-	char			*DAQmxDevNameList, *remainder_DAQmxDevNameList; // device name string
+	char			*DAQmxDevNameList = NULL; // primary device name string
+	char			*remainder_DAQmxDevNameList = NULL; // remainder device name string
 	char			*DAQmxDeviceType; // device type string
 	char			*DAQmxDevName;
 	DAQmxDevice		*newDevice = NULL;
@@ -50,10 +59,9 @@ void enumerateDAQmxDevices(int printFlag)
 	DAQmxEnumeratedDevList = (cLinkedList *)malloc(sizeof(cLinkedList)); // DYN-M: create DAQmx master device list
 	cListInit(DAQmxEnumeratedDevList);
 	int tempDAQmxEnumeratedDevCount  = 0;
-	DAQmxEnumeratedDevMaxNum = 0;
 
 	// obtain device names from NI-DAQmx
-	buffersize = DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, DAQmxDevNameList);
+	buffersize = DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, (void *)DAQmxDevNameList);
 	DAQmxDevNameList = (char*)malloc(buffersize); // DYN-M: dynamically allocate devicenames
 	remainder_DAQmxDevNameList = DAQmxDevNameList;
 
@@ -90,8 +98,7 @@ void enumerateDAQmxDevices(int printFlag)
 		// TODO: initialize list of tasks
 
 		//set max device number
-		if (devNUM > DAQmxEnumeratedDevMaxNum)
-			DAQmxEnumeratedDevMaxNum = devNUM;
+		DAQmxEnumeratedDevMaxNum = devNUM;
 
 		// Sort and insert new device object into temporary linked list
 		for (isObjInserted = 0, list_elem = cListLastElem(DAQmxEnumeratedDevList); isObjInserted != 1; list_elem = cListPrevElem(DAQmxEnumeratedDevList, list_elem)) {
@@ -328,6 +335,7 @@ int ArduDAQmxConfigure()
 int ArduDAQmxInit(char *devicePrefix)
 {
 	if (ArduDAQmxStatus == STATUS_PRECONFIG) {
+		ArduDAQmxDevPrefix = (char *)malloc(sizeof(char)*MaxArduDAQmxDevPrefixLength);
 		strncpy_s(ArduDAQmxDevPrefix, strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength), devicePrefix, MaxArduDAQmxDevPrefixLength);
 		ArduDAQmxDevPrefixLength = strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength);
 		enumerateDAQmxDevices(0);
@@ -358,6 +366,9 @@ int ArduDAQmxTerminate()
 	free(ArduDAQmxDevList); // DYN-F: free ArduDAQmxDevList array
 	ArduDAQmxDevList = NULL;
 	
+	free(ArduDAQmxDevPrefix);
+	ArduDAQmxDevPrefix = NULL;
+
 	ArduDAQmxStatus = (int)STATUS_PRECONFIG;
 
 	return ArduDAQmxStatus;
@@ -391,6 +402,8 @@ void ArduDAQmxClearEnumerateDevices() {
  * \param IOtype I/O type being requested on the pin as defined in ::IOmode.
  * \return Returns the 'pin' data structure used to configure and operate the pin.
  */
+ 
+/*
 pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 {
 	DAQmxDevice myDev = ArduDAQmxDevList[deviceNumer-1];
@@ -413,4 +426,4 @@ pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 
 	return myPin;
 }
-
+*/

@@ -9,7 +9,7 @@
 
 int main()
 {
-	ArduDAQmxInit();
+	ArduDAQmxInit("PXI1Slot");
 	enumerateDAQmxDevices(1);
 	getchar();
 	return 0;

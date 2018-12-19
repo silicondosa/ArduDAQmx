@@ -123,19 +123,8 @@ typedef struct _pin {
 	/*! Pin active use flag*/
 	bool			activeFlag	= 0;
 	/*! I/O mode of the pin as defined in ::IOmode.*/
-	IOmode			pinIOmode	= INVALID_IO;
+	IOmode			pinIOmode = INVALID_IO;
 } pin;
-
-typedef struct _DAQmxTask {
-	/*! Device number of the task.*/
-	unsigned int	DevNum;
-	/*! Pointer to the device object of the task.*/
-	DAQmxDevice		*myDev;
-	/*!	The I/O type of the task.*/
-	IOmode			taskIOmode;
-	/*! List of pins associated with the task.*/
-	pin				pinList[DAQmxMaxPinCount];
-} DAQmxTask;
 
 /*!
  * Custom data type encompasses info on DAQmx devices used by ArduDAQmx.
@@ -154,6 +143,17 @@ typedef struct _DAQmxDevice{
 	/*! List of tasks associated with the device.*/
 	cLinkedList		*taskList;
 } DAQmxDevice;
+
+typedef struct _DAQmxTask {
+	/*! Device number of the task.*/
+	unsigned int	DevNum;
+	/*! Pointer to the device object of the task.*/
+	DAQmxDevice		*myDev;
+	/*!	The I/O type of the task.*/
+	IOmode			taskIOmode;
+	/*! List of pins associated with the task.*/
+	pin				pinList[DAQmxMaxPinCount];
+} DAQmxTask;
 
 
 // MASTER ARRAY OF DEVICES
