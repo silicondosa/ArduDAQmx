@@ -335,9 +335,11 @@ int ArduDAQmxConfigure()
 int ArduDAQmxInit(char *devicePrefix)
 {
 	if (ArduDAQmxStatus == STATUS_PRECONFIG) {
+		// copy string passed as parameter as device prefix and set prefix length
 		ArduDAQmxDevPrefix = (char *)malloc(sizeof(char)*MaxArduDAQmxDevPrefixLength);
-		strncpy_s(ArduDAQmxDevPrefix, strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength), devicePrefix, MaxArduDAQmxDevPrefixLength);
 		ArduDAQmxDevPrefixLength = strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength);
+		strncpy_s(ArduDAQmxDevPrefix, ArduDAQmxDevPrefixLength, devicePrefix, MaxArduDAQmxDevPrefixLength);
+		// enumerate and configure devices
 		enumerateDAQmxDevices(0);
 		ArduDAQmxConfigure();
 	} else {
