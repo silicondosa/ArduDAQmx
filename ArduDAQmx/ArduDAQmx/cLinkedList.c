@@ -27,10 +27,11 @@
  * Returns the length of the ::cLinkedList linked list passed to it as a parameter.
  * 
  * \param myList ::cLinkedList pointer of the linked list whose length is returned.
- * \return Length of the linked list passed as a parameter.
+ * \return Length of the linked list passed as a parameter. Returns 0 if myList is a null pointer as well.
  */
 long cListLength (cLinkedList *myList)
 {
+	if (myList == NULL) return 0;
     return myList->num_elem;
 }
 
@@ -43,7 +44,9 @@ long cListLength (cLinkedList *myList)
  */
 int cListEmpty (cLinkedList *myList)
 {
-    if (myList->num_elem > 0) {
+	if (myList == NULL) {
+		return FALSE;
+	}else if (myList->num_elem > 0) {
         return FALSE;
     }
     return TRUE;
@@ -63,7 +66,8 @@ int cListEmpty (cLinkedList *myList)
  */
 cListElem * cListFirstElem (cLinkedList *myList)
 {
-    return myList->anchor.nextElem;
+	if (myList == NULL) return NULL;
+	return myList->anchor.nextElem;
 }
 
 /*!
@@ -72,11 +76,12 @@ cListElem * cListFirstElem (cLinkedList *myList)
  * Returns a NULL pointer if the list is empty.
  * 
  * \param myList ::cLinkedList pointer to the linked list whose last element we need.
- * \return ::cListElem pointer to the last element of the linked list.
+ * \return ::cListElem pointer to the last element of the linked list. If myList is a null pointer, so will the output.
  */
 cListElem * cListLastElem (cLinkedList *myList)
 {
-    return myList->anchor.prevElem;
+    if (myList == NULL) return NULL;
+	return myList->anchor.prevElem;
 }
 
 /*!
@@ -86,11 +91,13 @@ cListElem * cListLastElem (cLinkedList *myList)
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be read.
  * \param myElem The function returns the element next to the element pointed to by this ::cListElem pointer.
- * \return ::cListElem pointer to the element next to the element passed as a parameter.
+ * \return ::cListElem pointer to the element next to the element passed as a parameter. If myList or myElem is a null pointer, so will the output.
  */
 cListElem * cListNextElem (cLinkedList *myList, cListElem *myElem)
 {
-    if ((myList->num_elem == 0) || (myList->anchor.prevElem == myElem)) {
+	if (myList == NULL || myElem == NULL) {
+		return NULL;
+	} else if ((myList->num_elem == 0) || (myList->anchor.prevElem == myElem)) {
         return NULL;
     }
     return myElem->nextElem;
@@ -103,11 +110,13 @@ cListElem * cListNextElem (cLinkedList *myList, cListElem *myElem)
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be read.
  * \param myElem The function returns the element beefore the element pointed to by this ::cListElem pointer.
- * \return ::cListElem pointer to the element that is before the element passed as a parameter.
+ * \return ::cListElem pointer to the element that is before the element passed as a parameter. If myList or myElem is a null pointer, so will the output.
  */
 cListElem * cListPrevElem (cLinkedList *myList, cListElem *myElem)
 {
-    if ((myList->num_elem == 0) || (myList->anchor.nextElem == myElem)) {
+	if (myList == NULL || myElem == NULL) {
+		return NULL;
+	} else if ((myList->num_elem == 0) || (myList->anchor.nextElem == myElem)) {
         return NULL;
     }
     return myElem->prevElem;
@@ -122,10 +131,11 @@ cListElem * cListPrevElem (cLinkedList *myList, cListElem *myElem)
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be read.
  * \param myData void pointer to the data that would be held by the list element that needs to be found.
- * \return ::cListElem pointer to the first element found that holds the data being used to find the element.
+ * \return ::cListElem pointer to the first element found that holds the data being used to find the element. If myList is a null pointer, so will the output.
  */
 cListElem * cListFindElem (cLinkedList *myList, void *myData)
 {
+	if (myList == NULL) return NULL;
     cListElem *myElem = NULL;
     for (myElem = cListFirstElem(myList); myElem != NULL ; myElem = cListNextElem(myList, myElem)) {
         if (myElem->obj == myData) {
@@ -144,10 +154,11 @@ cListElem * cListFindElem (cLinkedList *myList, void *myData)
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be read.
  * \param myData void pointer to the data that would be held by the list element that needs to be found.
- * \return void pointer to the data found on the linked list.
+ * \return void pointer to the data found on the linked list. If myList is a null pointer, so will the output.
  */ 
 void * cListFindData (cLinkedList *myList, void *myData)
 {
+	if (myList == NULL) return NULL;
 	cListElem *elem = cListFindElem(myList, myData);
 	if (elem == NULL)
 		return NULL;
@@ -161,10 +172,11 @@ void * cListFindData (cLinkedList *myList, void *myData)
  * But, it returns a NULL pointer if the list is empty.
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be used.
- * \return void pointer to the data held by the first element in the linked list passed as a pointer.
+ * \return void pointer to the data held by the first element in the linked list passed as a pointer. If myList is a null pointer, so will the output.
  */
 void * cListFirstData (cLinkedList *myList)
 {
+	if (myList == NULL) return NULL;
 	cListElem *elem = (cListFirstElem(myList));
 	if (elem == NULL)
 		return NULL;
@@ -178,11 +190,12 @@ void * cListFirstData (cLinkedList *myList)
  * But, it returns a NULL pointer if the list is empty.
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be used.
- * \return void pointer to the data held by the last element in the linked list passed as a pointer.
+ * \return void pointer to the data held by the last element in the linked list passed as a pointer. If myList is a null pointer, so will the output.
  */
 void * cListLastData (cLinkedList *myList)
 {
-    cListElem *elem = (cListLastElem(myList));
+	if (myList == NULL) return NULL;
+	cListElem *elem = (cListLastElem(myList));
 	if (elem == NULL)
 		return NULL;
 	else
@@ -197,11 +210,12 @@ void * cListLastData (cLinkedList *myList)
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be used.
  * \param myData void pointer to the data next to which we get the want look for the next data.
- * \return void pointer to the data held by the next element in the linked list passed as a pointer.
+ * \return void pointer to the data held by the next element in the linked list passed as a pointer. If myList is a null pointer, so will the output.
  */
 void * cListNextData (cLinkedList *myList, void *myData)
 {
-    cListElem *elem = cListNextElem(myList, cListFindElem(myList, myData));
+	if (myList == NULL) return NULL;
+	cListElem *elem = cListNextElem(myList, cListFindElem(myList, myData));
 	if (elem == NULL)
 		return NULL;
 	else
@@ -215,11 +229,12 @@ void * cListNextData (cLinkedList *myList, void *myData)
  * 
  * \param myList ::cLinkedList pointer to the linked list need to be used.
  * \param myData void pointer to the data before which we look for the previous data.
- * \return void pointer to the data held by the previous element in the linked list passed as a pointer.
+ * \return void pointer to the data held by the previous element in the linked list passed as a pointer. If myList or is a null pointer, so will the output.
  */
 void * cListPrevData (cLinkedList *myList, void *myData)
 {
-    cListElem *elem = cListPrevElem(myList, cListFindElem(myList, myData));
+	if (myList == NULL) return NULL;
+	cListElem *elem = cListPrevElem(myList, cListFindElem(myList, myData));
 	if (elem == NULL)
 		return NULL;
 	else
@@ -263,10 +278,13 @@ int cListInit (cLinkedList *myList)
  */
 int cListInsertAfter (cLinkedList *myList, void *newData, cListElem *elem)
 {
-    cListElem *newElem = (cListElem *)malloc(sizeof(cListElem));
+	if (myList == NULL) return 0;
+	cListElem *newElem = (cListElem *)malloc(sizeof(cListElem));
     if (cListEmpty(myList)) {
-        myList->anchor.prevElem = myList->anchor.nextElem = newElem;
-        newElem->prevElem       = newElem->nextElem       = &(myList->anchor);
+		myList->anchor.prevElem = newElem;
+		myList->anchor.nextElem = newElem;
+		newElem->prevElem		= newElem;
+		newElem->nextElem		= &(myList->anchor);
     } else {
         newElem->prevElem           = elem;
         newElem->nextElem           = elem->nextElem;
@@ -289,10 +307,13 @@ int cListInsertAfter (cLinkedList *myList, void *newData, cListElem *elem)
  */
 int cListInsertBefore (cLinkedList *myList, void *newData, cListElem *elem)
 {
+	if (myList == NULL) return 0;
     cListElem *newElem = (cListElem *)malloc(sizeof(cListElem));
     if (cListEmpty(myList)) {
-         myList->anchor.prevElem =  myList->anchor.nextElem = newElem;
-        newElem->prevElem        = newElem->nextElem        = &(myList->anchor);
+		myList->anchor.prevElem = newElem;
+		myList->anchor.nextElem = newElem;
+		newElem->prevElem		= newElem;
+		newElem->nextElem		= &(myList->anchor);
     } else {
         newElem->prevElem           = elem->prevElem;
         newElem->nextElem           = elem;
