@@ -106,7 +106,8 @@ cListElem * cListLastElem (cLinkedList *myList)
 cListElem * cListNextElem (cLinkedList *myList, cListElem *myElem)
 {
 	if (myList == NULL || myElem == NULL) {
-		fprintf(ERRSTREAM, "cLinkedList (cListNextElem): WARNING - Quashed attempt to access NULL pointer.\n");
+		if (myList == NULL)
+			fprintf(ERRSTREAM, "cLinkedList (cListNextElem): WARNING - Quashed attempt to access NULL pointer.\n");
 		return NULL;
 	} else if ((myList->num_elem == 0) || (myList->anchor.prevElem == myElem)) {
         return NULL;
@@ -126,7 +127,8 @@ cListElem * cListNextElem (cLinkedList *myList, cListElem *myElem)
 cListElem * cListPrevElem (cLinkedList *myList, cListElem *myElem)
 {
 	if (myList == NULL || myElem == NULL) {
-		fprintf(ERRSTREAM, "cLinkedList (cListPrevElem): WARNING - Quashed attempt to access NULL pointer.\n");
+		if(myList == NULL)
+			fprintf(ERRSTREAM, "cLinkedList (cListPrevElem): WARNING - Quashed attempt to access NULL pointer.\n");
 		return NULL;
 	} else if ((myList->num_elem == 0) || (myList->anchor.nextElem == myElem)) {
         return NULL;
