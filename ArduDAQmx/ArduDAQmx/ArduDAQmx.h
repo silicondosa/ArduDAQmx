@@ -212,7 +212,7 @@ inline unsigned getArduDAQmxDevPrefixLength();
 int ArduDAQmxConfigure();
 int ArduDAQmxInit(char *devicePrefix);
 int ArduDAQmxTerminate();
-void ArduDAQmxClearEnumerateDevices();
+void ArduDAQmxClearEnumeratedDevices();
 
 	// Get the DAQmx device
 DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);

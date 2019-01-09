@@ -48,7 +48,7 @@ void enumerateDAQmxDevices(int printFlag)
 	char			*DAQmxDevNameList = NULL; // primary device name string
 	char			*remainder_DAQmxDevNameList = NULL; // remainder device name string
 	char			*DAQmxDeviceType; // device type string
-	char			*DAQmxDevName;
+	char			*DAQmxDevName = NULL;
 	DAQmxDevice		*newDevice = NULL;
 
 	int				deviceSerial;
@@ -57,18 +57,18 @@ void enumerateDAQmxDevices(int printFlag)
 	int				isObjInserted = 0;
 	cListElem		*list_elem = NULL;
 	
-	// Create temporary/insert list for DAQmx Devices
-	ArduDAQmxClearEnumerateDevices();
-	DAQmxEnumeratedDevList = (cLinkedList *)malloc(sizeof(cLinkedList)); // DYN-M: create DAQmx master device list
+	// Create temporary linked list to enumerate and sort DAQmx devices
+	ArduDAQmxClearEnumeratedDevices();
+	DAQmxEnumeratedDevList = (cLinkedList *) malloc(sizeof(cLinkedList)); // DYN-M: create DAQmx master device list. Cleared in ArduDAQmxClearEnumeratedDevices()
 	cListInit(DAQmxEnumeratedDevList);
 	int tempDAQmxEnumeratedDevCount  = 0;
 
 	// obtain device names from NI-DAQmx
 	buffersize = DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, (void *)DAQmxDevNameList);
-	DAQmxDevNameList = (char*)malloc(buffersize); // DYN-M: dynamically allocate devicenames
+	DAQmxDevNameList = (char*) malloc(buffersize); // DYN-M: dynamically allocate devicenames. Cleared at the end of this function.
 	remainder_DAQmxDevNameList = DAQmxDevNameList;
 
-	//Get the string of devicenames in the computer
+	//Get the string of devicenames from NI-DAQmx
 	DAQmxGetSystemInfoAttribute(DAQmx_Sys_DevNames, DAQmxDevNameList, buffersize);
 
 	// Optionally print device table headers
@@ -79,18 +79,18 @@ void enumerateDAQmxDevices(int printFlag)
 		printf("***************************************************************************\n");
 	} // end print flag check
 
-	//Get information about the first DAQmx device on the list
+	//Get information about the DAQmx devices on the list
 	for (DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ",", &remainder_DAQmxDevNameList); DAQmxDevName != NULL; DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ", ", &remainder_DAQmxDevNameList), tempDAQmxEnumeratedDevCount++) {
 		// Obtain some device properties
 		devicetype_buffersize = DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_ProductType, NULL); //Get Product Type for a DAQmx device pointed to by devToken
-		DAQmxDeviceType = (char*) malloc(devicetype_buffersize); // DYN-M: dynamically allocate memory for devicetype
+		DAQmxDeviceType = (char*) malloc(devicetype_buffersize); // DYN-M: dynamically allocate memory for devicetype. Memory is cleared later in this function.
 		DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_ProductType, DAQmxDeviceType, devicetype_buffersize); //Get device type		
 		DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_SerialNum  , &deviceSerial  , 1); //Get Product Serial Number for the device
 		DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_IsSimulated, &isSimulated  , 1); //Get "Is device simulated?" flag for the device
 
-		newDevice = (DAQmxDevice *) malloc(sizeof(DAQmxDevice)); // DYN-M: dynamically allocate newDevice for DAQmx Master List
+		newDevice = (DAQmxDevice *) malloc(sizeof(DAQmxDevice)); // DYN-M: dynamically allocate newDevice for DAQmx device. Freed recursively in ArduDAQmxClearEnumeratedDevices().
 			
-		//copy datapoints
+		//copy retrieved datapoints to the newly created DAQmx device object
 		strcpy_s(newDevice->DevName, sizeof(newDevice->DevName), DAQmxDevName); // copy device name in structure
 		devNUM					= strtol( &(newDevice->DevName[ArduDAQmxDevPrefixLength]), NULL, 10);
 		newDevice->DevNum		= devNUM; // set device number in structure			
@@ -132,7 +132,7 @@ void enumerateDAQmxDevices(int printFlag)
 				printf("%s || %d || %s || %d || yes\n", DAQmxDevName, devNUM, DAQmxDeviceType, deviceSerial);
 		} // end print flag check
 
-		free(DAQmxDeviceType); // free device type buffer
+		free(DAQmxDeviceType); // DYN-F free device type buffer
 	} // end device enumeration for loop
 
 	// Print end of device table, status messages
@@ -159,7 +159,10 @@ void enumerateDAQmxDevices(int printFlag)
 	DAQmxEnumeratedDevCount = tempDAQmxEnumeratedDevCount;
 	ArduDAQmxFirstEnum = 0;
 	
+	// Free up memory
 	free(DAQmxDevNameList); // DYN-F: free devicenames
+	DAQmxDevNameList = NULL;
+	remainder_DAQmxDevNameList = NULL;
 } // end enumerateDAQmxDevices function
 
 /*!
@@ -230,7 +233,7 @@ inline int printArduDAQmxStatus()
 }
 
 /*!
- * \fn inline int printDAQmxLastError()
+ * \fn inline int printArduDAQmxLastError()
  * Prints the meaning of the last library error as reflected in 'ArduDAQmxErrorCode'.
  * 
  * \return Returns 'ArduDAQmxErrorCode' as an integer.
@@ -346,11 +349,11 @@ int ArduDAQmxInit(char *devicePrefix)
 {
 	if (ArduDAQmxStatus == STATUS_PRECONFIG) {
 		// copy string passed as parameter as device prefix and set prefix length
-		ArduDAQmxDevPrefix = (char *)malloc(sizeof(char)*(MaxArduDAQmxDevPrefixLength+1));
+		ArduDAQmxDevPrefix = (char *)malloc(sizeof(char)*(MaxArduDAQmxDevPrefixLength+1)); // DYN-M: allocate memory for the NI-DAQmx prefix
 		strncpy_s(ArduDAQmxDevPrefix, 1+strnlen_s(devicePrefix, MaxArduDAQmxDevPrefixLength), devicePrefix, MaxArduDAQmxDevPrefixLength);		
 		ArduDAQmxDevPrefixLength = strnlen_s(ArduDAQmxDevPrefix, MaxArduDAQmxDevPrefixLength);
 		// enumerate and configure devices
-		enumerateDAQmxDevices(1);
+		enumerateDAQmxDevices(0);
 		ArduDAQmxConfigure();
 	} else {
 		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to initialize. Terminate library first!\n");
@@ -370,28 +373,28 @@ int ArduDAQmxInit(char *devicePrefix)
  */
 int ArduDAQmxTerminate()
 {
-	//TODO: stop any active DAQmx tasks using the ArduDAQmx I/O Stop function
-		
-
-	ArduDAQmxClearEnumerateDevices(); // clear enumerated device list
-
+	//TODO: stop any active DAQmx tasks using the ArduDAQmx I/O Stop function		
+	ArduDAQmxStatus				= (int)STATUS_PRECONFIG;
+	ArduDAQmxError				= 0;
+	NIDAQmxErrorCode			= 0;	
+	free(ArduDAQmxDevPrefix); // DYN-F: free ArduDAQmxDevPrefix allocation
+		ArduDAQmxDevPrefix		= NULL;	
+	ArduDAQmxDevPrefixLength	= MaxArduDAQmxDevPrefixLength;
 	free(ArduDAQmxDevList); // DYN-F: free ArduDAQmxDevList array
-	ArduDAQmxDevList = NULL;
-	
-	free(ArduDAQmxDevPrefix);
-	ArduDAQmxDevPrefix = NULL;
-
-	ArduDAQmxStatus = (int)STATUS_PRECONFIG;
+		ArduDAQmxDevList		= NULL;	
+	ArduDAQmxDevCount			= 0;
+	ArduDAQmxDevMaxNum			= 0;
+	ArduDAQmxClearEnumeratedDevices(); // clear enumerated device list
 
 	return ArduDAQmxStatus;
 }
 
 /*!
- * \fn void ArduDAQmxClearEnumerateDevices()
+ * \fn void ArduDAQmxClearEnumeratedDevices()
  * Clears the linked list of enumerated devices. Automatically called by 'enumerateDAQmxDevices'.
  * Not to be used by the user. 
  */
-void ArduDAQmxClearEnumerateDevices()
+void ArduDAQmxClearEnumeratedDevices()
 {
 	// DYN-F: delete devices from DAQmxEnumeratedDevList and unlink all of it.
 	if (DAQmxEnumeratedDevList != NULL) {
@@ -405,6 +408,7 @@ void ArduDAQmxClearEnumerateDevices()
 		}
 
 		free(DAQmxEnumeratedDevList); // DYN-F: free DAQmxEnumeratedDevList
+
 		DAQmxEnumeratedDevList = NULL;
 		DAQmxEnumeratedDevCount = 0;
 		DAQmxEnumeratedDevMaxNum = 0;
