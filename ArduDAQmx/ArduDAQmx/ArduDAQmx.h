@@ -31,7 +31,7 @@ extern int ArduDAQmxError;
 /*!
  * Error code of the NI-DAQmx library. DO NOT access this variable.
  */
-extern int NIDAQmxErrorCode;
+extern long NIDAQmxErrorCode;
 
 /*!
 * Default device name prefix as "PXI1Slot".
@@ -47,9 +47,21 @@ extern const char *DefaultArduDAQmxDevPrefix;
 extern char *ArduDAQmxDevPrefix;
 
 /*!
- * The maximum length of the DADmx device string is 8 characters. It does NOT include the NULL character.
+ * The maximum length of the DADmx device string prefix is 8 characters. It does NOT include the NULL character.
  */
 extern const unsigned MaxArduDAQmxDevPrefixLength;
+
+/*!
+ * The maximum length of the DAQmx device string is 10 characters. It does NOT include the NULL character.
+ * 8 characters are for the 'ArduDAQmxDevPrefix', same as 'MaxArduDAQmxDevPrefixLength'.
+ * The last 2 characrers are for the device ID - with a maximum value of 99.
+ */
+extern const unsigned MaxArduDAQmxDevStringLength;
+
+/*!
+ * The maximum ID string length permitted by NI-DAQmx is 255 characters. 
+ */
+extern const unsigned MaxNIstringLength;
 
 /*!
  * Length of the device name prefix - used to isolate device number. DO NOT access this variable directly.
@@ -76,6 +88,10 @@ typedef enum _ArduDAQmxStatusMode {
  * Enumerates the list of error codes of the ArduDAQmx library as set in 'ArduDAQmxErrorCode'.
  */
 typedef enum _ArduDAQmxErrorCode {
+	/*!	An invalid or unsupported I/O type has been selected.*/
+	ERROR_INVIO				= -5,
+	/*! NI-DAQmx has generated an error. Need to check 'NIDAQmxErrorCode' for details.*/
+	ERROR_NIDAQMX			= -4,
 	/*! List of NI-DAQmx devices detected by ArduDAQmx library has changed.*/
 	ERROR_DEVCHANGE			= -3,
 	/*! No NI-DAQmx devices detected by ArduDAQmx library.*/
@@ -131,17 +147,32 @@ typedef struct _pin {
  */
 typedef struct _DAQmxDevice{
 	/*! DAQmx Device name - max 255 characters.*/
-	char			DevName[256];
+	char			DevName[16];
 	/*! NI-DAQ device/slot number*/
 	unsigned int	DevNum;
 	/*! Serial number of the NI-DAQ device*/
 	int				DevSerial;
 	/*! This flag is set when device is simulated.*/
 	int				isDevSim;
+
+	//task list and pin list may not be needed
 	/*! Pointer to the array of pins of the device.*/
 	pin				*pinList;
 	/*! List of tasks associated with the device.*/
 	cLinkedList		*taskList;
+
+	/*!	Number of Analong Input channels available in the device.*/
+	unsigned int	numAIch;
+	/*!	Number of Analong Output channels available in the device.*/
+	unsigned int	numAOch;
+	/*!	Number of Digital Input channels available in the device.*/
+	unsigned int	numDIch;
+	/*!	Number of Digital Output channels available in the device.*/
+	unsigned int	numDOch;
+	/*!	Number of Counter Input channels available in the device.*/
+	unsigned int	numCIch;
+	/*!	Number of Counter Output channels available in the device.*/
+	unsigned int	numCOch;
 } DAQmxDevice;
 
 typedef struct _DAQmxTask {
@@ -194,8 +225,12 @@ extern unsigned long DAQmxEnumeratedDevMaxNum;
 
 
 
-// library function declarations
-	// configuration functions
+// Library support function declarations
+char* dev2string(char *strBuf, unsigned int devNum);
+char* pin2string(char *strbuf, unsigned int devNum, IOmode ioMode, unsigned int pinNum);
+inline int32 DAQmxErrChk(int32 NIerrCode);
+
+// Library configuration function declarations
 //void deleteEnumeratedDevices();
 void enumerateDAQmxDevices(int printFlag);
 inline int getArduDAQmxStatus();
@@ -208,14 +243,17 @@ inline unsigned long getDAQmxDeviceCount();
 inline char * getArduDAQmxPrefix();
 inline unsigned getArduDAQmxDevPrefixLength();
 
-	// initialization and termination functions
+unsigned int enumerateDAQmxDeviceTerminals(unsigned int deviceNumber);
+unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, unsigned int printFlag);
+
+// Library initialization and termination function declarations
 int ArduDAQmxConfigure();
 int ArduDAQmxInit(char *devicePrefix);
 int ArduDAQmxTerminate();
 void ArduDAQmxClearEnumeratedDevices();
 
 	// Get the DAQmx device
-DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
+//DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
 
 	// mode selection functions
 pin* pinMode(unsigned int, unsigned int, IOmode);

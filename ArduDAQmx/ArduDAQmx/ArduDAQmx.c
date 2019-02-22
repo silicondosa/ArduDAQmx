@@ -19,10 +19,12 @@ int ArduDAQmxFirstEnum = 1; // Flag to indicate that this is the first device en
 	// EXTERN declarations
 int				ArduDAQmxStatus				= (int) STATUS_PRECONFIG;
 int				ArduDAQmxError				= 0;
-int				NIDAQmxErrorCode			= 0;
+long			NIDAQmxErrorCode			= 0;
 const char		*DefaultArduDAQmxDevPrefix	= "PXI1Slot";
 char			*ArduDAQmxDevPrefix			= NULL;
 const unsigned	MaxArduDAQmxDevPrefixLength	= 8;
+const unsigned	MaxArduDAQmxDevStringLength = MaxArduDAQmxDevPrefixLength + 2;
+const unsigned	MaxNIstringLength			= 255;
 unsigned		ArduDAQmxDevPrefixLength	= MaxArduDAQmxDevPrefixLength;
 DAQmxDevice		*ArduDAQmxDevList			= NULL;
 unsigned long	ArduDAQmxDevCount			= 0;
@@ -31,7 +33,65 @@ cLinkedList		*DAQmxEnumeratedDevList		= NULL;
 unsigned long	DAQmxEnumeratedDevCount		= 0;
 unsigned long	DAQmxEnumeratedDevMaxNum	= 0;
 
-// Library function definitions
+// Library support function definitions
+char* dev2string(char *strBuf, unsigned int devNum)
+{
+	snprintf(strBuf, 1 + MaxArduDAQmxDevStringLength, "%s%d", ArduDAQmxDevPrefix, devNum);
+	return strBuf;
+}
+
+char* pin2string(char *strbuf, unsigned int devNum, IOmode ioMode, unsigned int pinNum)
+{
+	const int pinTypeLength = 10;
+	char pinType[pinTypeLength];
+	switch (ioMode)
+	{
+		case IOmode::ANALOG_IN:
+			snprintf(pinType, pinTypeLength, "ai");
+			break;
+		case IOmode::ANALOG_OUT:
+			snprintf(pinType, pinTypeLength, "ao");
+			break;
+		case IOmode::DIGITAL_IN:
+			snprintf(pinType, pinTypeLength, "port");
+			break;
+		case IOmode::DIGITAL_OUT:
+			snprintf(pinType, pinTypeLength, "port");
+			break;
+		case IOmode::COUNTER_IN:
+			snprintf(pinType, pinTypeLength, "ctr");
+			break;
+		case IOmode::COUNTER_OUT:
+			snprintf(pinType, pinTypeLength, "ctr");
+			break;
+		default:
+			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Invalid I/O type requested.\n");
+			break;
+	}
+	snprintf(strbuf, MaxNIstringLength, "%s%d/%s%d", ArduDAQmxDevPrefix, devNum, pinType, pinNum);
+	return strbuf;
+}
+
+/*!
+ * \fn int32 DAQmxErrChk(int32 NIerrCode)
+ * Checks if passed value represents a valid NI-DAQmx error. If DAQmx error is detected it sets 'NIDAQmxErrorCode.'
+ * Then, it shuts down all NI-DAQmx tasks and terminates ArduDAQmx library immediately.
+ * 
+ * \param NIerrCode the INT32 error code from NI-DAQmx is passed here.
+ * \return Returns the NI-DAQmx error code as an INT32 value.
+ */
+inline int32 DAQmxErrChk(int32 NIerrCode)
+{
+	if (NIerrCode < 0) {
+		char DAQmxErrChkStr[2048];
+		DAQmxGetExtendedErrorInfo(DAQmxErrChkStr, 2048);
+		NIDAQmxErrorCode = NIerrCode;
+		ArduDAQmxTerminate();
+	}
+	return NIerrCode;
+}
+
+// Library configuration funcion definitions
 /*!
  * \fn void enumerateDAQmxDevices(int printFlag)
  * enumerates all accessible DAQmx devices and populates the 'ArduDAQmxDevList' list along with some status messages.
@@ -74,10 +134,10 @@ void enumerateDAQmxDevices(int printFlag)
 
 	// Optionally print device table headers
 	if (printFlag == 1) {
-		printf("Full Device name list: %s\n\n", DAQmxDevNameList);
-		printf("******************** LIST OF DEVICES ON THIS COMPUTER *********************\n");
-		printf("Device Name || Device Number || Device type || Device Serial# || Simulated?\n");
-		printf("***************************************************************************\n");
+		fprintf(LOGSTREAM, "Full Device name list: %s\n\n", DAQmxDevNameList);
+		fprintf(LOGSTREAM, "*** LIST OF DEVICES ON THIS COMPUTER ******************************************************************\n");
+		fprintf(LOGSTREAM, "| Dev# || Dev Type || Dev Serial# || Sim? || AI Ch# || AO Ch# || DI Ch# || DO Ch# || CI Ch# || CO Ch# |\n");
+		fprintf(LOGSTREAM, "*******************************************************************************************************\n");
 	} // end print flag check
 
 	//Get information about the DAQmx devices on the list
@@ -101,6 +161,15 @@ void enumerateDAQmxDevices(int printFlag)
 		
 		// TODO: initialize list of tasks
 
+
+		//initialize numbers of available physical channels
+		newDevice->numAIch = enumerateDAQmxDeviceChannels(newDevice->DevNum, ANALOG_IN  , 0);
+		newDevice->numAOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, ANALOG_OUT , 0);
+		newDevice->numDIch = enumerateDAQmxDeviceChannels(newDevice->DevNum, DIGITAL_IN , 0);
+		newDevice->numDOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, DIGITAL_OUT, 0);
+		newDevice->numCIch = enumerateDAQmxDeviceChannels(newDevice->DevNum, COUNTER_IN , 0);
+		newDevice->numCOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, COUNTER_OUT, 0);
+		
 		//set max device number
 		if(DAQmxEnumeratedDevMaxNum < newDevice->DevNum)
 			DAQmxEnumeratedDevMaxNum = newDevice->DevNum;
@@ -132,10 +201,10 @@ void enumerateDAQmxDevices(int printFlag)
 
 		// Optionally print device table contents
 		if (printFlag == 1) {
-			if (isSimulated = 0)
-				printf("%s || %d || %s || %d || no\n",  DAQmxDevName, devNUM, DAQmxDeviceType, deviceSerial);
-			else
-				printf("%s || %d || %s || %d || yes\n", DAQmxDevName, devNUM, DAQmxDeviceType, deviceSerial);
+			fprintf(LOGSTREAM, "| %4d || %s || %11d ||", devNUM, DAQmxDeviceType, deviceSerial);
+			if (isSimulated = 0)	fprintf(LOGSTREAM, "   NO ||");
+			else					fprintf(LOGSTREAM, "  YES ||");
+			fprintf(LOGSTREAM, " %6d || %6d || %6d || %6d || %6d || %6d |\n", newDevice->numAIch, newDevice->numAOch, newDevice->numDIch, newDevice->numDOch, newDevice->numCIch, newDevice->numCOch);
 		} // end print flag check
 
 		free(DAQmxDeviceType); // DYN-F free device type buffer
@@ -144,16 +213,17 @@ void enumerateDAQmxDevices(int printFlag)
 	// Print end of device table, status messages
 	
 	if (printFlag == 1) {
-		printf("***************************************************************************\n\n");
-		printf("ArduDAQmx library: %d devices in internal device list\n", cListLength(DAQmxEnumeratedDevList));
+		fprintf(LOGSTREAM, "*******************************************************************************************************\n");
+		fprintf(LOGSTREAM, "ArduDAQmx library: %d devices in internal device list\n", cListLength(DAQmxEnumeratedDevList));
 		printArduDAQmxStatus();
-		printf("***************************************************************************\n\n");
+		fprintf(LOGSTREAM, "*******************************************************************************************************\n");
 	} // end print flag check
 
 	// Test for change in the number of devices since library was configured. Also checks tests for no devices.
 	if (tempDAQmxEnumeratedDevCount != cListLength(DAQmxEnumeratedDevList) && ArduDAQmxFirstEnum == 0) {
 		fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Length of enumerated device list not equal to enumerated device count.\n");
 		fprintf(ERRSTREAM, "Temp Count: %d, Main Count (0x%p): %d", tempDAQmxEnumeratedDevCount, DAQmxEnumeratedDevList, cListLength(DAQmxEnumeratedDevList));
+		setArduDAQmxLastError(ERROR_DEVCHANGE, 1);
 		ArduDAQmxTerminate();
 		//getchar();
 		//exit(-1);
@@ -229,15 +299,19 @@ inline int printArduDAQmxStatus()
 	switch (ArduDAQmxStatus)
 	{
 	case STATUS_PRECONFIG:
-			printf("ArduDAQmx library: Status: Library uninitialized. Urgh! [STATUS_PRECONFIG]\n");
+			fprintf(LOGSTREAM, "ArduDAQmx library: Status: Library uninitialized. Urgh! [STATUS_PRECONFIG]\n");
 			break;
 	case STATUS_CONFIG:
-			printf("ArduDAQmx library: Status: Initialized, but not configured. [STATUS_CONFIG]\n");
+			fprintf(LOGSTREAM, "ArduDAQmx library: Status: Initialized, but not configured. [STATUS_CONFIG]\n");
 			break;
 	case STATUS_READY:
-			printf("ArduDAQmx library: Status: Configured and ready. Let's Go!!! [STATUS_READY]\n");
+			fprintf(LOGSTREAM, "ArduDAQmx library: Status: Configured and ready. Let's Go!!! [STATUS_READY]\n");
 			break;	
+	case STATUS_RUN:
+			fprintf(LOGSTREAM, "ArduDAQmx library: Status: DAQmx Running - data being collected [STATUS_RUN]\n");
+			break;
 	default:
+			fprintf(LOGSTREAM, "ArduDAQmx library: Status: ArduDAQmx has an unknown status [Status code: %d]\n");
 			break;
 	}
 	return ArduDAQmxStatus;
@@ -246,6 +320,7 @@ inline int printArduDAQmxStatus()
 /*!
  * \fn inline int printArduDAQmxLastError()
  * Prints the meaning of the last library error as reflected in 'ArduDAQmxErrorCode'.
+ * Unknown errors are detected as such and their integer error codes are printed.
  * 
  * \return Returns 'ArduDAQmxErrorCode' as an integer.
  */
@@ -253,19 +328,29 @@ inline int printArduDAQmxLastError()
 {
 	switch (ArduDAQmxError)
 	{
+	case ERROR_INVIO:
+			fprintf(ERRSTREAM, "ArduDAQmx library: Error: An unsupported/invalid I/O type was selected. [ERROR_INVIO]\n");
+			break;
+	case ERROR_NIDAQMX:
+			fprintf(ERRSTREAM, "ArduDAQmx library: Error: NI-DAQmx has encountered an error (NI Error Code: %d). [ERROR_NIDAQMX]\n", NIDAQmxErrorCode);
+			char NIerrorString[1000];
+			DAQmxGetErrorString(NIDAQmxErrorCode, NIerrorString, 1000);
+			fprintf(ERRSTREAM, "ArduDAQmx library: NI-DAQmx Error: %s\n", NIerrorString);
+			break;
 	case ERROR_DEVCHANGE:
-			printf("ArduDAQmx library: Error: Number of DAQmx devices have changed during operation. [ERROR_DEVCHANGE]\n");
+			fprintf(ERRSTREAM, "ArduDAQmx library: Error: Number of DAQmx devices have changed during operation. [ERROR_DEVCHANGE]\n");
 			break;
 	case ERROR_NODEVICES:
-			printf("ArduDAQmx library: Error: No DAQmx devices discovered. [ERROR_NODEVICES]\n");
+			fprintf(ERRSTREAM, "ArduDAQmx library: Error: No DAQmx devices discovered. [ERROR_NODEVICES]\n");
 			break;
 	case ERROR_NOTCONFIG:
-			printf("ArduDAQmx library: Error: Library is not configured. [ERROR_NOTCONFIG]\n");
+			fprintf(ERRSTREAM, "ArduDAQmx library: Error: Library is not configured. [ERROR_NOTCONFIG]\n");
 			break;
 	case ERROR_NONE:
-			printf("ArduDAQmx library: No errors detected. [ERROR_NONE]\n");
+			fprintf(ERRSTREAM, "ArduDAQmx library: No errors detected. [ERROR_NONE]\n");
 			break;	
 	default:
+			fprintf(ERRSTREAM, "ArduDAQmx library: An unknown error was detected. [ArduDAQmx error code: %d]\n", ArduDAQmxError);
 			break;
 	}
 	return (int)ArduDAQmxError;
@@ -317,6 +402,99 @@ inline unsigned getArduDAQmxDevPrefixLength()
 }
 
 /*!
+ * \fn unsigned int enumerateDAQmxDeviceTerminals(unsigned int deviceNumber)
+ * Detects, enumerates and prints all the terminals on a specified DAQmx device.
+ * 
+ * \return Returns the total number of terminals on the device.
+ */
+unsigned int enumerateDAQmxDeviceTerminals(unsigned int deviceNumber)
+{
+	char myDev[1+MaxNIstringLength];
+	const unsigned bufSize = 20000;
+	char data[bufSize], data2[bufSize];
+	char *rem_data;
+	char *oneCh_data;
+	
+	dev2string(myDev, deviceNumber);
+	NIDAQmxErrorCode = DAQmxGetDevTerminals(myDev, data, bufSize);
+	int charLength = (int)strnlen_s(data, bufSize);
+	rem_data = data;
+	unsigned int i = 0;
+	
+	for (oneCh_data = strtok_s(rem_data, ",", &rem_data); oneCh_data != NULL; oneCh_data = strtok_s(rem_data, ",", &rem_data), i++) {
+		fprintf(LOGSTREAM, "Terminal %d: %s\n", i+1, oneCh_data);
+	}
+
+	fprintf(LOGSTREAM, "\nOn %s - %d Terminals (%d characters)\n\n", myDev, i, charLength);
+
+	// get AI physical channels
+	DAQmxGetDevAIPhysicalChans(myDev, data, bufSize);
+	fprintf(LOGSTREAM, "Physical AI Channels (%d characters): %s\n\n", strnlen_s(data, bufSize-1), data);
+
+	DAQmxGetDevAOPhysicalChans(myDev, data, bufSize);
+	fprintf(LOGSTREAM, "Physical AO Channels (%d characters): %s\n"  , strnlen_s(data, bufSize-1), data);
+
+
+	return i;
+}
+
+/*!
+ * \fn unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, unsigned int printFlag)
+ * Returns the number of physical channels of a particular I/O type available in a specified device.
+ * A printFlag also allows users to optionally have the function print the list of available channels.
+ * 
+ * \param myDev Device ID numver of the NI-DAQmx device as specified by ArduDAQmx
+ * \param IOtype The supported 'IOmode' I/O types for which number of channels must be enumerated.
+ * \param printFlag Set to 1 to print the list of channels of the specified I/O types available with the device.
+ * \return Returns the number of physical channels of the specified I/O type that is available in the device.
+ */
+unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, unsigned int printFlag)
+{
+	const unsigned bufSize = 20000;
+	char data[bufSize];
+	char DevIDstring[1+MaxArduDAQmxDevStringLength];
+	char *rem_data, *oneCh_data;
+
+	dev2string(DevIDstring, myDev);
+
+	switch (IOtype)
+	{
+	case ANALOG_IN:		// ENUM value 0
+		DAQmxGetDevAIPhysicalChans(DevIDstring, data, bufSize);
+		break;
+	case ANALOG_OUT:	// ENUM value 1
+		DAQmxGetDevAOPhysicalChans(DevIDstring, data, bufSize);
+		break;
+	case DIGITAL_IN:	// ENUM value 2
+		DAQmxGetDevDIPorts(DevIDstring, data, bufSize);
+		break;
+	case DIGITAL_OUT:	// ENUM value 3
+		DAQmxGetDevDOPorts(DevIDstring, data, bufSize);
+		break;
+	case COUNTER_IN:	// ENUM value 4
+		DAQmxGetDevCIPhysicalChans(DevIDstring, data, bufSize);
+		break;
+	case COUNTER_OUT:	// ENUM value 5
+		DAQmxGetDevCOPhysicalChans(DevIDstring, data, bufSize);
+		break;
+	default:
+		setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+		ArduDAQmxTerminate();
+		break;
+	}
+
+	rem_data = data;
+	unsigned int i = 0;
+	for (oneCh_data = strtok_s(rem_data, ",", &rem_data); oneCh_data != NULL; oneCh_data = strtok_s(rem_data, ",", &rem_data), i++) {
+		if (printFlag == 1) {
+			fprintf(LOGSTREAM, "Terminal %d: %s\n", i + 1, oneCh_data);
+		} // end printflag if block
+	}// end channel counting for loop
+
+	return i; // returns the number of termninals of a certain I/O type avaiable in a particular device.
+}
+
+/*!
  * \fn int ArduDAQmxConfigure()
  * Configures the ArduDAQmx library with a list of devices and library status.
  * This function is called by 'ArduDAQmxInit' and must be called before initialization to setup the library.
@@ -351,8 +529,14 @@ int ArduDAQmxConfigure()
 		}
 		ArduDAQmxDevCount  = DAQmxEnumeratedDevCount;
 		ArduDAQmxDevMaxNum = DAQmxEnumeratedDevMaxNum;
-		setArduDAQmxLastError(ERROR_NONE, 0);
-		ArduDAQmxStatus = STATUS_CONFIG;
+		if (ArduDAQmxDevCount > 0) {
+			setArduDAQmxLastError(ERROR_NONE, 0);
+			ArduDAQmxError		= 0;
+			NIDAQmxErrorCode	= 0;	
+			ArduDAQmxStatus		= STATUS_CONFIG;
+		} else {
+			setArduDAQmxLastError(ERROR_NODEVICES, 1);
+		}
 	} else {
 		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to configure.\n");
 	}
@@ -397,9 +581,12 @@ int ArduDAQmxInit(char *devicePrefix)
 int ArduDAQmxTerminate()
 {
 	//TODO: stop any active DAQmx tasks using the ArduDAQmx I/O Stop function		
+
+
+	if (getArduDAQmxLastError() != 0)
+		printArduDAQmxLastError();
+
 	ArduDAQmxStatus				= (int)STATUS_PRECONFIG;
-	ArduDAQmxError				= 0;
-	NIDAQmxErrorCode			= 0;	
 	free(ArduDAQmxDevPrefix); // DYN-F: free ArduDAQmxDevPrefix allocation
 		ArduDAQmxDevPrefix		= NULL;	
 	ArduDAQmxDevPrefixLength	= MaxArduDAQmxDevPrefixLength;
@@ -449,13 +636,18 @@ void ArduDAQmxClearEnumeratedDevices()
  * \param IOtype I/O type being requested on the pin as defined in ::IOmode.
  * \return Returns the 'pin' data structure used to configure and operate the pin.
  */
- 
-/*
 pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 {
-	DAQmxDevice myDev = ArduDAQmxDevList[deviceNumer-1];
+	DAQmxDevice *myDev = &(ArduDAQmxDevList[deviceNumer-1]);
 	pin * myPin = NULL;
-	if (myDev != NULL) {
+	if (ArduDAQmxStatus == STATUS_CONFIG) {
+
+	} else if (ArduDAQmxStatus == STATUS_READY) {
+
+	}
+
+	if (myDev->DevNum != 0) {
+
 		// every type of IO mode supported by the device gets it's own task.
 
 		// Search through them by IO type and pin number
@@ -473,4 +665,9 @@ pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 
 	return myPin;
 }
-*/
+
+
+void analogRead()
+{
+
+}

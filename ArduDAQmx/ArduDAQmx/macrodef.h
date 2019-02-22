@@ -49,8 +49,12 @@
 #endif /* ~MAXPATHLENGTH */
 
 #ifndef ERRSTREAM
-	#include <stdio.h>
 	#define ERRSTREAM stdout
 #endif
+
+#ifndef LOGSTREAM
+	#define LOGSTREAM stdout
+#endif // !LOGSTREAM
+
 
 #endif //MACRODEF_H
