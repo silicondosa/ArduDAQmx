@@ -202,7 +202,7 @@ void enumerateDAQmxDevices(int printFlag)
 			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum == newDevice->DevNum) { // if more than one object has equal device numbers, call FATAL error
 				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Multiple DAQmx devices have the same device number. Rename devices in NI MAX.\n");
 				ArduDAQmxTerminate();
-				setArduDAQmxLastError(ERROR_UNSUPPORTED);
+				setArduDAQmxLastError(ERROR_UNSUPPORTED, 1);
 				isObjInserted = 1;
 				DEVenumERR = -1;
 				//exit(-1);
@@ -230,7 +230,7 @@ void enumerateDAQmxDevices(int printFlag)
 	if (printFlag == 1) {
 		if (DEVenumERR != 0) {
 			fprintf(LOGSTREAM, "*******************************************************************************************************\n");
-			fprintf(LOGSTREAM, "ArduDAQmx library: The last device printed above encountered an error. Terminating library.\n", cListLength(DAQmxEnumeratedDevList));
+			fprintf(LOGSTREAM, "ArduDAQmx library: The last device printed above encountered an error. Terminating library.\n");
 			printArduDAQmxStatus();
 			fprintf(LOGSTREAM, "*******************************************************************************************************\n");
 
@@ -338,7 +338,7 @@ inline int printArduDAQmxStatus()
 			fprintf(LOGSTREAM, "ArduDAQmx library: Status: DAQmx Running - data being collected [STATUS_RUN]\n");
 			break;
 	default:
-			fprintf(LOGSTREAM, "ArduDAQmx library: Status: ArduDAQmx has an unknown status [Status code: %d]\n");
+			fprintf(LOGSTREAM, "ArduDAQmx library: Status: ArduDAQmx has an unknown status [Status code: %d]\n", ArduDAQmxStatus);
 			break;
 	}
 	return ArduDAQmxStatus;
@@ -556,11 +556,18 @@ int ArduDAQmxConfigure()
 			cpyDev[cpyInd] = *(DAQmxDevice*)(elem->obj);
 			
 			//Create NI-DAQmx task handlers
-			if (cpyDev[cpyInd].numAIch > 0)
-			{
-				AI
+			if (cpyDev[cpyInd].numAIch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].AItaskHandler)) );
+			if (cpyDev[cpyInd].numAOch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].AOtaskHandler)) );
+			if (cpyDev[cpyInd].numDIch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].DItaskHandler)) );
+			if (cpyDev[cpyInd].numDOch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].DOtaskHandler)) );
+			if (cpyDev[cpyInd].numCIch > 0) {
+				cpyDev[cpyInd].CTRtaskHandler = (TaskHandle *)malloc(cpyDev[cpyInd].numCIch * sizeof(TaskHandle));
+				int i = 0;
+				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) {
+					DAQmxErrChk(DAQmxCreateTask( "", &(cpyDev[cpyInd].CTRtaskHandler[i]) ));
+				}
 			}
-		}
+		} // end device copy for loop
 		ArduDAQmxDevCount  = DAQmxEnumeratedDevCount;
 		ArduDAQmxDevMaxNum = DAQmxEnumeratedDevMaxNum;
 		if (ArduDAQmxDevCount > 0) {
@@ -615,8 +622,34 @@ int ArduDAQmxInit(char *devicePrefix)
  */
 int ArduDAQmxTerminate()
 {
-	//TODO: stop any active DAQmx tasks using the ArduDAQmx I/O Stop function		
+	//stop any active DAQmx tasks using the ArduDAQmx I/O Stop function		
+	int i, j;
+	for (i = 0; i < ArduDAQmxDevMaxNum; i++) {
+		if (ArduDAQmxDevList[i].numAIch > 0) {
+			DAQmxStopTask (ArduDAQmxDevList[i].AItaskHandler);
+			DAQmxClearTask(ArduDAQmxDevList[i].AItaskHandler);
+		}
+		if (ArduDAQmxDevList[i].numAOch > 0) {
+			DAQmxStopTask (ArduDAQmxDevList[i].AOtaskHandler);
+			DAQmxClearTask(ArduDAQmxDevList[i].AOtaskHandler);
+		}
+		if (ArduDAQmxDevList[i].numDIch > 0) {
+			DAQmxStopTask (ArduDAQmxDevList[i].DItaskHandler);
+			DAQmxClearTask(ArduDAQmxDevList[i].DItaskHandler);
+		}
+		if (ArduDAQmxDevList[i].numDOch > 0) {
+			DAQmxStopTask (ArduDAQmxDevList[i].DOtaskHandler);
+			DAQmxClearTask(ArduDAQmxDevList[i].DOtaskHandler);
+		}
+		if (ArduDAQmxDevList[i].numCIch > 0) {
+			for (j = 0; j < ArduDAQmxDevList[i].numCIch; j++) {
+				DAQmxStopTask (ArduDAQmxDevList[i].CTRtaskHandler[j]);
+				DAQmxClearTask(ArduDAQmxDevList[i].CTRtaskHandler[j]);
+			}
+			free(ArduDAQmxDevList[i].CTRtaskHandler);
+		}
 
+	} // end task stop and task clearing for loop
 
 	if (getArduDAQmxLastError() != 0)
 		printArduDAQmxLastError();

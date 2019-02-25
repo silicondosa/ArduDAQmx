@@ -165,12 +165,11 @@ typedef struct _DAQmxDevice{
 
 	// Number of NI-DAQmx tasks based on this NI article: https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019KWYSA2&l=en-US
 	
-	TaskHandle		*AItask;
-	TaskHandle		*AOtask;
-	TaskHandle		*DItask;
-	TaskHandle		*DOtask;
-	TaskHandle		*CItask;
-	TaskHandle		*COtask;
+	TaskHandle		  AItaskHandler;
+	TaskHandle		  AOtaskHandler;
+	TaskHandle		  DItaskHandler;
+	TaskHandle		  DOtaskHandler;
+	TaskHandle		*CTRtaskHandler;
 
 	/*!	Number of Analong Input channels available in the device.*/
 	unsigned int	numAIch;
