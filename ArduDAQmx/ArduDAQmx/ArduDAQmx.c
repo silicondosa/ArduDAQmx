@@ -86,6 +86,7 @@ inline int32 DAQmxErrChk(int32 NIerrCode)
 		char DAQmxErrChkStr[2048];
 		DAQmxGetExtendedErrorInfo(DAQmxErrChkStr, 2048);
 		NIDAQmxErrorCode = NIerrCode;
+		setArduDAQmxLastError(ERROR_NIDAQMX, 1);
 		ArduDAQmxTerminate();
 	}
 	return NIerrCode;
@@ -178,14 +179,17 @@ void enumerateDAQmxDevices(int printFlag)
 		if ( newDevice->DevNum == 0 ) { // if object in list has device number as 0, call FATAL error
 			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
 			ArduDAQmxTerminate();
+			setArduDAQmxLastError(ERROR_NODEVICES, 1);
 			DEVenumERR = -1;
 		} else if (newDevice->numDIch != newDevice->numDOch) {
 			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has unequal number of digital input and output ports - not supported.");
 			ArduDAQmxTerminate();
+			setArduDAQmxLastError(ERROR_UNSUPPORTED,1);
 			DEVenumERR = -1;
 		} else if (newDevice->numDIch != newDevice->numDOch) {
 			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has unequal number of counter input and output ports - not supported.");
 			ArduDAQmxTerminate();
+			setArduDAQmxLastError(ERROR_UNSUPPORTED, 1);
 			DEVenumERR = -1;
 		}
 		// Sort and insert new device object into temporary linked list
@@ -198,6 +202,7 @@ void enumerateDAQmxDevices(int printFlag)
 			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum == newDevice->DevNum) { // if more than one object has equal device numbers, call FATAL error
 				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Multiple DAQmx devices have the same device number. Rename devices in NI MAX.\n");
 				ArduDAQmxTerminate();
+				setArduDAQmxLastError(ERROR_UNSUPPORTED);
 				isObjInserted = 1;
 				DEVenumERR = -1;
 				//exit(-1);
@@ -294,7 +299,7 @@ inline int getArduDAQmxLastError()
 
 /*!
  * \fn inline int setArduDAQmxLastError(ErrorCode newErrorCode, unsigned printErrorMsgFlag)
- * Sets the '' eror code of the ArduDAQmx library.
+ * Sets the 'ArduDAQmxError' error code of the ArduDAQmx library.
  * The routine also prints the meaning of the message if the printErrorMsgFlag = 1.
  * 
  * \param newErrorCode The new error code to set of type 'ArduDAQmxErrorcode'
@@ -350,6 +355,9 @@ inline int printArduDAQmxLastError()
 {
 	switch (ArduDAQmxError)
 	{
+	case ERROR_UNSUPPORTED:
+			fprintf(ERRSTREAM, "ArduDAQmx library: Error: A feature/functionality that is unsupported by ArduDAQmx requested. [ERROR_UNSUPPORTED]\n");
+			break;
 	case ERROR_INVIO:
 			fprintf(ERRSTREAM, "ArduDAQmx library: Error: An unsupported/invalid I/O type was selected. [ERROR_INVIO]\n");
 			break;
@@ -542,15 +550,21 @@ int ArduDAQmxConfigure()
 			if (cpyInd < 0) {
 				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
 				ArduDAQmxTerminate();
+				setArduDAQmxLastError(ERROR_NODEVICES, 1);
 				termLoop = 1;
 			}
 			cpyDev[cpyInd] = *(DAQmxDevice*)(elem->obj);
+			
+			//Create NI-DAQmx task handlers
+			if (cpyDev[cpyInd].numAIch > 0)
+			{
+				AI
+			}
 		}
 		ArduDAQmxDevCount  = DAQmxEnumeratedDevCount;
 		ArduDAQmxDevMaxNum = DAQmxEnumeratedDevMaxNum;
 		if (ArduDAQmxDevCount > 0) {
 			setArduDAQmxLastError(ERROR_NONE, 0);
-			ArduDAQmxError		= 0;
 			NIDAQmxErrorCode	= 0;	
 			ArduDAQmxStatus		= STATUS_CONFIG;
 		} else {
@@ -582,7 +596,9 @@ int ArduDAQmxInit(char *devicePrefix)
 		enumerateDAQmxDevices(0);
 		ArduDAQmxConfigure();
 	} else {
-		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to initialize. Terminate library first!\n");
+		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to initialize. Terminating library!\n");
+		ArduDAQmxTerminate();
+		setArduDAQmxLastError(ERROR_NOTCONFIG,1);
 	}
 	return ArduDAQmxStatus;
 }

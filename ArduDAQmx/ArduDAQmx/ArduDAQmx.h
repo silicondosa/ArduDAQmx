@@ -88,6 +88,8 @@ typedef enum _ArduDAQmxStatusMode {
  * Enumerates the list of error codes of the ArduDAQmx library as set in 'ArduDAQmxErrorCode'.
  */
 typedef enum _ArduDAQmxErrorCode {
+	/*! A feature or functionality that is unsupported by ArduDAQmx requested.*/
+	ERROR_UNSUPPORTED		= -6,
 	/*!	An invalid or unsupported I/O type has been selected.*/
 	ERROR_INVIO				= -5,
 	/*! NI-DAQmx has generated an error. Need to check 'NIDAQmxErrorCode' for details.*/
@@ -160,6 +162,15 @@ typedef struct _DAQmxDevice{
 	pin				*pinList;
 	/*! List of tasks associated with the device.*/
 	cLinkedList		*taskList;
+
+	// Number of NI-DAQmx tasks based on this NI article: https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019KWYSA2&l=en-US
+	
+	TaskHandle		*AItask;
+	TaskHandle		*AOtask;
+	TaskHandle		*DItask;
+	TaskHandle		*DOtask;
+	TaskHandle		*CItask;
+	TaskHandle		*COtask;
 
 	/*!	Number of Analong Input channels available in the device.*/
 	unsigned int	numAIch;
