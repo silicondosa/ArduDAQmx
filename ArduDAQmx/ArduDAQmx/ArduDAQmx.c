@@ -115,7 +115,7 @@ void enumerateDAQmxDevices(int printFlag)
 	int				deviceSerial;
 	int				isSimulated;
 	unsigned long	devNUM = 0;
-	int				isObjInserted = 0;
+	int				isObjInserted = 0, DEVenumERR = 0;
 	cListElem		*list_elem = NULL;
 	
 	// Create temporary linked list to enumerate and sort DAQmx devices
@@ -141,7 +141,7 @@ void enumerateDAQmxDevices(int printFlag)
 	} // end print flag check
 
 	//Get information about the DAQmx devices on the list
-	for (DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ",", &remainder_DAQmxDevNameList); DAQmxDevName != NULL; DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ", ", &remainder_DAQmxDevNameList), tempDAQmxEnumeratedDevCount++) {
+	for (DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ",", &remainder_DAQmxDevNameList); DAQmxDevName != NULL && DEVenumERR == 0; DAQmxDevName = strtok_s(remainder_DAQmxDevNameList, ", ", &remainder_DAQmxDevNameList), tempDAQmxEnumeratedDevCount++) {
 		// Obtain some device properties
 		devicetype_buffersize = DAQmxGetDeviceAttribute(DAQmxDevName, DAQmx_Dev_ProductType, NULL); //Get Product Type for a DAQmx device pointed to by devToken
 		DAQmxDeviceType = (char*) malloc(devicetype_buffersize); // DYN-M: dynamically allocate memory for devicetype. Memory is cleared later in this function.
@@ -174,6 +174,20 @@ void enumerateDAQmxDevices(int printFlag)
 		if(DAQmxEnumeratedDevMaxNum < newDevice->DevNum)
 			DAQmxEnumeratedDevMaxNum = newDevice->DevNum;
 
+		// Sanity check new device
+		if ( newDevice->DevNum == 0 ) { // if object in list has device number as 0, call FATAL error
+			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
+			ArduDAQmxTerminate();
+			DEVenumERR = -1;
+		} else if (newDevice->numDIch != newDevice->numDOch) {
+			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has unequal number of digital input and output ports - not supported.");
+			ArduDAQmxTerminate();
+			DEVenumERR = -1;
+		} else if (newDevice->numDIch != newDevice->numDOch) {
+			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has unequal number of counter input and output ports - not supported.");
+			ArduDAQmxTerminate();
+			DEVenumERR = -1;
+		}
 		// Sort and insert new device object into temporary linked list
 		isObjInserted = 0;
 		list_elem = cListLastElem(DAQmxEnumeratedDevList);
@@ -181,15 +195,11 @@ void enumerateDAQmxDevices(int printFlag)
 			if (list_elem == NULL) { // if linked list is empty, append the new device to list
 				isObjInserted = 1;
 				cListAppend(DAQmxEnumeratedDevList, (void *)newDevice);
-			} else if ( newDevice->DevNum == 0 ) { // if object in list has device number as 0, call FATAL error
-				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
-				ArduDAQmxTerminate();
-				isObjInserted = 1;
-				//exit(-1);
 			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum == newDevice->DevNum) { // if more than one object has equal device numbers, call FATAL error
 				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Multiple DAQmx devices have the same device number. Rename devices in NI MAX.\n");
 				ArduDAQmxTerminate();
 				isObjInserted = 1;
+				DEVenumERR = -1;
 				//exit(-1);
 			} else if ( ((DAQmxDevice *)list_elem->obj)->DevNum <  newDevice->DevNum) { // if list object device number is greater than new device number, insert new device before the list object
 				isObjInserted = 1;
@@ -213,28 +223,40 @@ void enumerateDAQmxDevices(int printFlag)
 	// Print end of device table, status messages
 	
 	if (printFlag == 1) {
-		fprintf(LOGSTREAM, "*******************************************************************************************************\n");
-		fprintf(LOGSTREAM, "ArduDAQmx library: %d devices in internal device list\n", cListLength(DAQmxEnumeratedDevList));
-		printArduDAQmxStatus();
-		fprintf(LOGSTREAM, "*******************************************************************************************************\n");
+		if (DEVenumERR != 0) {
+			fprintf(LOGSTREAM, "*******************************************************************************************************\n");
+			fprintf(LOGSTREAM, "ArduDAQmx library: The last device printed above encountered an error. Terminating library.\n", cListLength(DAQmxEnumeratedDevList));
+			printArduDAQmxStatus();
+			fprintf(LOGSTREAM, "*******************************************************************************************************\n");
+
+		} else {
+			fprintf(LOGSTREAM, "*******************************************************************************************************\n");
+			fprintf(LOGSTREAM, "ArduDAQmx library: %d devices in internal device list\n", cListLength(DAQmxEnumeratedDevList));
+			printArduDAQmxStatus();
+			fprintf(LOGSTREAM, "*******************************************************************************************************\n");
+		}
 	} // end print flag check
 
+	//Sanity check comparison from previous enumeration
 	// Test for change in the number of devices since library was configured. Also checks tests for no devices.
 	if (tempDAQmxEnumeratedDevCount != cListLength(DAQmxEnumeratedDevList) && ArduDAQmxFirstEnum == 0) {
 		fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Length of enumerated device list not equal to enumerated device count.\n");
 		fprintf(ERRSTREAM, "Temp Count: %d, Main Count (0x%p): %d", tempDAQmxEnumeratedDevCount, DAQmxEnumeratedDevList, cListLength(DAQmxEnumeratedDevList));
 		setArduDAQmxLastError(ERROR_DEVCHANGE, 1);
 		ArduDAQmxTerminate();
+		DEVenumERR = -2;
 		//getchar();
 		//exit(-1);
 	} else if (tempDAQmxEnumeratedDevCount == 0) { // If no new devices on the list, flash a warning and disable library
 		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: No NI-DAQmx devices detected. Terminating the library...\n");		
 		setArduDAQmxLastError(ERROR_NODEVICES, 1);
 		ArduDAQmxTerminate();
+		DEVenumERR = -2;
 	} else if (DAQmxEnumeratedDevCount != 0 && DAQmxEnumeratedDevCount != tempDAQmxEnumeratedDevCount) { // if new list is different than old list, then flash warning and disable library
 		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: %d devices detected. Library had %d devices when configured and need to be reinitialized. Terminating the library now...", tempDAQmxEnumeratedDevCount, DAQmxEnumeratedDevCount);	
 		setArduDAQmxLastError(ERROR_DEVCHANGE, 1);
 		ArduDAQmxTerminate();
+		DEVenumERR = -2;
 	}
 
 	DAQmxEnumeratedDevCount = tempDAQmxEnumeratedDevCount;
@@ -427,14 +449,6 @@ unsigned int enumerateDAQmxDeviceTerminals(unsigned int deviceNumber)
 
 	fprintf(LOGSTREAM, "\nOn %s - %d Terminals (%d characters)\n\n", myDev, i, charLength);
 
-	// get AI physical channels
-	DAQmxGetDevAIPhysicalChans(myDev, data, bufSize);
-	fprintf(LOGSTREAM, "Physical AI Channels (%d characters): %s\n\n", strnlen_s(data, bufSize-1), data);
-
-	DAQmxGetDevAOPhysicalChans(myDev, data, bufSize);
-	fprintf(LOGSTREAM, "Physical AO Channels (%d characters): %s\n"  , strnlen_s(data, bufSize-1), data);
-
-
 	return i;
 }
 
@@ -484,11 +498,16 @@ unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, uns
 	}
 
 	rem_data = data;
-	unsigned int i = 0;
+	int i = 0;
 	for (oneCh_data = strtok_s(rem_data, ",", &rem_data); oneCh_data != NULL; oneCh_data = strtok_s(rem_data, ",", &rem_data), i++) {
 		if (printFlag == 1) {
-			fprintf(LOGSTREAM, "Terminal %d: %s\n", i + 1, oneCh_data);
+			fprintf(LOGSTREAM, "Terminal %d: %s\n", i + 1, oneCh_data);	
 		} // end printflag if block
+		
+		// Check and omit counting of frequency scalers
+		if (IOtype == COUNTER_OUT && strstr(oneCh_data, "freqout") != NULL) {
+			i--;
+		}
 	}// end channel counting for loop
 
 	return i; // returns the number of termninals of a certain I/O type avaiable in a particular device.

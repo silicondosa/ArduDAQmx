@@ -259,7 +259,7 @@ void ArduDAQmxClearEnumeratedDevices();
 pin* pinMode(unsigned int, unsigned int, IOmode);
 
 
-	// timing and trigger selection functions
+	// Sample Clock and Trigger selection functions
 
 
 	// I/O Run/Pause/Stop functions

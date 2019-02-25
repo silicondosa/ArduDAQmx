@@ -15,14 +15,14 @@ int main()
 	ArduDAQmxInit("PXI1Slot");
 	enumerateDAQmxDevices(1);
 
-	enumerateDAQmxDeviceTerminals(3);
-	/*
+	//enumerateDAQmxDeviceTerminals(2);
+	
 	printf("Counter In:\n");
-	enumerateDAQmxDeviceChannels(3, COUNTER_IN, 1);
+	enumerateDAQmxDeviceChannels(5, COUNTER_IN, 1);
 
 	printf("Counter Out:\n");
-	enumerateDAQmxDeviceChannels(3, COUNTER_OUT, 1);
-	*/
+	enumerateDAQmxDeviceChannels(5, COUNTER_OUT, 1);
+	
 
 
 
