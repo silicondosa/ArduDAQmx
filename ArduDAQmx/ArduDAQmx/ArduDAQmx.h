@@ -130,6 +130,12 @@ typedef enum _IOmode{
 	COUNTER_OUT		= 5
 }IOmode;
 
+//pin I/O direction
+typedef enum _IO_DIRECTION {
+	INPUT	= 0,
+	OUTPUT	= 1
+}IO_DIRECTION;
+
 /*!
  * Custom data type to encompass info on pins used by ArduDAQmx.
  */
@@ -138,8 +144,10 @@ typedef struct _pin {
 	unsigned int	DevNum		= 0;
 	/*! Pin number of the pin on the device.*/
 	unsigned int	PinNum		= 0;
-	/*! Pin active use flag*/
-	bool			activeFlag	= 0;
+	/*! NI-DAQmx task to which the pin is associated.*/
+	TaskHandle		*pinTask	= NULL;
+	/*!  Set to 1 iff the pin has been assigned to a task.*/
+	bool			pinAssignFlag	= 0;
 	/*! I/O mode of the pin as defined in ::IOmode.*/
 	IOmode			pinIOmode = INVALID_IO;
 } pin;
@@ -151,17 +159,17 @@ typedef struct _DAQmxDevice{
 	/*! DAQmx Device name - max 255 characters.*/
 	char			DevName[16];
 	/*! NI-DAQ device/slot number*/
-	unsigned int	DevNum;
+	unsigned int	DevNum		= 0;
 	/*! Serial number of the NI-DAQ device*/
-	int				DevSerial;
+	int				DevSerial	= 0;
 	/*! This flag is set when device is simulated.*/
-	int				isDevSim;
+	int				isDevSim	= 0;
 
 	//task list and pin list may not be needed
 	/*! Pointer to the array of pins of the device.*/
-	pin				*pinList;
+	pin				*pinList	= NULL;;
 	/*! List of tasks associated with the device.*/
-	cLinkedList		*taskList;
+	cLinkedList		*taskList	= NULL;
 
 	// Number of NI-DAQmx tasks based on this NI article: https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019KWYSA2&l=en-US
 	
@@ -171,18 +179,37 @@ typedef struct _DAQmxDevice{
 	TaskHandle		  DOtaskHandler;
 	TaskHandle		*CTRtaskHandler;
 
+	// NI-DAQmx pin management
 	/*!	Number of Analong Input channels available in the device.*/
-	unsigned int	numAIch;
+	unsigned int	numAIch = 0;
+	/*! List of AI pins on the device.*/
+	pin				*AIpins = NULL;
+
 	/*!	Number of Analong Output channels available in the device.*/
-	unsigned int	numAOch;
+	unsigned int	numAOch = 0;
+	/*! List of AO pins on the device.*/
+	pin				*AOpins = NULL;
+
 	/*!	Number of Digital Input channels available in the device.*/
-	unsigned int	numDIch;
+	unsigned int	numDIch = 0;
+	/*! List of DI pins on the device.*/
+	pin				*DIpins = NULL;
+
 	/*!	Number of Digital Output channels available in the device.*/
-	unsigned int	numDOch;
+	unsigned int	numDOch = 0;
+	/*! List of DO pins on the device.*/
+	pin				*DOpins = NULL;
+
 	/*!	Number of Counter Input channels available in the device.*/
-	unsigned int	numCIch;
+	unsigned int	numCIch = 0;
+	/*! List of CI pins on the device.*/
+	pin				*CIpins = NULL;
+
 	/*!	Number of Counter Output channels available in the device.*/
-	unsigned int	numCOch;
+	unsigned int	numCOch = 0;
+	/*! List of CO pins on the device.*/
+	pin				*COpins = NULL;
+
 } DAQmxDevice;
 
 typedef struct _DAQmxTask {
