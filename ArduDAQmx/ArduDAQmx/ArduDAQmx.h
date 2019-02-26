@@ -172,7 +172,7 @@ typedef struct _DAQmxDevice{
 	cLinkedList		*taskList	= NULL;
 
 	// Number of NI-DAQmx tasks based on this NI article: https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019KWYSA2&l=en-US
-	
+		// Task handlers are dynamically initialized in the configure function and cleared in the terminate functiion
 	TaskHandle		  AItaskHandler;
 	TaskHandle		  AOtaskHandler;
 	TaskHandle		  DItaskHandler;
@@ -180,6 +180,7 @@ typedef struct _DAQmxDevice{
 	TaskHandle		*CTRtaskHandler;
 
 	// NI-DAQmx pin management
+		// The pin lists are dynamically initialized in the configure function and cleared in the terminate function.
 	/*!	Number of Analong Input channels available in the device.*/
 	unsigned int	numAIch = 0;
 	/*! List of AI pins on the device.*/
@@ -209,7 +210,6 @@ typedef struct _DAQmxDevice{
 	unsigned int	numCOch = 0;
 	/*! List of CO pins on the device.*/
 	pin				*COpins = NULL;
-
 } DAQmxDevice;
 
 typedef struct _DAQmxTask {

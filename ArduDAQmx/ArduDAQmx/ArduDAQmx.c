@@ -554,18 +554,34 @@ int ArduDAQmxConfigure()
 				termLoop = 1;
 			}
 			cpyDev[cpyInd] = *(DAQmxDevice*)(elem->obj);
-			
-			//Create NI-DAQmx task handlers
-			if (cpyDev[cpyInd].numAIch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].AItaskHandler)) );
-			if (cpyDev[cpyInd].numAOch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].AOtaskHandler)) );
-			if (cpyDev[cpyInd].numDIch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].DItaskHandler)) );
-			if (cpyDev[cpyInd].numDOch > 0)	DAQmxErrChk( DAQmxCreateTask("", &(cpyDev[cpyInd].DOtaskHandler)) );
-			if (cpyDev[cpyInd].numCIch > 0) {
+
+			//Create NI-DAQmx task handlers and pin list
+			if (cpyDev[cpyInd].numAIch > 0) {
+				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AItaskHandler)));
+				cpyDev[cpyInd].AIpins = (pin *) malloc(cpyDev[cpyInd].numAIch * sizeof(pin));
+			}
+			if (cpyDev[cpyInd].numAOch > 0) {
+				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AOtaskHandler)));
+				cpyDev[cpyInd].AOpins = (pin *) malloc(cpyDev[cpyInd].numAOch * sizeof(pin));
+			}
+			if (cpyDev[cpyInd].numDIch > 0 || cpyDev[cpyInd].numDOch > 0) {
+				if (cpyDev[cpyInd].numDIch > 0) {
+					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DItaskHandler)));
+				}
+				if (cpyDev[cpyInd].numDOch > 0) {
+					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DOtaskHandler)));
+				}
+				cpyDev[cpyInd].DIpins = (pin *) malloc(cpyDev[cpyInd].numDIch * sizeof(pin));
+				cpyDev[cpyInd].DOpins = cpyDev[cpyInd].DOpins;
+			}
+			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) {
 				cpyDev[cpyInd].CTRtaskHandler = (TaskHandle *)malloc(cpyDev[cpyInd].numCIch * sizeof(TaskHandle));
 				int i = 0;
 				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) {
 					DAQmxErrChk(DAQmxCreateTask( "", &(cpyDev[cpyInd].CTRtaskHandler[i]) ));
 				}
+				cpyDev[cpyInd].CIpins = (pin *) malloc(cpyDev[cpyInd].numCIch * sizeof(pin));
+				cpyDev[cpyInd].COpins = cpyDev[cpyInd].CIpins;
 			}
 		} // end device copy for loop
 		ArduDAQmxDevCount  = DAQmxEnumeratedDevCount;
@@ -626,27 +642,39 @@ int ArduDAQmxTerminate()
 	int i, j;
 	for (i = 0; i < ArduDAQmxDevMaxNum; i++) {
 		if (ArduDAQmxDevList[i].numAIch > 0) {
-			DAQmxStopTask (ArduDAQmxDevList[i].AItaskHandler);
+			DAQmxStopTask(ArduDAQmxDevList[i].AItaskHandler);
 			DAQmxClearTask(ArduDAQmxDevList[i].AItaskHandler);
+			free(ArduDAQmxDevList[i].AIpins);
+			ArduDAQmxDevList[i].AIpins = NULL;
 		}
 		if (ArduDAQmxDevList[i].numAOch > 0) {
-			DAQmxStopTask (ArduDAQmxDevList[i].AOtaskHandler);
+			DAQmxStopTask(ArduDAQmxDevList[i].AOtaskHandler);
 			DAQmxClearTask(ArduDAQmxDevList[i].AOtaskHandler);
+			free(ArduDAQmxDevList[i].AOpins);
+			ArduDAQmxDevList[i].AOpins = NULL;
 		}
-		if (ArduDAQmxDevList[i].numDIch > 0) {
-			DAQmxStopTask (ArduDAQmxDevList[i].DItaskHandler);
-			DAQmxClearTask(ArduDAQmxDevList[i].DItaskHandler);
+		if (ArduDAQmxDevList[i].numDIch > 0 || ArduDAQmxDevList[i].numDOch > 0) {
+			if (ArduDAQmxDevList[i].numDIch > 0) {
+				DAQmxStopTask(ArduDAQmxDevList[i].DItaskHandler);
+				DAQmxClearTask(ArduDAQmxDevList[i].DItaskHandler);
+			}
+			if (ArduDAQmxDevList[i].numDOch > 0) {
+				DAQmxStopTask(ArduDAQmxDevList[i].DOtaskHandler);
+				DAQmxClearTask(ArduDAQmxDevList[i].DOtaskHandler);
+			}
+			free(ArduDAQmxDevList[i].DIpins);
+			ArduDAQmxDevList[i].DIpins = NULL;
+			ArduDAQmxDevList[i].DOpins = NULL;
 		}
-		if (ArduDAQmxDevList[i].numDOch > 0) {
-			DAQmxStopTask (ArduDAQmxDevList[i].DOtaskHandler);
-			DAQmxClearTask(ArduDAQmxDevList[i].DOtaskHandler);
-		}
-		if (ArduDAQmxDevList[i].numCIch > 0) {
+		if (ArduDAQmxDevList[i].numCIch > 0 || ArduDAQmxDevList[i].numCOch > 0) {
 			for (j = 0; j < ArduDAQmxDevList[i].numCIch; j++) {
 				DAQmxStopTask (ArduDAQmxDevList[i].CTRtaskHandler[j]);
 				DAQmxClearTask(ArduDAQmxDevList[i].CTRtaskHandler[j]);
 			}
 			free(ArduDAQmxDevList[i].CTRtaskHandler);
+			free(ArduDAQmxDevList[i].CIpins);
+			ArduDAQmxDevList[i].CIpins = NULL;
+			ArduDAQmxDevList[i].COpins = NULL;
 		}
 
 	} // end task stop and task clearing for loop
