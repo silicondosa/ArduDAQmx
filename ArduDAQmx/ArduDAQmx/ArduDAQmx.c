@@ -32,6 +32,7 @@ unsigned long	ArduDAQmxDevMaxNum			= 0;
 cLinkedList		*DAQmxEnumeratedDevList		= NULL;
 unsigned long	DAQmxEnumeratedDevCount		= 0;
 unsigned long	DAQmxEnumeratedDevMaxNum	= 0;
+sampleClock		ArduDAQmxSampleClock;
 
 // Library support function definitions
 char* dev2string(char *strBuf, unsigned int devNum)
@@ -46,27 +47,27 @@ char* pin2string(char *strbuf, unsigned int devNum, IOmode ioMode, unsigned int 
 	char pinType[pinTypeLength];
 	switch (ioMode)
 	{
-		case IOmode::ANALOG_IN:
-			snprintf(pinType, pinTypeLength, "ai");
-			break;
-		case IOmode::ANALOG_OUT:
-			snprintf(pinType, pinTypeLength, "ao");
-			break;
-		case IOmode::DIGITAL_IN:
-			snprintf(pinType, pinTypeLength, "port");
-			break;
-		case IOmode::DIGITAL_OUT:
-			snprintf(pinType, pinTypeLength, "port");
-			break;
-		case IOmode::COUNTER_IN:
-			snprintf(pinType, pinTypeLength, "ctr");
-			break;
-		case IOmode::COUNTER_OUT:
-			snprintf(pinType, pinTypeLength, "ctr");
-			break;
-		default:
-			fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Invalid I/O type requested.\n");
-			break;
+	case IOmode::ANALOG_IN:
+		snprintf(pinType, pinTypeLength, "ai");
+		break;
+	case IOmode::ANALOG_OUT:
+		snprintf(pinType, pinTypeLength, "ao");
+		break;
+	case IOmode::DIGITAL_IN:
+		snprintf(pinType, pinTypeLength, "port");
+		break;
+	case IOmode::DIGITAL_OUT:
+		snprintf(pinType, pinTypeLength, "port");
+		break;
+	case IOmode::COUNTER_IN:
+		snprintf(pinType, pinTypeLength, "ctr");
+		break;
+	case IOmode::COUNTER_OUT:
+		snprintf(pinType, pinTypeLength, "ctr");
+		break;
+	default:
+		fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: Invalid I/O type requested.\n");
+		break;
 	}
 	snprintf(strbuf, MaxNIstringLength, "%s%d/%s%d", ArduDAQmxDevPrefix, devNum, pinType, pinNum);
 	return strbuf;
@@ -304,7 +305,7 @@ inline int getArduDAQmxLastError()
  * 
  * \param newErrorCode The new error code to set of type 'ArduDAQmxErrorcode'
  * \param printErrorMsgFlag
- * \return 
+ * \return Returns the error code in 'ArduDAQmxError'.
  */
 inline int setArduDAQmxLastError(ArduDAQmxErrorCode newErrorCode, unsigned printErrorMsgFlag)
 {
@@ -326,20 +327,20 @@ inline int printArduDAQmxStatus()
 	switch (ArduDAQmxStatus)
 	{
 	case STATUS_PRECONFIG:
-			fprintf(LOGSTREAM, "ArduDAQmx library: Status: Library uninitialized. Urgh! [STATUS_PRECONFIG]\n");
-			break;
+		fprintf(LOGSTREAM, "ArduDAQmx library: Status: Library uninitialized. Urgh! [STATUS_PRECONFIG]\n");
+		break;
 	case STATUS_CONFIG:
-			fprintf(LOGSTREAM, "ArduDAQmx library: Status: Initialized, but not configured. [STATUS_CONFIG]\n");
-			break;
+		fprintf(LOGSTREAM, "ArduDAQmx library: Status: Initialized, but not configured. [STATUS_CONFIG]\n");
+		break;
 	case STATUS_READY:
-			fprintf(LOGSTREAM, "ArduDAQmx library: Status: Configured and ready. Let's Go!!! [STATUS_READY]\n");
-			break;	
+		fprintf(LOGSTREAM, "ArduDAQmx library: Status: Configured and ready. Let's Go!!! [STATUS_READY]\n");
+		break;	
 	case STATUS_RUN:
-			fprintf(LOGSTREAM, "ArduDAQmx library: Status: DAQmx Running - data being collected [STATUS_RUN]\n");
-			break;
+		fprintf(LOGSTREAM, "ArduDAQmx library: Status: DAQmx Running - data being collected [STATUS_RUN]\n");
+		break;
 	default:
-			fprintf(LOGSTREAM, "ArduDAQmx library: Status: ArduDAQmx has an unknown status [Status code: %d]\n", ArduDAQmxStatus);
-			break;
+		fprintf(LOGSTREAM, "ArduDAQmx library: Status: ArduDAQmx has an unknown status [Status code: %d]\n", ArduDAQmxStatus);
+		break;
 	}
 	return ArduDAQmxStatus;
 }
@@ -356,32 +357,32 @@ inline int printArduDAQmxLastError()
 	switch (ArduDAQmxError)
 	{
 	case ERROR_UNSUPPORTED:
-			fprintf(ERRSTREAM, "ArduDAQmx library: Error: A feature/functionality that is unsupported by ArduDAQmx requested. [ERROR_UNSUPPORTED]\n");
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: Error: A feature/functionality that is unsupported by ArduDAQmx requested. [ERROR_UNSUPPORTED]\n");
+		break;
 	case ERROR_INVIO:
-			fprintf(ERRSTREAM, "ArduDAQmx library: Error: An unsupported/invalid I/O type was selected. [ERROR_INVIO]\n");
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: Error: An unsupported/invalid I/O type was selected. [ERROR_INVIO]\n");
+		break;
 	case ERROR_NIDAQMX:
-			fprintf(ERRSTREAM, "ArduDAQmx library: Error: NI-DAQmx has encountered an error (NI Error Code: %d). [ERROR_NIDAQMX]\n", NIDAQmxErrorCode);
-			char NIerrorString[1000];
-			DAQmxGetErrorString(NIDAQmxErrorCode, NIerrorString, 1000);
-			fprintf(ERRSTREAM, "ArduDAQmx library: NI-DAQmx Error: %s\n", NIerrorString);
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: Error: NI-DAQmx has encountered an error (NI Error Code: %d). [ERROR_NIDAQMX]\n", NIDAQmxErrorCode);
+		char NIerrorString[1000];
+		DAQmxGetErrorString(NIDAQmxErrorCode, NIerrorString, 1000);
+		fprintf(ERRSTREAM, "ArduDAQmx library: NI-DAQmx Error: %s\n", NIerrorString);
+		break;
 	case ERROR_DEVCHANGE:
-			fprintf(ERRSTREAM, "ArduDAQmx library: Error: Number of DAQmx devices have changed during operation. [ERROR_DEVCHANGE]\n");
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: Error: Number of DAQmx devices have changed during operation. [ERROR_DEVCHANGE]\n");
+		break;
 	case ERROR_NODEVICES:
-			fprintf(ERRSTREAM, "ArduDAQmx library: Error: No DAQmx devices discovered. [ERROR_NODEVICES]\n");
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: Error: No DAQmx devices discovered. [ERROR_NODEVICES]\n");
+		break;
 	case ERROR_NOTCONFIG:
-			fprintf(ERRSTREAM, "ArduDAQmx library: Error: Library is not configured. [ERROR_NOTCONFIG]\n");
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: Error: Library is not configured. [ERROR_NOTCONFIG]\n");
+		break;
 	case ERROR_NONE:
-			fprintf(ERRSTREAM, "ArduDAQmx library: No errors detected. [ERROR_NONE]\n");
-			break;	
+		fprintf(ERRSTREAM, "ArduDAQmx library: No errors detected. [ERROR_NONE]\n");
+		break;	
 	default:
-			fprintf(ERRSTREAM, "ArduDAQmx library: An unknown error was detected. [ArduDAQmx error code: %d]\n", ArduDAQmxError);
-			break;
+		fprintf(ERRSTREAM, "ArduDAQmx library: An unknown error was detected. [ArduDAQmx error code: %d]\n", ArduDAQmxError);
+		break;
 	}
 	return (int)ArduDAQmxError;
 }
@@ -679,6 +680,10 @@ int ArduDAQmxTerminate()
 
 	} // end task stop and task clearing for loop
 
+	// Resetting sample clock to invalid
+	ArduDAQmxSampleClock.sourceDevNum = 0;
+	ArduDAQmxSampleClock.sourceIOmode = INVALID_IO;
+
 	if (getArduDAQmxLastError() != 0)
 		printArduDAQmxLastError();
 
@@ -726,6 +731,7 @@ void ArduDAQmxClearEnumeratedDevices()
 /*!
  * \fn pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
  * Defines the input-output mode of pins as either analog or digital pins.
+ * If sample clock information is undefined, the function will set it to default values. Then sets up device of this pin as clock source.
  * 
  * \param deviceNumer NI-DAQ device/slot number of the pin.
  * \param pinNumber Pin number on the NI-DAQ device.
@@ -741,9 +747,37 @@ pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 	} else if (ArduDAQmxStatus == STATUS_READY) {
 
 	}
-
+	char pinIDstr[256], pinName[256];
 	if (myDev->DevNum != 0) {
+		switch (IOtype) {
+		case ANALOG_IN:
+			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
+			DAQmxErrChk(DAQmxCreateAIVoltageChan(ArduDAQmxDevList[deviceNumer].AItaskHandler, pin2string(pinIDstr, deviceNumer, IOtype, pinNumber) , pinName, DAQmx_Val_RSE, -10, 10, DAQmx_Val_Volts, NULL));
+			break;
+		case ANALOG_OUT:
+			snprintf(pinName, 256, "dev%dao%d", deviceNumer, pinNumber);
+			DAQmxErrChk(DAQmxCreateAOVoltageChan(ArduDAQmxDevList[deviceNumer].AItaskHandler, pin2string(pinIDstr, deviceNumer, IOtype, pinNumber) , pinName, -10, 10, DAQmx_Val_Volts, NULL));
+			break;
+		case DIGITAL_IN:
+			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
 
+			break;
+		case DIGITAL_OUT:
+			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
+
+			break;
+		case COUNTER_IN:
+			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
+
+			break;
+		case COUNTER_OUT:
+			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
+
+			break;
+		default:
+			
+			break;
+		}
 		// every type of IO mode supported by the device gets it's own task.
 
 		// Search through them by IO type and pin number
@@ -759,9 +793,65 @@ pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 		//TODO: reorder IO modes to match sync order. !!!!!!!!!!!!!!!!!!!!!!
 	} // check myDev check
 
+	// Set sample clock information for the task
+	//DAQmxErrChk(DAQmxCfgSampClkTiming(loadCelltaskHandle, "", controlFreq, DAQmx_Val_Rising, DAQmx_Val_HWTimedSinglePoint, 1));
+
+
 	return myPin;
 }
 
+/*!
+ * \fn inline bool isSampleClock()
+ * The function is used to check if sample clock has been set.
+ * 
+ * \return Returns TRUE(1) if sample clock has been set. Else, returns FALSE (0).
+ */
+inline bool isSampleClock()
+{
+	if (ArduDAQmxSampleClock.sourceDevNum == 0)
+		return FALSE;
+	return TRUE;
+}
+
+int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate)
+{
+	if (getArduDAQmxStatus() == STATUS_CONFIG) {
+		ArduDAQmxSampleClock.sourceDevNum = sourceDevNum;
+		ArduDAQmxSampleClock.sourceIOmode = sourceIOmode;
+		ArduDAQmxSampleClock.samplingRate = samplingRate;
+		ArduDAQmxSampleClock.ActiveEdgTrg = DAQmx_Val_Rising;
+		ArduDAQmxSampleClock.NIsampleMode = DAQmx_Val_HWTimedSinglePoint;
+		ArduDAQmxSampleClock.numberSample = 1;
+		
+		//set sample clock source ID string
+		switch (sourceIOmode) {
+		case ANALOG_IN:
+			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/ai/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			break;
+		case ANALOG_OUT:
+			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/ao/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			break;
+		case DIGITAL_IN:
+			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/di/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			break;
+		case DIGITAL_OUT:
+			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/do/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			break;
+		case COUNTER_IN:
+			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/Ctr%dSource",    ArduDAQmxDevPrefix, sourceDevNum, sourcePinNum);
+			break;
+		case COUNTER_OUT:
+			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/Ctr%dSource",    ArduDAQmxDevPrefix, sourceDevNum, sourcePinNum);
+			break;
+		default:
+			setArduDAQmxLastError(ERROR_INVIO, 1);
+			break;
+		}
+		return setArduDAQmxLastError(ERROR_NONE, 0);
+	}// end if block that checked config status of the library
+
+	return setArduDAQmxLastError(ERROR_NOTCONFIG, 1);
+}
 
 void analogRead()
 {

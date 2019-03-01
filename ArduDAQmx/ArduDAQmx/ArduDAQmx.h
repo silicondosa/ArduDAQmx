@@ -150,6 +150,8 @@ typedef struct _pin {
 	bool			pinAssignFlag	= 0;
 	/*! I/O mode of the pin as defined in ::IOmode.*/
 	IOmode			pinIOmode = INVALID_IO;
+	/*! Vlaue that is set to or received from the pin.*/
+	double			pinValue = 0;
 } pin;
 
 /*!
@@ -223,6 +225,16 @@ typedef struct _DAQmxTask {
 	pin				pinList[DAQmxMaxPinCount];
 } DAQmxTask;
 
+	// Sample Clock and Trigger selection functions
+typedef struct _sampleClock {
+	unsigned int	sourceDevNum = 0;
+	IOmode			sourceIOmode = INVALID_IO;
+	float64			samplingRate = 1000;
+	int32			ActiveEdgTrg = DAQmx_Val_Rising;
+	int32			NIsampleMode = DAQmx_Val_HWTimedSinglePoint;
+	uInt64			numberSample = 1;
+	char			sampClkSrcID[256];
+} sampleClock;
 
 // MASTER ARRAY OF DEVICES
 /*!
@@ -260,7 +272,10 @@ extern unsigned long DAQmxEnumeratedDevCount;
  */
 extern unsigned long DAQmxEnumeratedDevMaxNum;
 
-
+/*!
+ * The global sanple clock configuration structure that is used by the ArduDAQmx library
+ */
+extern sampleClock ArduDAQmxSampleClock;
 
 // Library support function declarations
 char* dev2string(char *strBuf, unsigned int devNum);
@@ -295,9 +310,8 @@ void ArduDAQmxClearEnumeratedDevices();
 	// mode selection functions
 pin* pinMode(unsigned int, unsigned int, IOmode);
 
-
-	// Sample Clock and Trigger selection functions
-
+inline bool isSampleClock();
+int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate);
 
 	// I/O Run/Pause/Stop functions
 

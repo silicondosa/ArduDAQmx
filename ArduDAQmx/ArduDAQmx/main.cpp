@@ -22,7 +22,13 @@ int main()
 
 	printf("Counter Out:\n");
 	enumerateDAQmxDeviceChannels(5, COUNTER_OUT, 1);
-	
+
+	/*
+	for (int i = 6; i < 7; i++) {
+		setSampleClock(2, (_IOmode)i, 9, 1);
+		printf("%s\n", ArduDAQmxSampleClock.sampClkSrcID);
+	}
+	*/
 
 
 
