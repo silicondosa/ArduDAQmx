@@ -559,27 +559,32 @@ int ArduDAQmxConfigure()
 			//Create NI-DAQmx task handlers and pin list
 			if (cpyDev[cpyInd].numAIch > 0) {
 				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AItaskHandler)));
+				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItaskHandler, 1));
 				cpyDev[cpyInd].AIpins = (pin *) malloc(cpyDev[cpyInd].numAIch * sizeof(pin));
 			}
 			if (cpyDev[cpyInd].numAOch > 0) {
 				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AOtaskHandler)));
+				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtaskHandler, 1));
 				cpyDev[cpyInd].AOpins = (pin *) malloc(cpyDev[cpyInd].numAOch * sizeof(pin));
 			}
 			if (cpyDev[cpyInd].numDIch > 0 || cpyDev[cpyInd].numDOch > 0) {
 				if (cpyDev[cpyInd].numDIch > 0) {
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DItaskHandler)));
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItaskHandler, 1));
 				}
 				if (cpyDev[cpyInd].numDOch > 0) {
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DOtaskHandler)));
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DOtaskHandler, 1));
 				}
 				cpyDev[cpyInd].DIpins = (pin *) malloc(cpyDev[cpyInd].numDIch * sizeof(pin));
-				cpyDev[cpyInd].DOpins = cpyDev[cpyInd].DOpins;
+				cpyDev[cpyInd].DOpins = cpyDev[cpyInd].DIpins;
 			}
 			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) {
 				cpyDev[cpyInd].CTRtaskHandler = (TaskHandle *)malloc(cpyDev[cpyInd].numCIch * sizeof(TaskHandle));
 				int i = 0;
 				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) {
 					DAQmxErrChk(DAQmxCreateTask( "", &(cpyDev[cpyInd].CTRtaskHandler[i]) ));
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].CTRtaskHandler[i], 1));
 				}
 				cpyDev[cpyInd].CIpins = (pin *) malloc(cpyDev[cpyInd].numCIch * sizeof(pin));
 				cpyDev[cpyInd].COpins = cpyDev[cpyInd].CIpins;
