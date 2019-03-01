@@ -558,33 +558,68 @@ int ArduDAQmxConfigure()
 
 			//Create NI-DAQmx task handlers and pin list
 			if (cpyDev[cpyInd].numAIch > 0) {
-				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AItaskHandler)));
-				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItaskHandler, 1));
+				cpyDev[cpyInd].AItask.DevNum		= cpyDev[cpyInd].DevNum;
+				cpyDev[cpyInd].AItask.taskIOmode	= ANALOG_IN;
+				cpyDev[cpyInd].AItask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
+				cListInit(cpyDev[cpyInd].AItask.activePinList);
+				cpyDev[cpyInd].AItask.activePinCnt	= 0;
+				cpyDev[cpyInd].AItask.ioBuffer		= NULL;
+				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AItask.Handler)));
+
+				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItask.Handler, 1));
 				cpyDev[cpyInd].AIpins = (pin *) malloc(cpyDev[cpyInd].numAIch * sizeof(pin));
-			}
+											}
 			if (cpyDev[cpyInd].numAOch > 0) {
-				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AOtaskHandler)));
-				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtaskHandler, 1));
+				cpyDev[cpyInd].AOtask.DevNum		= cpyDev[cpyInd].DevNum;
+				cpyDev[cpyInd].AOtask.taskIOmode	= ANALOG_OUT;
+				cpyDev[cpyInd].AOtask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
+				cListInit(cpyDev[cpyInd].AOtask.activePinList);
+				cpyDev[cpyInd].AOtask.activePinCnt	= 0;
+				cpyDev[cpyInd].AOtask.ioBuffer		= NULL;
+				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AOtask.Handler)));
+
+				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtask.Handler, 1));
 				cpyDev[cpyInd].AOpins = (pin *) malloc(cpyDev[cpyInd].numAOch * sizeof(pin));
 			}
 			if (cpyDev[cpyInd].numDIch > 0 || cpyDev[cpyInd].numDOch > 0) {
 				if (cpyDev[cpyInd].numDIch > 0) {
-					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DItaskHandler)));
-					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItaskHandler, 1));
+					cpyDev[cpyInd].DItask.DevNum		= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].DItask.taskIOmode	= DIGITAL_IN;
+					cpyDev[cpyInd].DItask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
+					cListInit(cpyDev[cpyInd].DItask.activePinList);
+					cpyDev[cpyInd].DItask.activePinCnt	= 0;
+					cpyDev[cpyInd].DItask.ioBuffer		= NULL;
+					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DItask.Handler)));
+
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItask.Handler, 1));
 				}
 				if (cpyDev[cpyInd].numDOch > 0) {
-					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DOtaskHandler)));
-					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DOtaskHandler, 1));
+					cpyDev[cpyInd].DOtask.DevNum		= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].DOtask.taskIOmode	= ANALOG_OUT;
+					cpyDev[cpyInd].DOtask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
+					cListInit(cpyDev[cpyInd].DOtask.activePinList);
+					cpyDev[cpyInd].DOtask.activePinCnt	= 0;
+					cpyDev[cpyInd].DOtask.ioBuffer		= NULL;
+					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DOtask.Handler)));
+					
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DOtask.Handler, 1));
 				}
 				cpyDev[cpyInd].DIpins = (pin *) malloc(cpyDev[cpyInd].numDIch * sizeof(pin));
 				cpyDev[cpyInd].DOpins = cpyDev[cpyInd].DIpins;
 			}
 			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) {
-				cpyDev[cpyInd].CTRtaskHandler = (TaskHandle *)malloc(cpyDev[cpyInd].numCIch * sizeof(TaskHandle));
+				cpyDev[cpyInd].CTRtask = (DAQmxTask *)malloc(cpyDev[cpyInd].numCIch * sizeof(DAQmxTask));
 				int i = 0;
 				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) {
-					DAQmxErrChk(DAQmxCreateTask( "", &(cpyDev[cpyInd].CTRtaskHandler[i]) ));
-					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].CTRtaskHandler[i], 1));
+					cpyDev[cpyInd].CTRtask[i].DevNum		= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].CTRtask[i].taskIOmode	= ANALOG_OUT;
+					cpyDev[cpyInd].CTRtask[i].activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
+					cListInit(cpyDev[cpyInd].CTRtask[i].activePinList);
+					cpyDev[cpyInd].CTRtask[i].activePinCnt	= 0;
+					cpyDev[cpyInd].CTRtask[i].ioBuffer		= NULL;
+					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].CTRtask[i].Handler)));
+					
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].CTRtask[i].Handler, 1));
 				}
 				cpyDev[cpyInd].CIpins = (pin *) malloc(cpyDev[cpyInd].numCIch * sizeof(pin));
 				cpyDev[cpyInd].COpins = cpyDev[cpyInd].CIpins;
@@ -648,25 +683,49 @@ int ArduDAQmxTerminate()
 	int i, j;
 	for (i = 0; i < ArduDAQmxDevMaxNum; i++) {
 		if (ArduDAQmxDevList[i].numAIch > 0) {
-			DAQmxStopTask(ArduDAQmxDevList[i].AItaskHandler);
-			DAQmxClearTask(ArduDAQmxDevList[i].AItaskHandler);
+			DAQmxStopTask(ArduDAQmxDevList[i].AItask.Handler);
+			DAQmxClearTask(ArduDAQmxDevList[i].AItask.Handler);
 			free(ArduDAQmxDevList[i].AIpins);
 			ArduDAQmxDevList[i].AIpins = NULL;
+			ArduDAQmxDevList[i].AItask.taskIOmode = INVALID_IO;
+			if (ArduDAQmxDevList[i].AItask.activePinList != NULL) {
+				cListUnlinkAll(ArduDAQmxDevList[i].AItask.activePinList);
+				free(ArduDAQmxDevList[i].AItask.activePinList);
+				ArduDAQmxDevList[i].AItask.activePinList = NULL;
+			}
 		}
 		if (ArduDAQmxDevList[i].numAOch > 0) {
-			DAQmxStopTask(ArduDAQmxDevList[i].AOtaskHandler);
-			DAQmxClearTask(ArduDAQmxDevList[i].AOtaskHandler);
+			DAQmxStopTask(ArduDAQmxDevList[i].AOtask.Handler);
+			DAQmxClearTask(ArduDAQmxDevList[i].AOtask.Handler);
 			free(ArduDAQmxDevList[i].AOpins);
 			ArduDAQmxDevList[i].AOpins = NULL;
+			ArduDAQmxDevList[i].AOtask.taskIOmode = INVALID_IO;
+			if (ArduDAQmxDevList[i].AOtask.activePinList != NULL) {
+				cListUnlinkAll(ArduDAQmxDevList[i].AOtask.activePinList);
+				free(ArduDAQmxDevList[i].AOtask.activePinList);
+				ArduDAQmxDevList[i].AOtask.activePinList = NULL;
+			}
 		}
 		if (ArduDAQmxDevList[i].numDIch > 0 || ArduDAQmxDevList[i].numDOch > 0) {
 			if (ArduDAQmxDevList[i].numDIch > 0) {
-				DAQmxStopTask(ArduDAQmxDevList[i].DItaskHandler);
-				DAQmxClearTask(ArduDAQmxDevList[i].DItaskHandler);
+				DAQmxStopTask(ArduDAQmxDevList[i].DItask.Handler);
+				DAQmxClearTask(ArduDAQmxDevList[i].DItask.Handler);
+				ArduDAQmxDevList[i].DItask.taskIOmode = INVALID_IO;
+				if (ArduDAQmxDevList[i].DItask.activePinList != NULL) {
+					cListUnlinkAll(ArduDAQmxDevList[i].DItask.activePinList);
+					free(ArduDAQmxDevList[i].DItask.activePinList);
+					ArduDAQmxDevList[i].DItask.activePinList = NULL;
+				}
 			}
 			if (ArduDAQmxDevList[i].numDOch > 0) {
-				DAQmxStopTask(ArduDAQmxDevList[i].DOtaskHandler);
-				DAQmxClearTask(ArduDAQmxDevList[i].DOtaskHandler);
+				DAQmxStopTask(ArduDAQmxDevList[i].DOtask.Handler);
+				DAQmxClearTask(ArduDAQmxDevList[i].DOtask.Handler);
+				ArduDAQmxDevList[i].DOtask.taskIOmode = INVALID_IO;
+				if (ArduDAQmxDevList[i].DOtask.activePinList != NULL) {
+					cListUnlinkAll(ArduDAQmxDevList[i].DOtask.activePinList);
+					free(ArduDAQmxDevList[i].DOtask.activePinList);
+					ArduDAQmxDevList[i].DOtask.activePinList = NULL;
+				}
 			}
 			free(ArduDAQmxDevList[i].DIpins);
 			ArduDAQmxDevList[i].DIpins = NULL;
@@ -674,10 +733,16 @@ int ArduDAQmxTerminate()
 		}
 		if (ArduDAQmxDevList[i].numCIch > 0 || ArduDAQmxDevList[i].numCOch > 0) {
 			for (j = 0; j < ArduDAQmxDevList[i].numCIch; j++) {
-				DAQmxStopTask (ArduDAQmxDevList[i].CTRtaskHandler[j]);
-				DAQmxClearTask(ArduDAQmxDevList[i].CTRtaskHandler[j]);
+				DAQmxStopTask (ArduDAQmxDevList[i].CTRtask[j].Handler);
+				DAQmxClearTask(ArduDAQmxDevList[i].CTRtask[j].Handler);
+				ArduDAQmxDevList[i].CTRtask[j].taskIOmode = INVALID_IO;
+				if (ArduDAQmxDevList[i].CTRtask[j].activePinList != NULL) {
+					cListUnlinkAll(ArduDAQmxDevList[i].CTRtask[j].activePinList);
+					free(ArduDAQmxDevList[i].CTRtask[j].activePinList);
+					ArduDAQmxDevList[i].CTRtask[j].activePinList = NULL;
+				}
 			}
-			free(ArduDAQmxDevList[i].CTRtaskHandler);
+			free(ArduDAQmxDevList[i].CTRtask);
 			free(ArduDAQmxDevList[i].CIpins);
 			ArduDAQmxDevList[i].CIpins = NULL;
 			ArduDAQmxDevList[i].COpins = NULL;
@@ -734,18 +799,18 @@ void ArduDAQmxClearEnumeratedDevices()
 }
 
 /*!
- * \fn pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
+ * \fn pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
  * Defines the input-output mode of pins as either analog or digital pins.
  * If sample clock information is undefined, the function will set it to default values. Then sets up device of this pin as clock source.
  * 
- * \param deviceNumer NI-DAQ device/slot number of the pin.
- * \param pinNumber Pin number on the NI-DAQ device.
+ * \param devNum NI-DAQ device/slot number of the pin.
+ * \param pinNum Pin number on the NI-DAQ device.
  * \param IOtype I/O type being requested on the pin as defined in ::IOmode.
  * \return Returns the 'pin' data structure used to configure and operate the pin.
  */
-pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
+pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 {
-	DAQmxDevice *myDev = &(ArduDAQmxDevList[deviceNumer-1]);
+	DAQmxDevice *myDev = &(ArduDAQmxDevList[devNum-1]);
 	pin * myPin = NULL;
 	if (ArduDAQmxStatus == STATUS_CONFIG) {
 
@@ -756,28 +821,28 @@ pin * pinMode(unsigned int deviceNumer, unsigned int pinNumber, IOmode IOtype)
 	if (myDev->DevNum != 0) {
 		switch (IOtype) {
 		case ANALOG_IN:
-			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
-			DAQmxErrChk(DAQmxCreateAIVoltageChan(ArduDAQmxDevList[deviceNumer].AItaskHandler, pin2string(pinIDstr, deviceNumer, IOtype, pinNumber) , pinName, DAQmx_Val_RSE, -10, 10, DAQmx_Val_Volts, NULL));
+			snprintf(pinName, 256, "dev%dAI%d", devNum, pinNum);
+			DAQmxErrChk(DAQmxCreateAIVoltageChan	(ArduDAQmxDevList[devNum].AItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum) , pinName, NIdef.NItermConf, NIdef.AImin, NIdef.AImax, NIdef.NIanlgUnits, NULL));
 			break;
 		case ANALOG_OUT:
-			snprintf(pinName, 256, "dev%dao%d", deviceNumer, pinNumber);
-			DAQmxErrChk(DAQmxCreateAOVoltageChan(ArduDAQmxDevList[deviceNumer].AItaskHandler, pin2string(pinIDstr, deviceNumer, IOtype, pinNumber) , pinName, -10, 10, DAQmx_Val_Volts, NULL));
+			snprintf(pinName, 256, "dev%dAO%d", devNum, pinNum);
+			DAQmxErrChk(DAQmxCreateAOVoltageChan	(ArduDAQmxDevList[devNum].AOtask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum) , pinName, NIdef.AOmin, NIdef.AOmax, NIdef.NIanlgUnits, NULL));
 			break;
 		case DIGITAL_IN:
-			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
-
+			snprintf(pinName, 256, "dev%dDI%d", devNum, pinNum);
+			DAQmxErrChk(DAQmxCreateDIChan			(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum) , pinName, DAQmx_Val_ChanForAllLines));
 			break;
 		case DIGITAL_OUT:
-			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
-
+			snprintf(pinName, 256, "dev%dDO%d", devNum, pinNum);
+			DAQmxErrChk(DAQmxCreateDOChan			(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum) , pinName, NIdef.NIdigiGrp));
 			break;
 		case COUNTER_IN:
-			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
-
+			snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
+			DAQmxErrChk(DAQmxCreateCIAngEncoderChan	(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum) , pinName, NIdef.NIctrMode, NIdef.ZEN, NIdef.Zval, NIdef.Zphase, NIdef.NIctrunits, NIdef.encoderPPR, NIdef.angleInit, ""));
 			break;
 		case COUNTER_OUT:
-			snprintf(pinName, 256, "dev%dai%d", deviceNumer, pinNumber);
-
+			snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
+			DAQmxErrChk(DAQmxCreateCOPulseChanTicks	(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum) , pinName, "OnboardClock", NIdef.plsIdleSt, NIdef.plsInitDel, NIdef.plsLoTick, NIdef.plsHiTick));
 			break;
 		default:
 			
@@ -856,9 +921,4 @@ int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int 
 	}// end if block that checked config status of the library
 
 	return setArduDAQmxLastError(ERROR_NOTCONFIG, 1);
-}
-
-void analogRead()
-{
-
 }

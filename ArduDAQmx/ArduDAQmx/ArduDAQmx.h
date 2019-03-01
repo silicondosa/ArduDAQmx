@@ -130,11 +130,43 @@ typedef enum _IOmode{
 	COUNTER_OUT		= 5
 }IOmode;
 
-//pin I/O direction
+/*!
+ * Possible I/O directions - Input and Output, defined for easy programming. 
+ */
 typedef enum _IO_DIRECTION {
 	INPUT	= 0,
 	OUTPUT	= 1
 }IO_DIRECTION;
+
+/*!
+ * Some default values for NI-DAQmx.
+ */
+struct NIdefVals {
+	float64 AImin		= -10;
+	float64 AImax		= 10;
+	int32	NItermConf	= DAQmx_Val_RSE;
+
+	float64 AOmin		= -10;
+	float64 AOmax		= 10;	
+	int32	NIanlgUnits	= DAQmx_Val_Volts;
+
+	int32	NIdigiGrp	= DAQmx_Val_ChanForAllLines;
+
+	int32	NIctrMode	= DAQmx_Val_X4;
+	bool32  ZEN			= 0;
+	float64 Zval		= 0.0;
+	int32	Zphase		= DAQmx_Val_AHighBHigh;
+	int32	NIctrunits	= DAQmx_Val_Degrees;
+	float64 angleInit	= 0.0;
+
+	uInt32	encoderPPR	= 2048; // For CUI AMT103 encoder
+
+	int32	plsIdleSt		= DAQmx_Val_Low;
+	int32	plsInitDel		= 0;
+	int32	plsLoTick		= 1;
+	int32	plsHiTick		= 1;
+
+ }NIdef;
 
 /*!
  * Custom data type to encompass info on pins used by ArduDAQmx.
@@ -144,15 +176,33 @@ typedef struct _pin {
 	unsigned int	DevNum		= 0;
 	/*! Pin number of the pin on the device.*/
 	unsigned int	PinNum		= 0;
-	/*! NI-DAQmx task to which the pin is associated.*/
-	TaskHandle		*pinTask	= NULL;
+	/*! Task to which the pin is associated.*/
+	DAQmxTask		*pinTask;
 	/*!  Set to 1 iff the pin has been assigned to a task.*/
 	bool			pinAssignFlag	= 0;
 	/*! I/O mode of the pin as defined in ::IOmode.*/
 	IOmode			pinIOmode = INVALID_IO;
-	/*! Vlaue that is set to or received from the pin.*/
+	/*! Value that is set to or received from the pin.*/
 	double			pinValue = 0;
 } pin;
+
+/*!
+ * Structure to hold information regarding the tasks of a device. 
+ */
+typedef struct _DAQmxTask {
+	/*! Device number of the task.*/
+	unsigned int	DevNum = 0;
+	/*!	The I/O type of the task.*/
+	IOmode			taskIOmode = INVALID_IO;
+	/*! List of pins associated with the task. Dynamically allocated when task starts, deleted during termination.*/
+	cLinkedList		*activePinList;
+	/*! Number of active pins associated with the task.*/
+	unsigned int	activePinCnt = 0;
+	/*! Buffer of data to write/read from the pins of the task. Created when task starts, removed when task stops.*/
+	void			*ioBuffer = NULL;
+	/*! NI-DAQmx task handler for the task.*/
+	TaskHandle		Handler;
+} DAQmxTask;
 
 /*!
  * Custom data type encompasses info on DAQmx devices used by ArduDAQmx.
@@ -173,14 +223,23 @@ typedef struct _DAQmxDevice{
 	/*! List of tasks associated with the device.*/
 	cLinkedList		*taskList	= NULL;
 
+
 	// Number of NI-DAQmx tasks based on this NI article: https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019KWYSA2&l=en-US
 		// Task handlers are dynamically initialized in the configure function and cleared in the terminate functiion
+	DAQmxTask		AItask;
+	DAQmxTask		AOtask;
+	DAQmxTask		DItask;
+	DAQmxTask		DOtask;
+	DAQmxTask		*CTRtask;
+
+	/*
 	TaskHandle		  AItaskHandler;
 	TaskHandle		  AOtaskHandler;
 	TaskHandle		  DItaskHandler;
 	TaskHandle		  DOtaskHandler;
 	TaskHandle		*CTRtaskHandler;
-
+	*/
+	
 	// NI-DAQmx pin management
 		// The pin lists are dynamically initialized in the configure function and cleared in the terminate function.
 	/*!	Number of Analong Input channels available in the device.*/
@@ -213,17 +272,6 @@ typedef struct _DAQmxDevice{
 	/*! List of CO pins on the device.*/
 	pin				*COpins = NULL;
 } DAQmxDevice;
-
-typedef struct _DAQmxTask {
-	/*! Device number of the task.*/
-	unsigned int	DevNum;
-	/*! Pointer to the device object of the task.*/
-	DAQmxDevice		*myDev;
-	/*!	The I/O type of the task.*/
-	IOmode			taskIOmode;
-	/*! List of pins associated with the task.*/
-	pin				pinList[DAQmxMaxPinCount];
-} DAQmxTask;
 
 	// Sample Clock and Trigger selection functions
 typedef struct _sampleClock {
@@ -307,16 +355,32 @@ void ArduDAQmxClearEnumeratedDevices();
 	// Get the DAQmx device
 //DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
 
-	// mode selection functions
+	// mode selection and timing configuration functions
 pin* pinMode(unsigned int, unsigned int, IOmode);
 
 inline bool isSampleClock();
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate);
 
 	// I/O Run/Pause/Stop functions
+int ArduDAQmxStart();
+int ArduDAQmxStop();
 
+	// read functions
+int analogReadPin (unsigned int devNum, unsigned int pinNum, double  readData);
+int analogReadTask(unsigned int devNum,                      double *readData);
+int analogReadEnum(unsigned int devNum);
 
-	// read/write functions
+int digitalReadPort(unsigned int devNum, unsigned int portNum, uInt32 *readData);
 
+int counterRead(unsigned int devNum, unsigned int ctrNum, float64 readData);
+
+	// write functions
+int analogWritePin (unsigned int devNum, unsigned int pinNum, double  writeData);
+int analogWriteTask(unsigned int devNum,                      double *writeData);
+int analogWriteEnum(unsigned int devNum);
+
+int digitalWritePort(unsigned int devNum, unsigned int portNum, uInt32 *writeData);
+
+int counterWrite(unsigned int devNum, unsigned int ctrNum);
 
 #endif // !ARDUDAQMX_H
