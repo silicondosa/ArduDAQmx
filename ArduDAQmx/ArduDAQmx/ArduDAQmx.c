@@ -532,7 +532,7 @@ int ArduDAQmxConfigure()
 	// If in PRECONFIG state, setup library and device list
 	if (getArduDAQmxStatus() == (int)STATUS_PRECONFIG) { // if there are no issues and library is in preconfig, setup library
 		ArduDAQmxDevList	= (DAQmxDevice *) malloc( sizeof(DAQmxDevice) * DAQmxEnumeratedDevMaxNum ); // DYN-M: allocate array of devices for fast access
-		unsigned int		i = 0, termLoop = 0;
+		unsigned int		i = 0, j = 0, termLoop = 0;
 		cListElem *elem		= NULL;
 		DAQmxDevice *cpyDev = NULL;
 		unsigned int cpyInd = 0;
@@ -567,6 +567,14 @@ int ArduDAQmxConfigure()
 				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItask.Handler, 1));
 					// initialize AI pin list
 				cpyDev[cpyInd].AIpins = (pin *) malloc(cpyDev[cpyInd].numAIch * sizeof(pin));
+				for (j = 0; j < cpyDev[cpyInd].numAIch; j++) {
+					cpyDev[cpyInd].AIpins[j].DevNum			= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].AIpins[j].PinNum			= j;
+					cpyDev[cpyInd].AIpins[j].pinTask		= &(cpyDev[cpyInd].AItask);
+					cpyDev[cpyInd].AIpins[j].pinAssignFlag	= 0;
+					cpyDev[cpyInd].AIpins[j].pinIOmode		= INVALID_IO;
+					cpyDev[cpyInd].AIpins[j].pinValue		= 0;
+				}
 			}
 			if (cpyDev[cpyInd].numAOch > 0) { // analog outputs present
 					// initialize AO task
@@ -581,6 +589,14 @@ int ArduDAQmxConfigure()
 				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtask.Handler, 1));
 					// initialize AO pin list
 				cpyDev[cpyInd].AOpins = (pin *) malloc(cpyDev[cpyInd].numAOch * sizeof(pin));
+				for (j = 0; j < cpyDev[cpyInd].numAOch; j++) {
+					cpyDev[cpyInd].AOpins[j].DevNum			= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].AOpins[j].PinNum			= j;
+					cpyDev[cpyInd].AOpins[j].pinTask		= &(cpyDev[cpyInd].AOtask);
+					cpyDev[cpyInd].AOpins[j].pinAssignFlag	= 0;
+					cpyDev[cpyInd].AOpins[j].pinIOmode		= INVALID_IO;
+					cpyDev[cpyInd].AOpins[j].pinValue		= 0;
+				}
 			}
 			if (cpyDev[cpyInd].numDIch > 0 || cpyDev[cpyInd].numDOch > 0) { // digital in/outs presents
 				if (cpyDev[cpyInd].numDIch > 0) { // digital in present
@@ -610,12 +626,20 @@ int ArduDAQmxConfigure()
 					// initialize common Digital IO pin list
 				cpyDev[cpyInd].DIpins = (pin *) malloc(cpyDev[cpyInd].numDIch * sizeof(pin));
 				cpyDev[cpyInd].DOpins = cpyDev[cpyInd].DIpins;
+				int maxJ = (cpyDev[cpyInd].numDIch > cpyDev[cpyInd].numDOch) ? cpyDev[cpyInd].numDIch: cpyDev[cpyInd].numDOch;
+				for (j = 0; j < maxJ; j++) {
+					cpyDev[cpyInd].DIpins[j].DevNum			= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].DIpins[j].PinNum			= j;
+					cpyDev[cpyInd].DIpins[j].pinTask		= NULL;
+					cpyDev[cpyInd].DIpins[j].pinAssignFlag	= 0;
+					cpyDev[cpyInd].DIpins[j].pinIOmode		= INVALID_IO;
+					cpyDev[cpyInd].DIpins[j].pinValue		= 0;
+				}
 			}
 			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) { // counters in/out present
 				// initialize 1 task per counter IO available.
 				cpyDev[cpyInd].CTRtask = (DAQmxTask *)malloc(cpyDev[cpyInd].numCIch * sizeof(DAQmxTask));
-				int i = 0;
-				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) { // counter inputs present
+				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) { // if counter inputs present, create counter tasks for each pin
 					cpyDev[cpyInd].CTRtask[i].DevNum		= cpyDev[cpyInd].DevNum;
 					cpyDev[cpyInd].CTRtask[i].taskIOmode	= ANALOG_OUT;
 					cpyDev[cpyInd].CTRtask[i].activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
@@ -629,6 +653,15 @@ int ArduDAQmxConfigure()
 					// initialize common CTR pin list
 				cpyDev[cpyInd].CIpins = (pin *) malloc(cpyDev[cpyInd].numCIch * sizeof(pin));
 				cpyDev[cpyInd].COpins = cpyDev[cpyInd].CIpins;
+				int maxJ = (cpyDev[cpyInd].numCIch > cpyDev[cpyInd].numCOch) ? cpyDev[cpyInd].numCIch: cpyDev[cpyInd].numCOch;
+				for (j = 0; j < maxJ; j++) {
+					cpyDev[cpyInd].CIpins[j].DevNum			= cpyDev[cpyInd].DevNum;
+					cpyDev[cpyInd].CIpins[j].PinNum			= j;
+					cpyDev[cpyInd].CIpins[j].pinTask		= &(cpyDev[cpyInd].CTRtask[j]);
+					cpyDev[cpyInd].CIpins[j].pinAssignFlag	= 0;
+					cpyDev[cpyInd].CIpins[j].pinIOmode		= INVALID_IO;
+					cpyDev[cpyInd].CIpins[j].pinValue		= 0;
+				}
 			}
 		} // end device copy for loop
 		ArduDAQmxDevCount  = DAQmxEnumeratedDevCount;
@@ -834,8 +867,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 {
 	DAQmxDevice *myDev = &(ArduDAQmxDevList[devNum-1]);
 	pin * myPin = NULL;
-	if (ArduDAQmxStatus == STATUS_CONFIG) {
-
+	if (ArduDAQmxStatus == STATUS_CONFIG) { // if library is in CONFIG mode
 		char pinIDstr[256], pinName[256];
 		if (myDev->DevNum != 0) {
 			switch (IOtype) {
