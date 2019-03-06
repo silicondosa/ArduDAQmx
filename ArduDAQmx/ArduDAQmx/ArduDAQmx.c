@@ -865,65 +865,212 @@ void ArduDAQmxClearEnumeratedDevices()
  */
 pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 {
-	DAQmxDevice *myDev = &(ArduDAQmxDevList[devNum-1]);
-	pin * myPin = NULL;
+	DAQmxDevice *myDev  = NULL;
+	pin			*myPin	= NULL;
+	DAQmxTask	*myTask = NULL;
 	if (ArduDAQmxStatus == STATUS_CONFIG) { // if library is in CONFIG mode
 		char pinIDstr[256], pinName[256];
-		if (myDev->DevNum != 0) {
-			switch (IOtype) {
-			case ANALOG_IN:
-				snprintf(pinName, 256, "dev%dAI%d", devNum, pinNum);
-				DAQmxErrChk(DAQmxCreateAIVoltageChan(ArduDAQmxDevList[devNum].AItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NItermConf, NIdef.AImin, NIdef.AImax, NIdef.NIanlgUnits, NULL));
-				break;
-			case ANALOG_OUT:
-				snprintf(pinName, 256, "dev%dAO%d", devNum, pinNum);
-				DAQmxErrChk(DAQmxCreateAOVoltageChan(ArduDAQmxDevList[devNum].AOtask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.AOmin, NIdef.AOmax, NIdef.NIanlgUnits, NULL));
-				break;
-			case DIGITAL_IN:
-				snprintf(pinName, 256, "dev%dDI%d", devNum, pinNum);
-				DAQmxErrChk(DAQmxCreateDIChan(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, DAQmx_Val_ChanForAllLines));
-				break;
-			case DIGITAL_OUT:
-				snprintf(pinName, 256, "dev%dDO%d", devNum, pinNum);
-				DAQmxErrChk(DAQmxCreateDOChan(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NIdigiGrp));
-				break;
-			case COUNTER_IN:
-				snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
-				DAQmxErrChk(DAQmxCreateCIAngEncoderChan(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NIctrMode, NIdef.ZEN, NIdef.Zval, NIdef.Zphase, NIdef.NIctrunits, NIdef.encoderPPR, NIdef.angleInit, ""));
-				break;
-			case COUNTER_OUT:
-				snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
-				DAQmxErrChk(DAQmxCreateCOPulseChanTicks(ArduDAQmxDevList[devNum].DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, "OnboardClock", NIdef.plsIdleSt, NIdef.plsInitDel, NIdef.plsLoTick, NIdef.plsHiTick));
-				break;
-			default:
+		if (devNum >= 0 && devNum < ArduDAQmxDevCount) {
+			myDev = &(ArduDAQmxDevList[devNum - 1]);
+			if (myDev->DevNum != 0) {
+				switch (IOtype) {
+				case ANALOG_IN: // ANALOG IN
+					if (pinNum >= 0 && pinNum < myDev->numAIch) { // pinNum validity check
+						myPin = &(myDev->AIpins[pinNum]);
+						// setup task
+						myTask = &(myDev->AItask);
+						cListAppend(myTask->activePinList, (void *)myPin);
+						myTask->activePinCnt = cListLength(myTask->activePinList);
+						// warn if pin assigned, and setup pin
+						if (myPin->pinAssignFlag != 0) {
+							fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Dev %d - AI pin%d being reasigned.\n", devNum, pinNum);
+							cListUnlinkElem(myPin->pinTask->activePinList, cListFindElem(myPin->pinTask->activePinList, (void *)myPin));
+							myPin->pinTask->activePinCnt = cListLength(myPin->pinTask->activePinList);
+						}
+						myPin->pinTask = myTask;
+						myPin->pinAssignFlag = 1;
+						myPin->pinIOmode = ANALOG_IN;
+						
+						snprintf(pinName, 256, "dev%dAI%d", devNum, pinNum);
+						DAQmxErrChk(DAQmxCreateAIVoltageChan(myDev->AItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NItermConf, NIdef.AImin, NIdef.AImax, NIdef.NIanlgUnits, NULL));
+					} else {
+						fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: On Dev %d - Attempt to access invalid AI pin%d. Terminating library.\n", devNum, pinNum);
+						ArduDAQmxTerminate();
+						setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+						myPin = NULL;
+					}
+					break;
+				case ANALOG_OUT: // ANALOG OUT
+					if (pinNum >= 0 && pinNum < myDev->numAOch) { // pinNum validity check
+						myPin = &(myDev->AOpins[pinNum]);
+						// setup task
+						myTask = &(myDev->AOtask);
+						cListAppend(myTask->activePinList, (void *)myPin);
+						myTask->activePinCnt = cListLength(myTask->activePinList);
+						// warn if pin assigned, and setup pin
+						if (myPin->pinAssignFlag != 0) {
+							fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Dev %d - AO pin%d being reasigned.\n", devNum, pinNum);
+							cListUnlinkElem(myPin->pinTask->activePinList, cListFindElem(myPin->pinTask->activePinList, (void *)myPin));
+							myPin->pinTask->activePinCnt = cListLength(myPin->pinTask->activePinList);
+						}
+						myPin->pinTask = myTask;
+						myPin->pinAssignFlag = 1;
+						myPin->pinIOmode = ANALOG_OUT;
 
-				break;
+						snprintf(pinName, 256, "dev%dAO%d", devNum, pinNum);
+						DAQmxErrChk(DAQmxCreateAOVoltageChan(myDev->AOtask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.AOmin, NIdef.AOmax, NIdef.NIanlgUnits, NULL));
+					} else {
+						fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: On Dev %d - Attempt to access invalid AO pin%d. Terminating library.\n", devNum, pinNum);
+						ArduDAQmxTerminate();
+						setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+						myPin = NULL;
+					}
+					break;
+				case DIGITAL_IN: // DIGITAL IN
+					if (pinNum >= 0 && pinNum < myDev->numDIch) { // pinNum validity check
+						myPin = &(myDev->DIpins[pinNum]);
+						// setup task
+						myTask = &(myDev->DItask);
+						cListAppend(myTask->activePinList, (void *)myPin);
+						myTask->activePinCnt = cListLength(myTask->activePinList);
+						// warn if pin assigned, and setup pin
+						if (myPin->pinAssignFlag != 0) {
+							fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Dev %d - DI port%d being reasigned.\n", devNum, pinNum);
+							cListUnlinkElem(myPin->pinTask->activePinList, cListFindElem(myPin->pinTask->activePinList, (void *)myPin));
+							myPin->pinTask->activePinCnt = cListLength(myPin->pinTask->activePinList);
+						}
+						myPin->pinTask = myTask;
+						myPin->pinAssignFlag = 1;
+						myPin->pinIOmode = DIGITAL_IN;
+
+						snprintf(pinName, 256, "dev%dDI%d", devNum, pinNum);
+						DAQmxErrChk(DAQmxCreateDIChan(myDev->DItask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, DAQmx_Val_ChanForAllLines));
+					} else {
+						fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: On Dev %d - Attempt to access invalid DI port%d. Terminating library.\n", devNum, pinNum);
+						ArduDAQmxTerminate();
+						setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+						myPin = NULL;
+					}
+					break;
+				case DIGITAL_OUT: // DIGITAL OUT
+					if (pinNum >= 0 && pinNum < myDev->numDOch) { // pinNum validity check
+						myPin = &(myDev->DOpins[pinNum]);
+						// setup task
+						myTask = &(myDev->DOtask);
+						cListAppend(myTask->activePinList, (void *)myPin);
+						myTask->activePinCnt = cListLength(myTask->activePinList);
+						// warn if pin assigned, and setup pin
+						if (myPin->pinAssignFlag != 0) {
+							fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Dev %d - DO port%d being reasigned.\n", devNum, pinNum);
+							cListUnlinkElem(myPin->pinTask->activePinList, cListFindElem(myPin->pinTask->activePinList, (void *)myPin));
+							myPin->pinTask->activePinCnt = cListLength(myPin->pinTask->activePinList);
+						}
+						myPin->pinTask = myTask;
+						myPin->pinAssignFlag = 1;
+						myPin->pinIOmode = DIGITAL_OUT;
+
+						snprintf(pinName, 256, "dev%dDO%d", devNum, pinNum);
+						DAQmxErrChk(DAQmxCreateDOChan(myDev->DOtask.Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NIdigiGrp));
+					} else {
+						fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: On Dev %d - Attempt to access invalid DO port%d. Terminating library.\n", devNum, pinNum);
+						ArduDAQmxTerminate();
+						setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+						myPin = NULL;
+					}
+					break;
+				case COUNTER_IN: // COUNTER IN
+					if (pinNum >= 0 && pinNum < myDev->numCIch) { // pinNum validity check
+						myPin = &(myDev->CIpins[pinNum]);
+						// setup task
+						myTask = &(myDev->CTRtask[pinNum]);
+						cListAppend(myTask->activePinList, (void *)myPin);
+						myTask->activePinCnt = cListLength(myTask->activePinList);
+						// warn if pin assigned, and setup pin
+						if (myPin->pinAssignFlag != 0) {
+							fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Dev %d - CTR%d being reasigned.\n", devNum, pinNum);
+							cListUnlinkElem(myPin->pinTask->activePinList, cListFindElem(myPin->pinTask->activePinList, (void *)myPin));
+							myPin->pinTask->activePinCnt = cListLength(myPin->pinTask->activePinList);
+						}
+						myPin->pinTask = myTask;
+						myPin->pinAssignFlag = 1;
+						myPin->pinIOmode = COUNTER_IN;
+
+						snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
+						DAQmxErrChk(DAQmxCreateCIAngEncoderChan(myDev->CTRtask[pinNum].Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NIctrMode, NIdef.ZEN, NIdef.Zval, NIdef.Zphase, NIdef.NIctrunits, NIdef.encoderPPR, NIdef.angleInit, ""));
+					} else {
+						fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: On Dev %d - Attempt to access invalid CTR input pin%d. Terminating library.\n", devNum, pinNum);
+						ArduDAQmxTerminate();
+						setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+						myPin = NULL;
+					}
+					break;
+				case COUNTER_OUT: // COUNTER OUT
+					if (pinNum >= 0 && pinNum < myDev->numCOch) { // pinNum validity check
+						myPin = &(myDev->COpins[pinNum]);
+						// setup task
+						myTask = &(myDev->CTRtask[pinNum]);
+						cListAppend(myTask->activePinList, (void *)myPin);
+						myTask->activePinCnt = cListLength(myTask->activePinList);
+						// warn if pin assigned, and setup pin
+						if (myPin->pinAssignFlag != 0) {
+							fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Dev %d - CTR%d being reasigned.\n", devNum, pinNum);
+							cListUnlinkElem(myPin->pinTask->activePinList, cListFindElem(myPin->pinTask->activePinList, (void *)myPin));
+							myPin->pinTask->activePinCnt = cListLength(myPin->pinTask->activePinList);
+						}
+						myPin->pinTask = myTask;
+						myPin->pinAssignFlag = 1;
+						myPin->pinIOmode = COUNTER_OUT;
+
+						snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
+						DAQmxErrChk(DAQmxCreateCOPulseChanTicks(myDev->CTRtask[pinNum].Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, "OnboardClock", NIdef.plsIdleSt, NIdef.plsInitDel, NIdef.plsLoTick, NIdef.plsHiTick));
+					} else {
+						fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: On Dev %d - Attempt to access invalid CTR input pin%d. Terminating library.\n", devNum, pinNum);
+						ArduDAQmxTerminate();
+						setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+						myPin = NULL;
+					}
+					break;
+				default:					 
+					fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: Dev %d - pin%d given invalid IO type\n");
+					ArduDAQmxTerminate();
+					setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
+					myPin = NULL;
+					break;
+				}
+				// every type of IO mode supported by the device gets it's own task.
+
+				// Search through them by IO type and pin number
+				//if task found
+					// if pin found
+						// reset pin mode if possible, else return NULL
+					//if pin not found, attach pin to the task of 
+
+				// ELSE if task not found, create task and add pin number to task
+					//when creating task, check sync order. If new order is less than current order,
+					//reset sync order for all tasks.
+
+				//TODO: reorder IO modes to match sync order. !!!!!!!!!!!!!!!!!!!!!!
+			} else { // myDev devNum check
+				fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: A device in library has invalid device number %d. Terminating library.\n", myDev->DevNum);
+				ArduDAQmxTerminate();
+				setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_UNSUPPORTED, 1);
+				myPin = NULL;
 			}
-			// every type of IO mode supported by the device gets it's own task.
-
-			// Search through them by IO type and pin number
-			//if task found
-				// if pin found
-					// reset pin mode if possible, else return NULL
-				//if pin not found, attach pin to the task of 
-
-			// ELSE if task not found, create task and add pin number to task
-				//when creating task, check sync order. If new order is less than current order,
-				//reset sync order for all tasks.
-
-			//TODO: reorder IO modes to match sync order. !!!!!!!!!!!!!!!!!!!!!!
-		} // check myDev check
+		} else {// devNum check
+			fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: Invalid device number requested. Terminating library.\n");
+			ArduDAQmxTerminate();
+			setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_UNSUPPORTED, 1);
+			myPin = NULL;
+		}
 
 		// Set sample clock information for the task
 		//DAQmxErrChk(DAQmxCfgSampClkTiming(loadCelltaskHandle, "", controlFreq, DAQmx_Val_Rising, DAQmx_Val_HWTimedSinglePoint, 1));
+	} else {
+		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: pinMode may be called only when library is in CONFIG mode.\n");
+		ArduDAQmxTerminate();
+		setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_NOTCONFIG, 1);
+		myPin = NULL;
 	}
-	else if (ArduDAQmxStatus == STATUS_READY) {
-		//do something
-	}
-	else {
-		// do something else?
-	}
-
 	return myPin;
 }
 
