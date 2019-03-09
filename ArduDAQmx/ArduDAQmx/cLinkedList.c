@@ -23,13 +23,13 @@
 /********************************/
 
 /*!
- * \fn long cListLength (cLinkedList *myList)
+ * \fn unsigned long cListLength (cLinkedList *myList)
  * Returns the length of the ::cLinkedList linked list passed to it as a parameter.
  * 
  * \param myList ::cLinkedList pointer of the linked list whose length is returned.
  * \return Length of the linked list passed as a parameter. Returns 0 if myList is a null pointer as well.
  */
-long cListLength (cLinkedList *myList)
+unsigned long cListLength (cLinkedList *myList)
 {
 	if (myList == NULL) {
 		fprintf(ERRSTREAM, "cLinkedList (cListLength): WARNING - Quashed attempt to access NULL pointer.\n");

@@ -36,14 +36,14 @@ typedef struct _cListElem {
  */
 typedef struct _cLinkedList {
 	/*! Number of elements in the linked list.*/
-    long        num_elem;
+    unsigned long        num_elem;
 	/*! The achhor element of the linked list to which all other elements are tied.*/
     cListElem   anchor;
 } cLinkedList;
 
 // Linked list status functions
-long cListLength             (cLinkedList *);
-int  cListEmpty              (cLinkedList *);
+unsigned long	cListLength	(cLinkedList *);
+int				cListEmpty	(cLinkedList *);
 
 // Linked list read functions
 cListElem * cListFirstElem   (cLinkedList *);

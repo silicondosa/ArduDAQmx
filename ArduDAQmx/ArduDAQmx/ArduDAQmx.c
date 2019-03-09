@@ -32,6 +32,9 @@ unsigned long	ArduDAQmxDevMaxNum			= 0;
 cLinkedList		*DAQmxEnumeratedDevList		= NULL;
 unsigned long	DAQmxEnumeratedDevCount		= 0;
 unsigned long	DAQmxEnumeratedDevMaxNum	= 0;
+cLinkedList		*ArduDAQmxTaskList			= NULL;
+unsigned long	ArduDAQmxTaskCount			= 0;
+
 sampleClock		ArduDAQmxSampleClock;
 
 // Library support function definitions
@@ -537,6 +540,10 @@ int ArduDAQmxConfigure()
 		DAQmxDevice *cpyDev = NULL;
 		unsigned int cpyInd = 0;
 		
+		if (cListLength(DAQmxEnumeratedDevList) > 0 && ArduDAQmxTaskList != NULL) {
+			ArduDAQmxTaskList = (cLinkedList *)malloc(sizeof(cLinkedList));
+			cListInit(ArduDAQmxTaskList);
+		}
 		// initialize all elements in ArduDAQmxDevList to have DevNum = 0 as it contains no valid devices yet.
 		for (i = 0, cpyDev = ArduDAQmxDevList; i < DAQmxEnumeratedDevMaxNum; i++, cpyDev++) {
 			cpyDev->DevNum = 0;
@@ -563,6 +570,9 @@ int ArduDAQmxConfigure()
 				cpyDev[cpyInd].AItask.activePinCnt	= 0;
 				cpyDev[cpyInd].AItask.ioBuffer		= NULL;
 				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AItask.Handler)));
+					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AItask.Handler));
+					ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
+				cpyDev[cpyInd].AItask.clockHandler = NULL;
 					// convert AI RT errors to warnings
 				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItask.Handler, 1));
 					// initialize AI pin list
@@ -585,6 +595,9 @@ int ArduDAQmxConfigure()
 				cpyDev[cpyInd].AOtask.activePinCnt	= 0;
 				cpyDev[cpyInd].AOtask.ioBuffer		= NULL;
 				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AOtask.Handler)));
+					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AOtask.Handler));
+					ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
+				cpyDev[cpyInd].AOtask.clockHandler = NULL;
 					// cinvert AO RT errors to warnings
 				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtask.Handler, 1));
 					// initialize AO pin list
@@ -608,6 +621,9 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].DItask.activePinCnt	= 0;
 					cpyDev[cpyInd].DItask.ioBuffer		= NULL;
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DItask.Handler)));
+						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DItask.Handler));
+						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
+					cpyDev[cpyInd].DItask.clockHandler = NULL;
 						// convert DI RT errors to warnings
 					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItask.Handler, 1));
 				}
@@ -620,7 +636,10 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].DOtask.activePinCnt	= 0;
 					cpyDev[cpyInd].DOtask.ioBuffer		= NULL;
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DOtask.Handler)));
-						// convert DO RT errors to warnings
+						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DOtask.Handler));
+						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
+					cpyDev[cpyInd].DOtask.clockHandler = NULL;
+					// convert DO RT errors to warnings
 					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DOtask.Handler, 1));
 				}
 					// initialize common Digital IO pin list
@@ -647,6 +666,9 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].CTRtask[i].activePinCnt	= 0;
 					cpyDev[cpyInd].CTRtask[i].ioBuffer		= NULL;
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].CTRtask[i].Handler)));
+						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].CTRtask[i].Handler));
+						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
+					cpyDev[cpyInd].CTRtask[i].clockHandler = NULL;
 						// convert CTR RT errors to warnings
 					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].CTRtask[i].Handler, 1));
 				}
@@ -802,6 +824,8 @@ int ArduDAQmxTerminate()
 		}
 
 	} // end for loop for task, pin clearing
+	cListUnlinkAll(ArduDAQmxTaskList);
+	ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 
 	// Resetting sample clock to invalid
 	ArduDAQmxSampleClock.sourceDevNum = 0;
@@ -813,6 +837,8 @@ int ArduDAQmxTerminate()
 
 	// dynamic memory housekeeping
 	ArduDAQmxStatus				= (int)STATUS_PRECONFIG;
+	free(ArduDAQmxTaskList);
+		ArduDAQmxTaskList		= NULL;
 	free(ArduDAQmxDevPrefix); // DYN-F: free ArduDAQmxDevPrefix allocation
 		ArduDAQmxDevPrefix		= NULL;	
 	ArduDAQmxDevPrefixLength	= MaxArduDAQmxDevPrefixLength;
@@ -1071,6 +1097,15 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 		setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_NOTCONFIG, 1);
 		myPin = NULL;
 	}
+	if (myPin != NULL) {
+		if (ArduDAQmxSampleClock.sourceDevNum == 0) {
+			setSampleClock(devNum, IOtype, pinNum, ArduDAQmxSampleClock.samplingRate);
+			fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Sample clock not set explicity. Implicitly setting it to Dev%d with sampling rate of %f.\n", devNum, ArduDAQmxSampleClock.samplingRate);
+		}
+		if (myTask->clockHandler == NULL) {
+			setTaskClock(myTask, &(ArduDAQmxSampleClock));
+		}
+	}
 	return myPin;
 }
 
@@ -1087,6 +1122,10 @@ inline bool isSampleClock()
 	return TRUE;
 }
 
+inline int32 setTaskClock(DAQmxTask *NItask, sampleClock *sampClk) {
+	return DAQmxErrChk(DAQmxCfgSampClkTiming(NItask->Handler, "", sampClk->samplingRate, sampClk->ActiveEdgTrg, sampClk->NIsampleMode, 1));
+}
+
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate)
 {
 	if (getArduDAQmxStatus() == STATUS_CONFIG) {
@@ -1101,28 +1140,66 @@ int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int 
 		switch (sourceIOmode) {
 		case ANALOG_IN:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/ai/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].AItask.Handler);
 			break;
 		case ANALOG_OUT:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/ao/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].AOtask.Handler);
 			break;
 		case DIGITAL_IN:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/di/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].DItask.Handler);
 			break;
 		case DIGITAL_OUT:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/do/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
+			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].DOtask.Handler);
 			break;
 		case COUNTER_IN:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/Ctr%dSource",    ArduDAQmxDevPrefix, sourceDevNum, sourcePinNum);
+			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].CTRtask[sourcePinNum].Handler);
 			break;
 		case COUNTER_OUT:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/Ctr%dSource",    ArduDAQmxDevPrefix, sourceDevNum, sourcePinNum);
+			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].CTRtask[sourcePinNum].Handler);
 			break;
 		default:
 			setArduDAQmxLastError(ERROR_INVIO, 1);
 			break;
 		}
-		return setArduDAQmxLastError(ERROR_NONE, 0);
+		return getArduDAQmxLastError();
 	}// end if block that checked config status of the library
-
+	fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: pinMode may be called only when library is in CONFIG mode.\n");
 	return setArduDAQmxLastError(ERROR_NOTCONFIG, 1);
 }
+
+
+inline void setSamplingRate(float64 samplingRate)
+{
+	ArduDAQmxSampleClock.samplingRate = samplingRate;
+}
+
+void waitSampleClock(float64 waitSeconds)
+{
+	bool32 isLate;
+	DAQmxErrChk(DAQmxWaitForNextSampleClock(&(ArduDAQmxSampleClock.sampClkTask), waitSeconds, &isLate));
+}
+
+int ArduDAQmxStart()
+{
+	cListElem *elem = NULL;
+	for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int) ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
+		DAQmxErrChk(DAQmxStartTask( *(TaskHandle *)elem->obj ));
+	}
+	return getArduDAQmxLastError();
+}
+
+int ArduDAQmxStop()
+{
+	cListElem *elem = NULL;
+	for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int) ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
+		DAQmxErrChk(DAQmxStopTask ( *(TaskHandle *)elem->obj ));
+		DAQmxErrChk(DAQmxClearTask( *(TaskHandle *)elem->obj ));
+	}
+	return getArduDAQmxLastError();
+}
+

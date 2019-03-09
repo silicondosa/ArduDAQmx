@@ -1,19 +1,26 @@
-Set the assigned sample clocks to the task when it is first assigned.
+	
+IN ArduDAQmx Start/Stop
+in start, create an ioBuffer using the active pin count - data type depends on IO mode. This is destroyed in stop
+
+
+
+read and write functions
+	counter out will have to use DAQmxWriteCtrTicksScalar .
+
+Handle and pass on NI-DAQmx error codes
+	
+~~~~
+DONE
+~~~~
+
+IN LIB, create new function to wait for next sample clock
+	- need to use task, so devNum, IOmode, pinNum can be parameters to select task to wait on.
+
+FINISH writing set sample clock
 
 IN PIN MODE:
 pin mode should use the pin list for each IO type as defined in the pin datastructure.
 	set pin as active in device specific master pin list
 	add active pin to active pin list in task
 	
-	
-IN ArduDAQmx Start/Stop
-in start, create an ioBuffer using the active pin count - data type depends on IO mode. This is destroyed in stop
-
-IN LIB, create new function to wait for next sample clock
-	- need to use task, so devNum, IOmode, pinNum can be parameters to select task to wait on.
-
-FINISH writing:
-set sample clock
-
-read and write functions
-	counter out will have to use DAQmxWriteCtrTicksScalar .
+Set the assigned sample clocks to the task when it is first assigned.

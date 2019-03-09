@@ -168,23 +168,17 @@ struct NIdefVals {
 
  }NIdef;
 
-/*!
- * Custom data type to encompass info on pins used by ArduDAQmx.
- */
-typedef struct _pin {
-	/*! NI-DAQ device/slot number where the pin lives.*/
-	unsigned int	DevNum		= 0;
-	/*! Pin number of the pin on the device.*/
-	unsigned int	PinNum		= 0;
-	/*! Task to which the pin is associated.*/
-	DAQmxTask		*pinTask;
-	/*!  Set to 1 iff the pin has been assigned to a task.*/
-	bool			pinAssignFlag	= 0;
-	/*! I/O mode of the pin as defined in ::IOmode.*/
-	IOmode			pinIOmode = INVALID_IO;
-	/*! Value that is set to or received from the pin.*/
-	double			pinValue = 0;
-} pin;
+	// Sample Clock and Trigger selection functions
+typedef struct _sampleClock {
+	unsigned int	sourceDevNum = 0;
+	IOmode			sourceIOmode = INVALID_IO;
+	float64			samplingRate = 1000;
+	int32			ActiveEdgTrg = DAQmx_Val_Rising;
+	int32			NIsampleMode = DAQmx_Val_HWTimedSinglePoint;
+	uInt64			numberSample = 1;
+	char			sampClkSrcID[256];
+	TaskHandle		*sampClkTask = NULL;
+} sampleClock;
 
 /*!
  * Structure to hold information regarding the tasks of a device. 
@@ -202,7 +196,28 @@ typedef struct _DAQmxTask {
 	void			*ioBuffer = NULL;
 	/*! NI-DAQmx task handler for the task.*/
 	TaskHandle		Handler;
+	/*! Sample Clock handler*/
+	sampleClock *clockHandler = NULL;
 } DAQmxTask;
+
+
+/*!
+ * Custom data type to encompass info on pins used by ArduDAQmx.
+ */
+typedef struct _pin {
+	/*! NI-DAQ device/slot number where the pin lives.*/
+	unsigned int	DevNum		= 0;
+	/*! Pin number of the pin on the device.*/
+	unsigned int	PinNum		= 0;
+	/*! Task to which the pin is associated.*/
+	DAQmxTask		*pinTask;
+	/*!  Set to 1 iff the pin has been assigned to a task.*/
+	bool			pinAssignFlag	= 0;
+	/*! I/O mode of the pin as defined in ::IOmode.*/
+	IOmode			pinIOmode = INVALID_IO;
+	/*! Value that is set to or received from the pin.*/
+	double			pinValue = 0;
+} pin;
 
 /*!
  * Custom data type encompasses info on DAQmx devices used by ArduDAQmx.
@@ -273,17 +288,6 @@ typedef struct _DAQmxDevice{
 	pin				*COpins = NULL;
 } DAQmxDevice;
 
-	// Sample Clock and Trigger selection functions
-typedef struct _sampleClock {
-	unsigned int	sourceDevNum = 0;
-	IOmode			sourceIOmode = INVALID_IO;
-	float64			samplingRate = 1000;
-	int32			ActiveEdgTrg = DAQmx_Val_Rising;
-	int32			NIsampleMode = DAQmx_Val_HWTimedSinglePoint;
-	uInt64			numberSample = 1;
-	char			sampClkSrcID[256];
-} sampleClock;
-
 // MASTER ARRAY OF DEVICES
 /*!
  * Pointer to master array of available NI-DAQmx compatible devices. DO NOT access this variable directly.
@@ -319,6 +323,10 @@ extern unsigned long DAQmxEnumeratedDevCount;
  * Highest device number of all NI-DAQmx devices enumerated by the 'enumerateDAQmxDevices' function.
  */
 extern unsigned long DAQmxEnumeratedDevMaxNum;
+
+// MASTER TASK LIST
+extern cLinkedList	*ArduDAQmxTaskList;
+extern unsigned long ArduDAQmxTaskCount;
 
 /*!
  * The global sanple clock configuration structure that is used by the ArduDAQmx library
@@ -360,6 +368,8 @@ pin* pinMode(unsigned int, unsigned int, IOmode);
 
 inline bool isSampleClock();
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate);
+inline void setSamplingRate(float64 samplingRate);
+void waitSampleClock(float64 waitSeconds);
 
 	// I/O Run/Pause/Stop functions
 int ArduDAQmxStart();
