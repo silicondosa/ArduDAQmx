@@ -1,11 +1,12 @@
 	
 IN ArduDAQmx Start/Stop
 in start, create an ioBuffer using the active pin count - data type depends on IO mode. This is destroyed in stop
-
+- start only if library status is ready
 
 
 read and write functions
 	counter out will have to use DAQmxWriteCtrTicksScalar .
+	read or write only if status is running.
 
 Handle and pass on NI-DAQmx error codes
 	

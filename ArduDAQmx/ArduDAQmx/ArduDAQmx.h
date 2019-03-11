@@ -349,7 +349,7 @@ inline int printArduDAQmxLastError();
 inline DAQmxDevice * getDAQmxDeviceList();
 inline unsigned long getDAQmxDeviceCount();
 inline char * getArduDAQmxPrefix();
-inline unsigned getArduDAQmxDevPrefixLength();
+inline unsigned int getArduDAQmxDevPrefixLength();
 
 unsigned int enumerateDAQmxDeviceTerminals(unsigned int deviceNumber);
 unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, unsigned int printFlag);
@@ -364,7 +364,7 @@ void ArduDAQmxClearEnumeratedDevices();
 //DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
 
 	// mode selection and timing configuration functions
-pin* pinMode(unsigned int, unsigned int, IOmode);
+int pinMode(unsigned int, unsigned int, IOmode);
 
 inline bool isSampleClock();
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate);

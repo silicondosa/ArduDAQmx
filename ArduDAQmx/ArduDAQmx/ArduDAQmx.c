@@ -422,12 +422,12 @@ inline char * getArduDAQmxPrefix()
 }
 
 /*!
- * \fn inline unsigned getArduDAQmxDevPrefixLength()
+ * \fn inline int unsigned getArduDAQmxDevPrefixLength()
  * Returns the length of the current DAQmx device prefix as defined in 'ArduDAQmxDevPrefixLength'.
  * 
  * \return Returns the length of current DAQmx device prefix as an unsigned integer.
  */
-inline unsigned getArduDAQmxDevPrefixLength()
+inline unsigned int getArduDAQmxDevPrefixLength()
 {
 	return ArduDAQmxDevPrefixLength;
 }
@@ -535,7 +535,7 @@ int ArduDAQmxConfigure()
 	// If in PRECONFIG state, setup library and device list
 	if (getArduDAQmxStatus() == (int)STATUS_PRECONFIG) { // if there are no issues and library is in preconfig, setup library
 		ArduDAQmxDevList	= (DAQmxDevice *) malloc( sizeof(DAQmxDevice) * DAQmxEnumeratedDevMaxNum ); // DYN-M: allocate array of devices for fast access
-		unsigned int		i = 0, j = 0, termLoop = 0;
+		unsigned int		i = 0, j = 0;
 		cListElem *elem		= NULL;
 		DAQmxDevice *cpyDev = NULL;
 		unsigned int cpyInd = 0;
@@ -550,18 +550,20 @@ int ArduDAQmxConfigure()
 		}
 
 		// copy sorted enumerated device linked list into the ArduDAQmxDevList device array that was just initialized.
-		for (termLoop = 0, cpyDev = ArduDAQmxDevList, elem = cListFirstElem(DAQmxEnumeratedDevList); elem != NULL && termLoop == 0; elem = cListNextElem(DAQmxEnumeratedDevList, elem)) {
+		for (cpyDev = ArduDAQmxDevList, elem = cListFirstElem(DAQmxEnumeratedDevList); elem != NULL && getArduDAQmxLastError() == ERROR_NONE; elem = cListNextElem(DAQmxEnumeratedDevList, elem)) {
 			cpyInd = ((DAQmxDevice*)(elem->obj))->DevNum - 1;
 			if (cpyInd < 0) {
 				fprintf(ERRSTREAM, "ArduDAQmx library: FATAL: A DAQmx device has a device number as 0. All device numbers must be positive integers");
 				ArduDAQmxTerminate();
 				setArduDAQmxLastError(ERROR_NODEVICES, 1);
-				termLoop = 1;
+				return getArduDAQmxStatus();
 			}
 			cpyDev[cpyInd] = *(DAQmxDevice*)(elem->obj);
 
 			// if pins of an IO type are present, initialize task, convert realtime errors to warnings and pinlist for that IO type
-			if (cpyDev[cpyInd].numAIch > 0) { // analog inputs present
+
+			// analog inputs present
+			if (cpyDev[cpyInd].numAIch > 0) { 
 					// initialize AI task
 				cpyDev[cpyInd].AItask.DevNum		= cpyDev[cpyInd].DevNum;
 				cpyDev[cpyInd].AItask.taskIOmode	= ANALOG_IN;
@@ -586,7 +588,9 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].AIpins[j].pinValue		= 0;
 				}
 			}
-			if (cpyDev[cpyInd].numAOch > 0) { // analog outputs present
+
+			// analog outputs present
+			if (cpyDev[cpyInd].numAOch > 0) { 
 					// initialize AO task
 				cpyDev[cpyInd].AOtask.DevNum		= cpyDev[cpyInd].DevNum;
 				cpyDev[cpyInd].AOtask.taskIOmode	= ANALOG_OUT;
@@ -611,8 +615,13 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].AOpins[j].pinValue		= 0;
 				}
 			}
-			if (cpyDev[cpyInd].numDIch > 0 || cpyDev[cpyInd].numDOch > 0) { // digital in/outs presents
-				if (cpyDev[cpyInd].numDIch > 0) { // digital in present
+
+
+			// digital in/outs presents
+			if (cpyDev[cpyInd].numDIch > 0 || cpyDev[cpyInd].numDOch > 0) { 
+				
+				// digital in pins are present
+				if (cpyDev[cpyInd].numDIch > 0) { 
 							// initialize DI task
 					cpyDev[cpyInd].DItask.DevNum		= cpyDev[cpyInd].DevNum;
 					cpyDev[cpyInd].DItask.taskIOmode	= DIGITAL_IN;
@@ -627,7 +636,9 @@ int ArduDAQmxConfigure()
 						// convert DI RT errors to warnings
 					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItask.Handler, 1));
 				}
-				if (cpyDev[cpyInd].numDOch > 0) { // digital outputs present
+				
+				// digital outputs present
+				if (cpyDev[cpyInd].numDOch > 0) { 
 						// initialize DO task
 					cpyDev[cpyInd].DOtask.DevNum		= cpyDev[cpyInd].DevNum;
 					cpyDev[cpyInd].DOtask.taskIOmode	= ANALOG_OUT;
@@ -655,7 +666,10 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].DIpins[j].pinValue		= 0;
 				}
 			}
-			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) { // counters in/out present
+
+
+			// counters in/out present
+			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) { 
 				// initialize 1 task per counter IO available.
 				cpyDev[cpyInd].CTRtask = (DAQmxTask *)malloc(cpyDev[cpyInd].numCIch * sizeof(DAQmxTask));
 				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) { // if counter inputs present, create counter tasks for each pin
@@ -699,6 +713,7 @@ int ArduDAQmxConfigure()
 		fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Library must be in preconfig mode to configure.\n");
 	}
 
+	if (getArduDAQmxLastError() != ERROR_NONE) ArduDAQmxTerminate();
 	return getArduDAQmxStatus();
 }
 
@@ -725,7 +740,7 @@ int ArduDAQmxInit(char *devicePrefix)
 		ArduDAQmxTerminate();
 		setArduDAQmxLastError(ERROR_NOTCONFIG,1);
 	}
-	return ArduDAQmxStatus;
+	return getArduDAQmxStatus();
 }
 
 /*!
@@ -880,26 +895,27 @@ void ArduDAQmxClearEnumeratedDevices()
 }
 
 /*!
- * \fn pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
+ * \fn int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
  * Defines the input-output mode of pins as either analog or digital pins.
  * If sample clock information is undefined, the function will set it to default values. Then sets up device of this pin as clock source.
  * 
  * \param devNum NI-DAQ device/slot number of the pin.
  * \param pinNum Pin number on the NI-DAQ device.
  * \param IOtype I/O type being requested on the pin as defined in ::IOmode.
- * \return Returns the 'pin' data structure used to configure and operate the pin.
+ * \return Returns the last error code of ArduDAQmx.
  */
-pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
+int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 {
 	DAQmxDevice *myDev  = NULL;
 	pin			*myPin	= NULL;
 	DAQmxTask	*myTask = NULL;
-	if (ArduDAQmxStatus == STATUS_CONFIG) { // if library is in CONFIG mode
+	if (ArduDAQmxStatus == STATUS_CONFIG || ArduDAQmxStatus == STATUS_READY) { // if library is in CONFIG mode
 		char pinIDstr[256], pinName[256];
-		if (devNum >= 0 && devNum < ArduDAQmxDevCount) {
+		if (devNum > 0 && devNum < ArduDAQmxDevCount) {
 			myDev = &(ArduDAQmxDevList[devNum - 1]);
 			if (myDev->DevNum != 0) {
 				switch (IOtype) {
+
 				case ANALOG_IN: // ANALOG IN
 					if (pinNum >= 0 && pinNum < myDev->numAIch) { // pinNum validity check
 						myPin = &(myDev->AIpins[pinNum]);
@@ -926,6 +942,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = NULL;
 					}
 					break;
+
 				case ANALOG_OUT: // ANALOG OUT
 					if (pinNum >= 0 && pinNum < myDev->numAOch) { // pinNum validity check
 						myPin = &(myDev->AOpins[pinNum]);
@@ -952,6 +969,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = NULL;
 					}
 					break;
+
 				case DIGITAL_IN: // DIGITAL IN
 					if (pinNum >= 0 && pinNum < myDev->numDIch) { // pinNum validity check
 						myPin = &(myDev->DIpins[pinNum]);
@@ -978,6 +996,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = NULL;
 					}
 					break;
+
 				case DIGITAL_OUT: // DIGITAL OUT
 					if (pinNum >= 0 && pinNum < myDev->numDOch) { // pinNum validity check
 						myPin = &(myDev->DOpins[pinNum]);
@@ -1004,6 +1023,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = NULL;
 					}
 					break;
+
 				case COUNTER_IN: // COUNTER IN
 					if (pinNum >= 0 && pinNum < myDev->numCIch) { // pinNum validity check
 						myPin = &(myDev->CIpins[pinNum]);
@@ -1030,6 +1050,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = NULL;
 					}
 					break;
+
 				case COUNTER_OUT: // COUNTER OUT
 					if (pinNum >= 0 && pinNum < myDev->numCOch) { // pinNum validity check
 						myPin = &(myDev->COpins[pinNum]);
@@ -1056,6 +1077,7 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = NULL;
 					}
 					break;
+
 				default:					 
 					fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: Dev %d - pin%d given invalid IO type\n");
 					ArduDAQmxTerminate();
@@ -1103,10 +1125,13 @@ pin * pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 			fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: Sample clock not set explicity. Implicitly setting it to Dev%d with sampling rate of %f.\n", devNum, ArduDAQmxSampleClock.samplingRate);
 		}
 		if (myTask->clockHandler == NULL) {
-			setTaskClock(myTask, &(ArduDAQmxSampleClock));
+			if (setTaskClock(myTask, &(ArduDAQmxSampleClock)) != (int32)ERROR_NONE) {
+				ArduDAQmxTerminate();
+				myPin = NULL;
+			}
 		}
 	}
-	return myPin;
+	return getArduDAQmxLastError();
 }
 
 /*!
@@ -1128,7 +1153,8 @@ inline int32 setTaskClock(DAQmxTask *NItask, sampleClock *sampClk) {
 
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate)
 {
-	if (getArduDAQmxStatus() == STATUS_CONFIG) {
+	if (getArduDAQmxStatus() == STATUS_CONFIG || getArduDAQmxStatus() == STATUS_READY) {
+		ArduDAQmxStatus = STATUS_READY;
 		ArduDAQmxSampleClock.sourceDevNum = sourceDevNum;
 		ArduDAQmxSampleClock.sourceIOmode = sourceIOmode;
 		ArduDAQmxSampleClock.samplingRate = samplingRate;
