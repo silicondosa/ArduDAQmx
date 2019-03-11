@@ -1201,7 +1201,9 @@ int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int 
 
 inline void setSamplingRate(float64 samplingRate)
 {
-	ArduDAQmxSampleClock.samplingRate = samplingRate;
+	if (getArduDAQmxStatus() == STATUS_CONFIG) {
+		ArduDAQmxSampleClock.samplingRate = samplingRate;
+	}
 }
 
 void waitSampleClock(float64 waitSeconds)
@@ -1213,8 +1215,19 @@ void waitSampleClock(float64 waitSeconds)
 int ArduDAQmxStart()
 {
 	cListElem *elem = NULL;
-	for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int) ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
-		DAQmxErrChk(DAQmxStartTask( *(TaskHandle *)elem->obj ));
+	if (getArduDAQmxLastError() == ERROR_NONE) {
+		if (getArduDAQmxStatus() == STATUS_READY) {
+			ArduDAQmxStatus = STATUS_RUN;
+			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
+				//create I/O buffer
+
+				//start NI tasks
+				DAQmxErrChk(DAQmxStartTask(*(TaskHandle *)elem->obj));
+			}
+		}
+		else {
+			fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: ArduDAQmx may be started only when library is in READY [1] status. Current status code: [%d].\n", getArduDAQmxStatus());
+		}
 	}
 	return getArduDAQmxLastError();
 }
@@ -1222,9 +1235,20 @@ int ArduDAQmxStart()
 int ArduDAQmxStop()
 {
 	cListElem *elem = NULL;
-	for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int) ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
-		DAQmxErrChk(DAQmxStopTask ( *(TaskHandle *)elem->obj ));
-		DAQmxErrChk(DAQmxClearTask( *(TaskHandle *)elem->obj ));
+	if (getArduDAQmxLastError() == ERROR_NONE) {
+		if (getArduDAQmxStatus() == STATUS_RUN) {
+			ArduDAQmxStatus = STATUS_READY;
+			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
+				//free I/O buffer
+
+				//stop and clear NI tasks
+				DAQmxErrChk(DAQmxStopTask(*(TaskHandle *)elem->obj));
+				DAQmxErrChk(DAQmxClearTask(*(TaskHandle *)elem->obj));
+			}
+		}
+		else {
+			fprintf(ERRSTREAM, "ArduDAQmx library: WARNING: ArduDAQmx may be stopped only when library is in RUN [2] status. Current status code: [%d].\n", getArduDAQmxStatus());
+		}
 	}
 	return getArduDAQmxLastError();
 }

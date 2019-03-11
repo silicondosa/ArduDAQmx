@@ -1,7 +1,7 @@
 	
 IN ArduDAQmx Start/Stop
 in start, create an ioBuffer using the active pin count - data type depends on IO mode. This is destroyed in stop
-- start only if library status is ready
+DONE - start only if library status is ready
 
 
 read and write functions
