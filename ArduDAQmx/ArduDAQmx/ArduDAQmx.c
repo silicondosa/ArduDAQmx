@@ -1253,12 +1253,15 @@ int ArduDAQmxStop()
 			ArduDAQmxStatus = STATUS_READY;
 			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
 				task = (ArduDAQmxTask *)elem->obj;
-				//free I/O buffer
-				free(task->ioBuffer);
 
-				//stop and clear NI task
-				DAQmxErrChk(DAQmxStopTask ( task->Handler ));
-				DAQmxErrChk(DAQmxClearTask( task->Handler ));
+				if (task->activePinCnt > 0) {
+					//free I/O buffer
+					free(task->ioBuffer);
+
+					//stop and clear NI task
+					DAQmxErrChk(DAQmxStopTask(task->Handler));
+					DAQmxErrChk(DAQmxClearTask(task->Handler));
+				}
 			}
 		}
 		else {
