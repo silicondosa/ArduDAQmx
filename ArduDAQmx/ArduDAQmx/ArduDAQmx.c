@@ -570,11 +570,12 @@ int ArduDAQmxConfigure()
 				cpyDev[cpyInd].AItask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
 				cListInit(cpyDev[cpyInd].AItask.activePinList);
 				cpyDev[cpyInd].AItask.activePinCnt	= 0;
+				cpyDev[cpyInd].AItask.ioDataSize	= sizeof(float64);
 				cpyDev[cpyInd].AItask.ioBuffer		= NULL;
 				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AItask.Handler)));
-					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AItask.Handler));
+					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AItask));
 					ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
-				cpyDev[cpyInd].AItask.clockHandler = NULL;
+				cpyDev[cpyInd].AItask.clockHandler	= NULL;
 					// convert AI RT errors to warnings
 				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItask.Handler, 1));
 					// initialize AI pin list
@@ -597,12 +598,13 @@ int ArduDAQmxConfigure()
 				cpyDev[cpyInd].AOtask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
 				cListInit(cpyDev[cpyInd].AOtask.activePinList);
 				cpyDev[cpyInd].AOtask.activePinCnt	= 0;
+				cpyDev[cpyInd].AOtask.ioDataSize	= sizeof(float64);
 				cpyDev[cpyInd].AOtask.ioBuffer		= NULL;
 				DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].AOtask.Handler)));
-					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AOtask.Handler));
+					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AOtask));
 					ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
-				cpyDev[cpyInd].AOtask.clockHandler = NULL;
-					// cinvert AO RT errors to warnings
+				cpyDev[cpyInd].AOtask.clockHandler	= NULL;
+					// convert AO RT errors to warnings
 				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtask.Handler, 1));
 					// initialize AO pin list
 				cpyDev[cpyInd].AOpins = (pin *) malloc(cpyDev[cpyInd].numAOch * sizeof(pin));
@@ -628,11 +630,12 @@ int ArduDAQmxConfigure()
 					cpyDev[cpyInd].DItask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
 					cListInit(cpyDev[cpyInd].DItask.activePinList);
 					cpyDev[cpyInd].DItask.activePinCnt	= 0;
+					cpyDev[cpyInd].DItask.ioDataSize	= cpyDev[cpyInd].numDIch <= 8 ? sizeof(uInt8) : cpyDev[cpyInd].numDIch <= 16 ? sizeof(uInt16) : sizeof(uInt32);
 					cpyDev[cpyInd].DItask.ioBuffer		= NULL;
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DItask.Handler)));
-						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DItask.Handler));
+						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DItask));
 						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
-					cpyDev[cpyInd].DItask.clockHandler = NULL;
+					cpyDev[cpyInd].DItask.clockHandler	= NULL;
 						// convert DI RT errors to warnings
 					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItask.Handler, 1));
 				}
@@ -641,15 +644,16 @@ int ArduDAQmxConfigure()
 				if (cpyDev[cpyInd].numDOch > 0) { 
 						// initialize DO task
 					cpyDev[cpyInd].DOtask.DevNum		= cpyDev[cpyInd].DevNum;
-					cpyDev[cpyInd].DOtask.taskIOmode	= ANALOG_OUT;
+					cpyDev[cpyInd].DOtask.taskIOmode	= DIGITAL_OUT;
 					cpyDev[cpyInd].DOtask.activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
 					cListInit(cpyDev[cpyInd].DOtask.activePinList);
 					cpyDev[cpyInd].DOtask.activePinCnt	= 0;
+					cpyDev[cpyInd].DItask.ioDataSize	= cpyDev[cpyInd].numDOch <= 8 ? sizeof(uInt8) : cpyDev[cpyInd].numDOch <= 16 ? sizeof(uInt16) : sizeof(uInt32);
 					cpyDev[cpyInd].DOtask.ioBuffer		= NULL;
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].DOtask.Handler)));
-						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DOtask.Handler));
+						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DOtask));
 						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
-					cpyDev[cpyInd].DOtask.clockHandler = NULL;
+					cpyDev[cpyInd].DOtask.clockHandler	= NULL;
 					// convert DO RT errors to warnings
 					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DOtask.Handler, 1));
 				}
@@ -671,16 +675,17 @@ int ArduDAQmxConfigure()
 			// counters in/out present
 			if (cpyDev[cpyInd].numCIch > 0 || cpyDev[cpyInd].numCOch > 0) { 
 				// initialize 1 task per counter IO available.
-				cpyDev[cpyInd].CTRtask = (DAQmxTask *)malloc(cpyDev[cpyInd].numCIch * sizeof(DAQmxTask));
+				cpyDev[cpyInd].CTRtask = (ArduDAQmxTask *)malloc(cpyDev[cpyInd].numCIch * sizeof(ArduDAQmxTask));
 				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) { // if counter inputs present, create counter tasks for each pin
 					cpyDev[cpyInd].CTRtask[i].DevNum		= cpyDev[cpyInd].DevNum;
-					cpyDev[cpyInd].CTRtask[i].taskIOmode	= ANALOG_OUT;
+					cpyDev[cpyInd].CTRtask[i].taskIOmode	= COUNTER_IN;
 					cpyDev[cpyInd].CTRtask[i].activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
 					cListInit(cpyDev[cpyInd].CTRtask[i].activePinList);
 					cpyDev[cpyInd].CTRtask[i].activePinCnt	= 0;
+					cpyDev[cpyInd].CTRtask[i].ioDataSize	= sizeof(float64);
 					cpyDev[cpyInd].CTRtask[i].ioBuffer		= NULL;
 					DAQmxErrChk(DAQmxCreateTask("", &(cpyDev[cpyInd].CTRtask[i].Handler)));
-						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].CTRtask[i].Handler));
+						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].CTRtask[i]));
 						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 					cpyDev[cpyInd].CTRtask[i].clockHandler = NULL;
 						// convert CTR RT errors to warnings
@@ -908,7 +913,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 {
 	DAQmxDevice *myDev  = NULL;
 	pin			*myPin	= NULL;
-	DAQmxTask	*myTask = NULL;
+	ArduDAQmxTask	*myTask = NULL;
 	if (ArduDAQmxStatus == STATUS_CONFIG || ArduDAQmxStatus == STATUS_READY) { // if library is in CONFIG mode
 		char pinIDstr[256], pinName[256];
 		if (devNum > 0 && devNum < ArduDAQmxDevCount) {
@@ -1029,6 +1034,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = &(myDev->CIpins[pinNum]);
 						// setup task
 						myTask = &(myDev->CTRtask[pinNum]);
+						myTask->taskIOmode = IOtype;
 						cListAppend(myTask->activePinList, (void *)myPin);
 						myTask->activePinCnt = cListLength(myTask->activePinList);
 						// warn if pin assigned, and setup pin
@@ -1056,6 +1062,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						myPin = &(myDev->COpins[pinNum]);
 						// setup task
 						myTask = &(myDev->CTRtask[pinNum]);
+						myTask->taskIOmode = IOtype;
 						cListAppend(myTask->activePinList, (void *)myPin);
 						myTask->activePinCnt = cListLength(myTask->activePinList);
 						// warn if pin assigned, and setup pin
@@ -1147,7 +1154,7 @@ inline bool isSampleClock()
 	return TRUE;
 }
 
-inline int32 setTaskClock(DAQmxTask *NItask, sampleClock *sampClk) {
+inline int32 setTaskClock(ArduDAQmxTask *NItask, sampleClock *sampClk) {
 	return DAQmxErrChk(DAQmxCfgSampClkTiming(NItask->Handler, "", sampClk->samplingRate, sampClk->ActiveEdgTrg, sampClk->NIsampleMode, 1));
 }
 
@@ -1215,14 +1222,17 @@ void waitSampleClock(float64 waitSeconds)
 int ArduDAQmxStart()
 {
 	cListElem *elem = NULL;
+	ArduDAQmxTask *task = NULL;
 	if (getArduDAQmxLastError() == ERROR_NONE) {
 		if (getArduDAQmxStatus() == STATUS_READY) {
 			ArduDAQmxStatus = STATUS_RUN;
 			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
+				task = (ArduDAQmxTask *)elem->obj;
 				//create I/O buffer
+				task->ioBuffer = malloc(task->ioDataSize * task->activePinCnt);
 
-				//start NI tasks
-				DAQmxErrChk(DAQmxStartTask(*(TaskHandle *)elem->obj));
+				//start NI task
+				DAQmxErrChk(DAQmxStartTask( task->Handler ));
 			}
 		}
 		else {
@@ -1235,15 +1245,18 @@ int ArduDAQmxStart()
 int ArduDAQmxStop()
 {
 	cListElem *elem = NULL;
+	ArduDAQmxTask *task = NULL;
 	if (getArduDAQmxLastError() == ERROR_NONE) {
 		if (getArduDAQmxStatus() == STATUS_RUN) {
 			ArduDAQmxStatus = STATUS_READY;
 			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
+				task = (ArduDAQmxTask *)elem->obj;
 				//free I/O buffer
+				free(task->ioBuffer);
 
-				//stop and clear NI tasks
-				DAQmxErrChk(DAQmxStopTask(*(TaskHandle *)elem->obj));
-				DAQmxErrChk(DAQmxClearTask(*(TaskHandle *)elem->obj));
+				//stop and clear NI task
+				DAQmxErrChk(DAQmxStopTask ( task->Handler ));
+				DAQmxErrChk(DAQmxClearTask( task->Handler ));
 			}
 		}
 		else {
@@ -1252,4 +1265,5 @@ int ArduDAQmxStop()
 	}
 	return getArduDAQmxLastError();
 }
+
 

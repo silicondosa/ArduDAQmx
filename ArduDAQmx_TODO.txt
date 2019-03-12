@@ -7,6 +7,7 @@ DONE - start only if library status is ready
 read and write functions
 	counter out will have to use DAQmxWriteCtrTicksScalar .
 	read or write only if status is running.
+	Don't forget to use the paper sheet that you were jotting things on for this.
 
 Handle and pass on NI-DAQmx error codes
 	

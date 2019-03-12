@@ -124,9 +124,9 @@ typedef enum _IOmode{
 	DIGITAL_OUT		= 3,
 	
 // counter I/O modes
-	/*! Counter I/O mode: COUNTER IN*/
+	/*! Counter I/O mode: COUNTER IN - reads angular position*/
 	COUNTER_IN		= 4,
-	/*! Counter I/O mode: COUNTER OUT*/
+	/*! Counter I/O mode: COUNTER OUT - writes ticks*/
 	COUNTER_OUT		= 5
 }IOmode;
 
@@ -183,7 +183,7 @@ typedef struct _sampleClock {
 /*!
  * Structure to hold information regarding the tasks of a device. 
  */
-typedef struct _DAQmxTask {
+typedef struct _ArduDAQmxTask {
 	/*! Device number of the task.*/
 	unsigned int	DevNum = 0;
 	/*!	The I/O type of the task.*/
@@ -192,13 +192,15 @@ typedef struct _DAQmxTask {
 	cLinkedList		*activePinList;
 	/*! Number of active pins associated with the task.*/
 	unsigned int	activePinCnt = 0;
+	/*! Size of each element of the data array I/O buffer. Set based on I/O type and pin count.*/
+	size_t			ioDataSize = 0;
 	/*! Buffer of data to write/read from the pins of the task. Created when task starts, removed when task stops.*/
 	void			*ioBuffer = NULL;
 	/*! NI-DAQmx task handler for the task.*/
 	TaskHandle		Handler;
 	/*! Sample Clock handler*/
 	sampleClock *clockHandler = NULL;
-} DAQmxTask;
+} ArduDAQmxTask;
 
 
 /*!
@@ -210,7 +212,7 @@ typedef struct _pin {
 	/*! Pin number of the pin on the device.*/
 	unsigned int	PinNum		= 0;
 	/*! Task to which the pin is associated.*/
-	DAQmxTask		*pinTask;
+	ArduDAQmxTask		*pinTask;
 	/*!  Set to 1 iff the pin has been assigned to a task.*/
 	bool			pinAssignFlag	= 0;
 	/*! I/O mode of the pin as defined in ::IOmode.*/
@@ -241,11 +243,11 @@ typedef struct _DAQmxDevice{
 
 	// Number of NI-DAQmx tasks based on this NI article: https://knowledge.ni.com/KnowledgeArticleDetails?id=kA00Z0000019KWYSA2&l=en-US
 		// Task handlers are dynamically initialized in the configure function and cleared in the terminate functiion
-	DAQmxTask		AItask;
-	DAQmxTask		AOtask;
-	DAQmxTask		DItask;
-	DAQmxTask		DOtask;
-	DAQmxTask		*CTRtask;
+	ArduDAQmxTask		AItask;
+	ArduDAQmxTask		AOtask;
+	ArduDAQmxTask		DItask;
+	ArduDAQmxTask		DOtask;
+	ArduDAQmxTask		*CTRtask;
 
 	/*
 	TaskHandle		  AItaskHandler;
