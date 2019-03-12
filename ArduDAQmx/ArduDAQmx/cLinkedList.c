@@ -428,12 +428,14 @@ int cListPrepend (cLinkedList *myList, void *newData) {
  */
 void cListUnlinkAll (cLinkedList *myList)
 {
-    cListElem *elem = NULL;
+	cListElem *elem = cListFirstElem(myList);
+	cListElem *nextElem = cListNextElem(myList, elem);
 
-    for (elem = cListFirstElem(myList); elem != NULL; elem = cListNextElem(myList, elem)) {
-        free(elem);
-    }
-    cListInit(myList);
+    while (elem != NULL) {
+		cListUnlinkElem(myList, elem);
+		elem = nextElem;
+		nextElem = cListNextElem(myList, elem);
+	}
 }
 
 /*!

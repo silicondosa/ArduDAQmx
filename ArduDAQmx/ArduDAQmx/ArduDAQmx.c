@@ -754,86 +754,87 @@ int ArduDAQmxTerminate()
 	//stop any active DAQmx tasks using the ArduDAQmx I/O Stop function		
 	unsigned int i, j;
 	for (i = 0; i < ArduDAQmxDevMaxNum; i++) { // for all NI-DAQmx devices
-		if (ArduDAQmxDevList[i].numAIch > 0) { 
+		if (ArduDAQmxDevList[i].DevNum > 0) { // only devices with devNum > 0 are valid devices on this array
+			if (ArduDAQmxDevList[i].numAIch > 0) {
 				// terminate NI AI task handler
-			DAQmxStopTask(ArduDAQmxDevList[i].AItask.Handler);
-			DAQmxClearTask(ArduDAQmxDevList[i].AItask.Handler);
+				DAQmxStopTask(ArduDAQmxDevList[i].AItask.Handler);
+				DAQmxClearTask(ArduDAQmxDevList[i].AItask.Handler);
 				// clear AI pin list
-			free(ArduDAQmxDevList[i].AIpins);
-			ArduDAQmxDevList[i].AIpins = NULL;
+				free(ArduDAQmxDevList[i].AIpins);
+				ArduDAQmxDevList[i].AIpins = NULL;
 				// clear AI task
-			ArduDAQmxDevList[i].AItask.taskIOmode = INVALID_IO;
-			if (ArduDAQmxDevList[i].AItask.activePinList != NULL) {
-				cListUnlinkAll(ArduDAQmxDevList[i].AItask.activePinList);
-				free(ArduDAQmxDevList[i].AItask.activePinList);
-				ArduDAQmxDevList[i].AItask.activePinList = NULL;
+				ArduDAQmxDevList[i].AItask.taskIOmode = INVALID_IO;
+				if (ArduDAQmxDevList[i].AItask.activePinList != NULL) {
+					cListUnlinkAll(ArduDAQmxDevList[i].AItask.activePinList);
+					free(ArduDAQmxDevList[i].AItask.activePinList);
+					ArduDAQmxDevList[i].AItask.activePinList = NULL;
+				}
 			}
-		}
-		if (ArduDAQmxDevList[i].numAOch > 0) {
+			if (ArduDAQmxDevList[i].numAOch > 0) {
 				// terminate NI AO task handler
-			DAQmxStopTask(ArduDAQmxDevList[i].AOtask.Handler);
-			DAQmxClearTask(ArduDAQmxDevList[i].AOtask.Handler);
+				DAQmxStopTask(ArduDAQmxDevList[i].AOtask.Handler);
+				DAQmxClearTask(ArduDAQmxDevList[i].AOtask.Handler);
 				// clear AO pin list
-			free(ArduDAQmxDevList[i].AOpins);
-			ArduDAQmxDevList[i].AOpins = NULL;
+				free(ArduDAQmxDevList[i].AOpins);
+				ArduDAQmxDevList[i].AOpins = NULL;
 				// clear AO task
-			ArduDAQmxDevList[i].AOtask.taskIOmode = INVALID_IO;
-			if (ArduDAQmxDevList[i].AOtask.activePinList != NULL) {
-				cListUnlinkAll(ArduDAQmxDevList[i].AOtask.activePinList);
-				free(ArduDAQmxDevList[i].AOtask.activePinList);
-				ArduDAQmxDevList[i].AOtask.activePinList = NULL;
+				ArduDAQmxDevList[i].AOtask.taskIOmode = INVALID_IO;
+				if (ArduDAQmxDevList[i].AOtask.activePinList != NULL) {
+					cListUnlinkAll(ArduDAQmxDevList[i].AOtask.activePinList);
+					free(ArduDAQmxDevList[i].AOtask.activePinList);
+					ArduDAQmxDevList[i].AOtask.activePinList = NULL;
+				}
 			}
-		}
-		if (ArduDAQmxDevList[i].numDIch > 0 || ArduDAQmxDevList[i].numDOch > 0) {
-			if (ArduDAQmxDevList[i].numDIch > 0) { // if DI pins present
-					// terminate NI DI task handler
-				DAQmxStopTask(ArduDAQmxDevList[i].DItask.Handler);
-				DAQmxClearTask(ArduDAQmxDevList[i].DItask.Handler);
+			if (ArduDAQmxDevList[i].numDIch > 0 || ArduDAQmxDevList[i].numDOch > 0) {
+				if (ArduDAQmxDevList[i].numDIch > 0) { // if DI pins present
+						// terminate NI DI task handler
+					DAQmxStopTask(ArduDAQmxDevList[i].DItask.Handler);
+					DAQmxClearTask(ArduDAQmxDevList[i].DItask.Handler);
 					// clear DI task
-				ArduDAQmxDevList[i].DItask.taskIOmode = INVALID_IO;
-				if (ArduDAQmxDevList[i].DItask.activePinList != NULL) {
-					cListUnlinkAll(ArduDAQmxDevList[i].DItask.activePinList);
-					free(ArduDAQmxDevList[i].DItask.activePinList);
-					ArduDAQmxDevList[i].DItask.activePinList = NULL;
+					ArduDAQmxDevList[i].DItask.taskIOmode = INVALID_IO;
+					if (ArduDAQmxDevList[i].DItask.activePinList != NULL) {
+						cListUnlinkAll(ArduDAQmxDevList[i].DItask.activePinList);
+						free(ArduDAQmxDevList[i].DItask.activePinList);
+						ArduDAQmxDevList[i].DItask.activePinList = NULL;
+					}
 				}
-			}
-			if (ArduDAQmxDevList[i].numDOch > 0) { // if DO pins present
-					// terminate NI DO task handler
-				DAQmxStopTask(ArduDAQmxDevList[i].DOtask.Handler);
-				DAQmxClearTask(ArduDAQmxDevList[i].DOtask.Handler);
+				if (ArduDAQmxDevList[i].numDOch > 0) { // if DO pins present
+						// terminate NI DO task handler
+					DAQmxStopTask(ArduDAQmxDevList[i].DOtask.Handler);
+					DAQmxClearTask(ArduDAQmxDevList[i].DOtask.Handler);
 					// clear DO task
-				ArduDAQmxDevList[i].DOtask.taskIOmode = INVALID_IO;
-				if (ArduDAQmxDevList[i].DOtask.activePinList != NULL) {
-					cListUnlinkAll(ArduDAQmxDevList[i].DOtask.activePinList);
-					free(ArduDAQmxDevList[i].DOtask.activePinList);
-					ArduDAQmxDevList[i].DOtask.activePinList = NULL;
+					ArduDAQmxDevList[i].DOtask.taskIOmode = INVALID_IO;
+					if (ArduDAQmxDevList[i].DOtask.activePinList != NULL) {
+						cListUnlinkAll(ArduDAQmxDevList[i].DOtask.activePinList);
+						free(ArduDAQmxDevList[i].DOtask.activePinList);
+						ArduDAQmxDevList[i].DOtask.activePinList = NULL;
+					}
 				}
-			}
 				// Clear common digital pin list
-			free(ArduDAQmxDevList[i].DIpins);
-			ArduDAQmxDevList[i].DIpins = NULL;
-			ArduDAQmxDevList[i].DOpins = NULL;
-		}
-		if (ArduDAQmxDevList[i].numCIch > 0 || ArduDAQmxDevList[i].numCOch > 0) {
-			for (j = 0; j < ArduDAQmxDevList[i].numCIch; j++) { // if any CTR in tasks are present
-					// terminate all NI CTR task handlers
-				DAQmxStopTask (ArduDAQmxDevList[i].CTRtask[j].Handler);
-				DAQmxClearTask(ArduDAQmxDevList[i].CTRtask[j].Handler);
-					// clear all CTR tasks
-				ArduDAQmxDevList[i].CTRtask[j].taskIOmode = INVALID_IO;
-				if (ArduDAQmxDevList[i].CTRtask[j].activePinList != NULL) {
-					cListUnlinkAll(ArduDAQmxDevList[i].CTRtask[j].activePinList);
-					free(ArduDAQmxDevList[i].CTRtask[j].activePinList);
-					ArduDAQmxDevList[i].CTRtask[j].activePinList = NULL;
-				}
+				free(ArduDAQmxDevList[i].DIpins);
+				ArduDAQmxDevList[i].DIpins = NULL;
+				ArduDAQmxDevList[i].DOpins = NULL;
 			}
-			free(ArduDAQmxDevList[i].CTRtask);
+			if (ArduDAQmxDevList[i].numCIch > 0 || ArduDAQmxDevList[i].numCOch > 0) {
+				for (j = 0; j < ArduDAQmxDevList[i].numCIch; j++) { // if any CTR in tasks are present
+						// terminate all NI CTR task handlers
+					DAQmxStopTask(ArduDAQmxDevList[i].CTRtask[j].Handler);
+					DAQmxClearTask(ArduDAQmxDevList[i].CTRtask[j].Handler);
+					// clear all CTR tasks
+					ArduDAQmxDevList[i].CTRtask[j].taskIOmode = INVALID_IO;
+					if (ArduDAQmxDevList[i].CTRtask[j].activePinList != NULL) {
+						cListUnlinkAll(ArduDAQmxDevList[i].CTRtask[j].activePinList);
+						free(ArduDAQmxDevList[i].CTRtask[j].activePinList);
+						ArduDAQmxDevList[i].CTRtask[j].activePinList = NULL;
+					}
+				}
+				free(ArduDAQmxDevList[i].CTRtask);
 				// clear common CTR pin list
-			free(ArduDAQmxDevList[i].CIpins);
-			ArduDAQmxDevList[i].CIpins = NULL;
-			ArduDAQmxDevList[i].COpins = NULL;
-		}
-
+				free(ArduDAQmxDevList[i].CIpins);
+				ArduDAQmxDevList[i].CIpins = NULL;
+				ArduDAQmxDevList[i].COpins = NULL;
+			}
+		} // end devNum > 0 check - this checks for device validity
 	} // end for loop for task, pin clearing
 	cListUnlinkAll(ArduDAQmxTaskList);
 	ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
@@ -908,7 +909,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype, bool pinRst
 	ArduDAQmxTask	*myTask = NULL;
 	if (ArduDAQmxStatus == STATUS_CONFIG || ArduDAQmxStatus == STATUS_READY) { // if library is in CONFIG mode
 		char pinIDstr[256], pinName[256];
-		if (devNum > 0 && devNum < ArduDAQmxDevCount) {
+		if (devNum > 0 && devNum <= ArduDAQmxDevMaxNum) {
 			myDev = &(ArduDAQmxDevList[devNum - 1]);
 			if (myDev->DevNum != 0) {
 				switch (IOtype) {
@@ -1223,15 +1224,17 @@ int ArduDAQmxStart()
 			//Start all tasks
 			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
 				task = (ArduDAQmxTask *)elem->obj;
+				
+				if (task->activePinCnt > 0) {
+					//Convert realtime conversion errors to warnings in all tasks
+					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings(task->Handler, 1));
 
-				//Convert realtime conversion errors to warnings in all tasks
-				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( task->Handler, 1));
+					//create I/O buffer
+					task->ioBuffer = malloc(task->ioDataSize * task->activePinCnt);
 
-				//create I/O buffer
-				task->ioBuffer = malloc(task->ioDataSize * task->activePinCnt);
-
-				//start NI task
-				DAQmxErrChk(DAQmxStartTask( task->Handler ));
+					//start NI task
+					DAQmxErrChk(DAQmxStartTask(task->Handler));
+				}
 			}
 		}
 		else {

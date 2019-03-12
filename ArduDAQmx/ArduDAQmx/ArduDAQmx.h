@@ -368,7 +368,8 @@ void ArduDAQmxClearEnumeratedDevices();
 //DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
 
 	// mode selection and timing configuration functions
-int pinMode(unsigned int, unsigned int, IOmode, bool pinRst);
+
+int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype, bool pinRst);
 
 inline bool isSampleClock();
 inline int32 setTaskClock(ArduDAQmxTask *NItask, sampleClock *sampClk);
