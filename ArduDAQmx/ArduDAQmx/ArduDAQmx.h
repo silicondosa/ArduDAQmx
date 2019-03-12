@@ -88,6 +88,8 @@ typedef enum _ArduDAQmxStatusMode {
  * Enumerates the list of error codes of the ArduDAQmx library as set in 'ArduDAQmxErrorCode'.
  */
 typedef enum _ArduDAQmxErrorCode {
+	/*! Library is not ready to run. Configure library, sample clock and pin mode first!*/
+	ERROR_NOTREADY			= -7,
 	/*! A feature or functionality that is unsupported by ArduDAQmx requested.*/
 	ERROR_UNSUPPORTED		= -6,
 	/*!	An invalid or unsupported I/O type has been selected.*/
@@ -125,9 +127,9 @@ typedef enum _IOmode{
 	
 // counter I/O modes
 	/*! Counter I/O mode: COUNTER IN - reads angular position*/
-	COUNTER_IN		= 4,
+	CTR_ANGLE_IN	= 4,
 	/*! Counter I/O mode: COUNTER OUT - writes ticks*/
-	COUNTER_OUT		= 5
+	CTR_TICK_OUT	= 5
 }IOmode;
 
 /*!
@@ -366,7 +368,7 @@ void ArduDAQmxClearEnumeratedDevices();
 //DAQmxDevice * findDAQmxDeviceData(unsigned int deviceNumber);
 
 	// mode selection and timing configuration functions
-int pinMode(unsigned int, unsigned int, IOmode);
+int pinMode(unsigned int, unsigned int, IOmode, bool pinRst);
 
 inline bool isSampleClock();
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate);
@@ -384,7 +386,7 @@ int analogReadEnum(unsigned int devNum);
 
 int digitalReadPort(unsigned int devNum, unsigned int portNum, uInt32 *readData);
 
-int counterRead(unsigned int devNum, unsigned int ctrNum, float64 readData);
+int counterAngleRead(unsigned int devNum, unsigned int ctrNum, float64 readData);
 
 	// write functions
 int analogWritePin (unsigned int devNum, unsigned int pinNum, double  writeData);
@@ -393,6 +395,6 @@ int analogWriteEnum(unsigned int devNum);
 
 int digitalWritePort(unsigned int devNum, unsigned int portNum, uInt32 *writeData);
 
-int counterWrite(unsigned int devNum, unsigned int ctrNum);
+int counterTickWrite(unsigned int devNum, unsigned int ctrNum);
 
 #endif // !ARDUDAQMX_H

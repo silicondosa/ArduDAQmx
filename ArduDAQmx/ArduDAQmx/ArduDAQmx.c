@@ -62,10 +62,10 @@ char* pin2string(char *strbuf, unsigned int devNum, IOmode ioMode, unsigned int 
 	case IOmode::DIGITAL_OUT:
 		snprintf(pinType, pinTypeLength, "port");
 		break;
-	case IOmode::COUNTER_IN:
+	case IOmode::CTR_ANGLE_IN:
 		snprintf(pinType, pinTypeLength, "ctr");
 		break;
-	case IOmode::COUNTER_OUT:
+	case IOmode::CTR_TICK_OUT:
 		snprintf(pinType, pinTypeLength, "ctr");
 		break;
 	default:
@@ -169,8 +169,8 @@ void enumerateDAQmxDevices(int printFlag)
 		newDevice->numAOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, ANALOG_OUT , 0);
 		newDevice->numDIch = enumerateDAQmxDeviceChannels(newDevice->DevNum, DIGITAL_IN , 0);
 		newDevice->numDOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, DIGITAL_OUT, 0);
-		newDevice->numCIch = enumerateDAQmxDeviceChannels(newDevice->DevNum, COUNTER_IN , 0);
-		newDevice->numCOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, COUNTER_OUT, 0);
+		newDevice->numCIch = enumerateDAQmxDeviceChannels(newDevice->DevNum, CTR_ANGLE_IN , 0);
+		newDevice->numCOch = enumerateDAQmxDeviceChannels(newDevice->DevNum, CTR_TICK_OUT, 0);
 		
 		//set max device number
 		if(DAQmxEnumeratedDevMaxNum < newDevice->DevNum)
@@ -494,10 +494,10 @@ unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, uns
 	case DIGITAL_OUT:	// ENUM value 3
 		DAQmxGetDevDOPorts(DevIDstring, data, bufSize);
 		break;
-	case COUNTER_IN:	// ENUM value 4
+	case CTR_ANGLE_IN:	// ENUM value 4
 		DAQmxGetDevCIPhysicalChans(DevIDstring, data, bufSize);
 		break;
-	case COUNTER_OUT:	// ENUM value 5
+	case CTR_TICK_OUT:	// ENUM value 5
 		DAQmxGetDevCOPhysicalChans(DevIDstring, data, bufSize);
 		break;
 	default:
@@ -514,7 +514,7 @@ unsigned int enumerateDAQmxDeviceChannels(unsigned int myDev, IOmode IOtype, uns
 		} // end printflag if block
 		
 		// Check and omit counting of frequency scalers
-		if (IOtype == COUNTER_OUT && strstr(oneCh_data, "freqout") != NULL) {
+		if (IOtype == CTR_TICK_OUT && strstr(oneCh_data, "freqout") != NULL) {
 			i--;
 		}
 	}// end channel counting for loop
@@ -678,7 +678,7 @@ int ArduDAQmxConfigure()
 				cpyDev[cpyInd].CTRtask = (ArduDAQmxTask *)malloc(cpyDev[cpyInd].numCIch * sizeof(ArduDAQmxTask));
 				for (i = 0; i < cpyDev[cpyInd].numCIch; i++) { // if counter inputs present, create counter tasks for each pin
 					cpyDev[cpyInd].CTRtask[i].DevNum		= cpyDev[cpyInd].DevNum;
-					cpyDev[cpyInd].CTRtask[i].taskIOmode	= COUNTER_IN;
+					cpyDev[cpyInd].CTRtask[i].taskIOmode	= CTR_ANGLE_IN;
 					cpyDev[cpyInd].CTRtask[i].activePinList = (cLinkedList *)malloc(sizeof(cLinkedList));
 					cListInit(cpyDev[cpyInd].CTRtask[i].activePinList);
 					cpyDev[cpyInd].CTRtask[i].activePinCnt	= 0;
@@ -907,9 +907,10 @@ void ArduDAQmxClearEnumeratedDevices()
  * \param devNum NI-DAQ device/slot number of the pin.
  * \param pinNum Pin number on the NI-DAQ device.
  * \param IOtype I/O type being requested on the pin as defined in ::IOmode.
+ * \param pinRst If set to 1, pinMode will reset the pin back to INVALID_IO mode.
  * \return Returns the last error code of ArduDAQmx.
  */
-int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
+int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype, bool pinRst)
 {
 	DAQmxDevice *myDev  = NULL;
 	pin			*myPin	= NULL;
@@ -1029,7 +1030,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 					}
 					break;
 
-				case COUNTER_IN: // COUNTER IN
+				case CTR_ANGLE_IN: // COUNTER IN
 					if (pinNum >= 0 && pinNum < myDev->numCIch) { // pinNum validity check
 						myPin = &(myDev->CIpins[pinNum]);
 						// setup task
@@ -1045,7 +1046,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						}
 						myPin->pinTask = myTask;
 						myPin->pinAssignFlag = 1;
-						myPin->pinIOmode = COUNTER_IN;
+						myPin->pinIOmode = CTR_ANGLE_IN;
 
 						snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
 						DAQmxErrChk(DAQmxCreateCIAngEncoderChan(myDev->CTRtask[pinNum].Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, NIdef.NIctrMode, NIdef.ZEN, NIdef.Zval, NIdef.Zphase, NIdef.NIctrunits, NIdef.encoderPPR, NIdef.angleInit, ""));
@@ -1057,7 +1058,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 					}
 					break;
 
-				case COUNTER_OUT: // COUNTER OUT
+				case CTR_TICK_OUT: // COUNTER OUT
 					if (pinNum >= 0 && pinNum < myDev->numCOch) { // pinNum validity check
 						myPin = &(myDev->COpins[pinNum]);
 						// setup task
@@ -1073,7 +1074,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype)
 						}
 						myPin->pinTask = myTask;
 						myPin->pinAssignFlag = 1;
-						myPin->pinIOmode = COUNTER_OUT;
+						myPin->pinIOmode = CTR_TICK_OUT;
 
 						snprintf(pinName, 256, "dev%dCTR%d", devNum, pinNum);
 						DAQmxErrChk(DAQmxCreateCOPulseChanTicks(myDev->CTRtask[pinNum].Handler, pin2string(pinIDstr, devNum, IOtype, pinNum), pinName, "OnboardClock", NIdef.plsIdleSt, NIdef.plsInitDel, NIdef.plsLoTick, NIdef.plsHiTick));
@@ -1187,11 +1188,11 @@ int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int 
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/do/SampleClock", ArduDAQmxDevPrefix, sourceDevNum);
 			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].DOtask.Handler);
 			break;
-		case COUNTER_IN:
+		case CTR_ANGLE_IN:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/Ctr%dSource",    ArduDAQmxDevPrefix, sourceDevNum, sourcePinNum);
 			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].CTRtask[sourcePinNum].Handler);
 			break;
-		case COUNTER_OUT:
+		case CTR_TICK_OUT:
 			snprintf(ArduDAQmxSampleClock.sampClkSrcID, 1 + MaxNIstringLength, "%s%d/Ctr%dSource",    ArduDAQmxDevPrefix, sourceDevNum, sourcePinNum);
 			ArduDAQmxSampleClock.sampClkTask = &(ArduDAQmxDevList[sourceDevNum].CTRtask[sourcePinNum].Handler);
 			break;
@@ -1264,6 +1265,58 @@ int ArduDAQmxStop()
 		}
 	}
 	return getArduDAQmxLastError();
+}
+
+	// read functions
+int analogReadPin(unsigned int devNum, unsigned int pinNum, double  readData)
+{
+	return 0;
+}
+
+int analogReadTask(unsigned int devNum, double *readData)
+{
+	return 0;
+}
+
+int analogReadEnum(unsigned int devNum)
+{
+	return 0;
+}
+
+int digitalReadPort(unsigned int devNum, unsigned int portNum, uInt32 *readData)
+{
+	return 0;
+}
+
+int counterAngleRead(unsigned int devNum, unsigned int ctrNum, float64 readData)
+{
+	return 0;
+}
+
+	// write functions
+int analogWritePin(unsigned int devNum, unsigned int pinNum, double  writeData)
+{
+	return 0;
+}
+
+int analogWriteTask(unsigned int devNum, double *writeData)
+{
+	return 0;
+}
+
+int analogWriteEnum(unsigned int devNum)
+{
+	return 0;
+}
+
+int digitalWritePort(unsigned int devNum, unsigned int portNum, uInt32 *writeData)
+{
+	return 0;
+}
+
+int counterTickWrite(unsigned int devNum, unsigned int ctrNum)
+{
+	return 0;
 }
 
 

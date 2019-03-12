@@ -18,10 +18,10 @@ int main()
 	//enumerateDAQmxDeviceTerminals(2);
 	
 	printf("Counter In:\n");
-	enumerateDAQmxDeviceChannels(5, COUNTER_IN, 1);
+	enumerateDAQmxDeviceChannels(5, CTR_ANGLE_IN, 1);
 
 	printf("Counter Out:\n");
-	enumerateDAQmxDeviceChannels(5, COUNTER_OUT, 1);
+	enumerateDAQmxDeviceChannels(5, CTR_TICK_OUT, 1);
 
 	/*
 	for (int i = 6; i < 7; i++) {
