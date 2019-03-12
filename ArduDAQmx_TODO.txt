@@ -10,6 +10,8 @@ read and write functions
 	Don't forget to use the paper sheet that you were jotting things on for this.
 
 Handle and pass on NI-DAQmx error codes
+
+IMPORTANT: Major errors can occur in calling terminate function inside DAQmxErrChk - instead, we should handle it outside
 	
 ~~~~
 DONE

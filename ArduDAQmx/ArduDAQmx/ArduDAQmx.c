@@ -35,7 +35,8 @@ unsigned long	DAQmxEnumeratedDevMaxNum	= 0;
 cLinkedList		*ArduDAQmxTaskList			= NULL;
 unsigned long	ArduDAQmxTaskCount			= 0;
 
-sampleClock		ArduDAQmxSampleClock;
+sampleClock		ArduDAQmxSampleClock;// = { 0, INVALID_IO, 1000, DAQmx_Val_Rising, DAQmx_Val_HWTimedSinglePoint, 1, "", NULL };
+NIdefaults		NIdef;// = { -10,10,DAQmx_Val_RSE, -10,10,DAQmx_Val_Volts, DAQmx_Val_ChanForAllLines, DAQmx_Val_X4,0,0.0, DAQmx_Val_AHighBLow,DAQmx_Val_Degrees,0.0, 2048, DAQmx_Val_Low,0,1,1 };
 
 // Library support function definitions
 char* dev2string(char *strBuf, unsigned int devNum)
@@ -442,7 +443,7 @@ unsigned int enumerateDAQmxDeviceTerminals(unsigned int deviceNumber)
 {
 	char myDev[1+MaxNIstringLength];
 	const unsigned bufSize = 20000;
-	char data[bufSize], data2[bufSize];
+	char data[bufSize];
 	char *rem_data;
 	char *oneCh_data;
 	
@@ -540,7 +541,7 @@ int ArduDAQmxConfigure()
 		DAQmxDevice *cpyDev = NULL;
 		unsigned int cpyInd = 0;
 		
-		if (cListLength(DAQmxEnumeratedDevList) > 0 && ArduDAQmxTaskList != NULL) {
+		if (cListLength(DAQmxEnumeratedDevList) > 0 && ArduDAQmxTaskList == NULL) {
 			ArduDAQmxTaskList = (cLinkedList *)malloc(sizeof(cLinkedList));
 			cListInit(ArduDAQmxTaskList);
 		}
@@ -576,8 +577,6 @@ int ArduDAQmxConfigure()
 					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AItask));
 					ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 				cpyDev[cpyInd].AItask.clockHandler	= NULL;
-					// convert AI RT errors to warnings
-				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AItask.Handler, 1));
 					// initialize AI pin list
 				cpyDev[cpyInd].AIpins = (pin *) malloc(cpyDev[cpyInd].numAIch * sizeof(pin));
 				for (j = 0; j < cpyDev[cpyInd].numAIch; j++) {
@@ -604,8 +603,6 @@ int ArduDAQmxConfigure()
 					cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].AOtask));
 					ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 				cpyDev[cpyInd].AOtask.clockHandler	= NULL;
-					// convert AO RT errors to warnings
-				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].AOtask.Handler, 1));
 					// initialize AO pin list
 				cpyDev[cpyInd].AOpins = (pin *) malloc(cpyDev[cpyInd].numAOch * sizeof(pin));
 				for (j = 0; j < cpyDev[cpyInd].numAOch; j++) {
@@ -636,8 +633,6 @@ int ArduDAQmxConfigure()
 						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DItask));
 						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 					cpyDev[cpyInd].DItask.clockHandler	= NULL;
-						// convert DI RT errors to warnings
-					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DItask.Handler, 1));
 				}
 				
 				// digital outputs present
@@ -654,13 +649,11 @@ int ArduDAQmxConfigure()
 						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].DOtask));
 						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 					cpyDev[cpyInd].DOtask.clockHandler	= NULL;
-					// convert DO RT errors to warnings
-					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].DOtask.Handler, 1));
 				}
 					// initialize common Digital IO pin list
 				cpyDev[cpyInd].DIpins = (pin *) malloc(cpyDev[cpyInd].numDIch * sizeof(pin));
 				cpyDev[cpyInd].DOpins = cpyDev[cpyInd].DIpins;
-				int maxJ = (cpyDev[cpyInd].numDIch > cpyDev[cpyInd].numDOch) ? cpyDev[cpyInd].numDIch: cpyDev[cpyInd].numDOch;
+				unsigned int maxJ = (cpyDev[cpyInd].numDIch > cpyDev[cpyInd].numDOch) ? cpyDev[cpyInd].numDIch: cpyDev[cpyInd].numDOch;
 				for (j = 0; j < maxJ; j++) {
 					cpyDev[cpyInd].DIpins[j].DevNum			= cpyDev[cpyInd].DevNum;
 					cpyDev[cpyInd].DIpins[j].PinNum			= j;
@@ -688,13 +681,11 @@ int ArduDAQmxConfigure()
 						cListAppend(ArduDAQmxTaskList, (void *) &(cpyDev[cpyInd].CTRtask[i]));
 						ArduDAQmxTaskCount = cListLength(ArduDAQmxTaskList);
 					cpyDev[cpyInd].CTRtask[i].clockHandler = NULL;
-						// convert CTR RT errors to warnings
-					DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( cpyDev[cpyInd].CTRtask[i].Handler, 1));
 				}
 					// initialize common CTR pin list
 				cpyDev[cpyInd].CIpins = (pin *) malloc(cpyDev[cpyInd].numCIch * sizeof(pin));
 				cpyDev[cpyInd].COpins = cpyDev[cpyInd].CIpins;
-				int maxJ = (cpyDev[cpyInd].numCIch > cpyDev[cpyInd].numCOch) ? cpyDev[cpyInd].numCIch: cpyDev[cpyInd].numCOch;
+				unsigned int maxJ = (cpyDev[cpyInd].numCIch > cpyDev[cpyInd].numCOch) ? cpyDev[cpyInd].numCIch: cpyDev[cpyInd].numCOch;
 				for (j = 0; j < maxJ; j++) {
 					cpyDev[cpyInd].CIpins[j].DevNum			= cpyDev[cpyInd].DevNum;
 					cpyDev[cpyInd].CIpins[j].PinNum			= j;
@@ -761,7 +752,7 @@ int ArduDAQmxInit(char *devicePrefix)
 int ArduDAQmxTerminate()
 {
 	//stop any active DAQmx tasks using the ArduDAQmx I/O Stop function		
-	int i, j;
+	unsigned int i, j;
 	for (i = 0; i < ArduDAQmxDevMaxNum; i++) { // for all NI-DAQmx devices
 		if (ArduDAQmxDevList[i].numAIch > 0) { 
 				// terminate NI AI task handler
@@ -1087,7 +1078,7 @@ int pinMode(unsigned int devNum, unsigned int pinNum, IOmode IOtype, bool pinRst
 					break;
 
 				default:					 
-					fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: Dev %d - pin%d given invalid IO type\n");
+					fprintf(ERRSTREAM, "ArduDAQmx library: ERROR: Dev %d - pin%d given invalid IO type\n", devNum, pinNum);
 					ArduDAQmxTerminate();
 					setArduDAQmxLastError(ArduDAQmxErrorCode::ERROR_INVIO, 1);
 					myPin = NULL;
@@ -1163,7 +1154,7 @@ int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int 
 {
 	if (getArduDAQmxStatus() == STATUS_CONFIG || getArduDAQmxStatus() == STATUS_READY) {
 		ArduDAQmxStatus = STATUS_READY;
-		ArduDAQmxSampleClock.sourceDevNum = sourceDevNum;
+		ArduDAQmxSampleClock.sourceDevNum = sourceDevNum-1;
 		ArduDAQmxSampleClock.sourceIOmode = sourceIOmode;
 		ArduDAQmxSampleClock.samplingRate = samplingRate;
 		ArduDAQmxSampleClock.ActiveEdgTrg = DAQmx_Val_Rising;
@@ -1226,9 +1217,16 @@ int ArduDAQmxStart()
 	ArduDAQmxTask *task = NULL;
 	if (getArduDAQmxLastError() == ERROR_NONE) {
 		if (getArduDAQmxStatus() == STATUS_READY) {
+			//set the library to RUN state
 			ArduDAQmxStatus = STATUS_RUN;
+
+			//Start all tasks
 			for (elem = cListFirstElem(ArduDAQmxTaskList); elem != NULL && getArduDAQmxLastError() == (int)ERROR_NONE; elem = cListNextElem(ArduDAQmxTaskList, elem)) {
 				task = (ArduDAQmxTask *)elem->obj;
+
+				//Convert realtime conversion errors to warnings in all tasks
+				DAQmxErrChk(DAQmxSetRealTimeConvLateErrorsToWarnings( task->Handler, 1));
+
 				//create I/O buffer
 				task->ioBuffer = malloc(task->ioDataSize * task->activePinCnt);
 
@@ -1268,6 +1266,8 @@ int ArduDAQmxStop()
 }
 
 	// read functions
+
+// DO NOT FORGET TO DO (DEVICE NUMBER -1)
 int analogReadPin(unsigned int devNum, unsigned int pinNum, double  readData)
 {
 	return 0;

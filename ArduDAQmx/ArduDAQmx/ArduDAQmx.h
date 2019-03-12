@@ -143,7 +143,7 @@ typedef enum _IO_DIRECTION {
 /*!
  * Some default values for NI-DAQmx.
  */
-struct NIdefVals {
+typedef struct _NIdefaults {
 	float64 AImin		= -10;
 	float64 AImax		= 10;
 	int32	NItermConf	= DAQmx_Val_RSE;
@@ -168,7 +168,7 @@ struct NIdefVals {
 	int32	plsLoTick		= 1;
 	int32	plsHiTick		= 1;
 
- }NIdef;
+ }NIdefaults;
 
 	// Sample Clock and Trigger selection functions
 typedef struct _sampleClock {
@@ -371,6 +371,7 @@ void ArduDAQmxClearEnumeratedDevices();
 int pinMode(unsigned int, unsigned int, IOmode, bool pinRst);
 
 inline bool isSampleClock();
+inline int32 setTaskClock(ArduDAQmxTask *NItask, sampleClock *sampClk);
 int setSampleClock(unsigned int sourceDevNum, IOmode sourceIOmode, unsigned int sourcePinNum, double samplingRate);
 inline void setSamplingRate(float64 samplingRate);
 void waitSampleClock(float64 waitSeconds);
